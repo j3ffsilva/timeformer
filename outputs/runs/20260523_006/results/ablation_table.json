@@ -1,0 +1,32 @@
+{
+  "ablation_deltas": {
+    "\u0394A_spurious (B3-shuffled \u2212 B2b)": {
+      "split": "continuation",
+      "B3_shuffled_accuracy": 0.77455919395466
+    },
+    "\u0394T_global": {
+      "split": "ambiguous_test",
+      "B1_accuracy": 0.582,
+      "B2a_accuracy": 0.569,
+      "delta": -0.013
+    },
+    "\u0394T_inter": {
+      "split": "ambiguous_test",
+      "B2a_accuracy": 0.569,
+      "B2b_accuracy": 0.622,
+      "delta": 0.053
+    },
+    "\u0394A": {
+      "split": "continuation",
+      "B2b_accuracy": 0.7619647355163728,
+      "B3_accuracy": 0.77455919395466,
+      "delta": 0.0126
+    }
+  },
+  "models": [
+    "B1",
+    "B2a",
+    "B2b",
+    "B3"
+  ]
+}

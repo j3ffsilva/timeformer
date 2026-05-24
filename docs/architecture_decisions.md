@@ -3,7 +3,7 @@
 **Projeto:** Timeformer  
 **Fase:** B (ablação de representação temporal)  
 **Código:** `src/timeformer/models.py`, `src/timeformer/encoding.py`, `src/timeformer/memory.py`  
-**Cadeia de ablação:** B1 → B2a → B2b → B3
+**Cadeia de ablação:** Static Transformer (`B1`) → Additive Time-Conditioned Transformer (`B2a`) → Token-Time Transformer (`B2b`) → Memory-Augmented Timeformer (`B3`)
 
 ---
 
@@ -23,21 +23,21 @@ O objetivo de treino de todos os modelos é Masked Language Modeling (MLM) sobre
 
 ---
 
-## 2. Cadeia de ablação B1 → B2a → B2b → B3
+## 2. Cadeia de ablação
 
 A hipótese central é que representações temporalmente informadas são melhores para rastrear deriva semântica. Para isolar de onde vem o ganho, a arquitetura foi dividida em quatro modelos de complexidade crescente:
 
-| Modelo | O que acrescenta | Split principal de validação |
-|--------|-----------------|------------------------------|
-| B1 | Transformer textual sem tempo — adversário base | — |
-| B2a | TimeEncoding aditivo global | `ambiguous_test` |
-| B2b | Interação token×época | `ambiguous_test` |
-| B3 | Atenção temporal sobre memória histórica | `continuation` |
+| Código | Nome público | O que acrescenta | Split principal de validação |
+|--------|-------------|-----------------|------------------------------|
+| B1 | Static Transformer | Transformer textual sem tempo — adversário base | — |
+| B2a | Additive Time-Conditioned Transformer | TimeEncoding aditivo global | `ambiguous_test` |
+| B2b | Token-Time Transformer | Interação token×época | `ambiguous_test` |
+| B3 | Memory-Augmented Timeformer | Atenção temporal sobre memória histórica | `continuation` |
 
 **Interpretação dos deltas:**
-- **ΔT_global = B2a − B1** em `ambiguous_test`: ganho de saber a época globalmente
-- **ΔT_inter = B2b − B2a** em `ambiguous_test`: ganho de injetar época por token (vs. global)
-- **ΔA = B3 − B2b** em `continuation`: ganho de usar trajetória histórica específica do sujeito
+- **Delta time-conditioning = B2a − B1** em `ambiguous_test`: ganho de saber a época globalmente
+- **Delta token-time interaction = B2b − B2a** em `ambiguous_test`: ganho de injetar época por token (vs. global)
+- **Delta memory = B3 − B2b** em `continuation`: ganho de usar trajetória histórica específica do sujeito
 
 **Decisão de usar `ambiguous_test` para B2 e `continuation` para B3:**
 

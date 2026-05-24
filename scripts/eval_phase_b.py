@@ -15,6 +15,7 @@ from pathlib import Path
 import torch
 
 from src.timeformer.models import build_model
+from src.timeformer.nomenclature import model_label
 from src.timeformer.train import load_checkpoint
 from src.timeformer.eval import Evaluator, save_results
 from src.timeformer.run import RunManager
@@ -84,7 +85,7 @@ def main() -> None:
 
     results = {}
     for name in available:
-        print(f"\n--- {name} ---")
+        print(f"\n--- {name}: {model_label(name)} ---")
         model, memory = load_model_and_memory(name, run, args.device)
         res = evaluator.evaluate(model, memory=memory)
         results[name] = res

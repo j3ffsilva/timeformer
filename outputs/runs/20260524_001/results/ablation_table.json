@@ -1,0 +1,13 @@
+{
+  "ablation_deltas": {},
+  "models": [
+    "B3_oracle",
+    "B2b_ref",
+    "B3_learned"
+  ],
+  "model_labels": {
+    "B3_oracle": "Oracle-Memory Timeformer",
+    "B2b_ref": "Token-Time Transformer (reference)",
+    "B3_learned": "Memory-Augmented Timeformer (learned memory)"
+  }
+}

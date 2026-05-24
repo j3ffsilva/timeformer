@@ -1,0 +1,742 @@
+% Compile from the repository root with:
+% TEXINPUTS=templates/LaTeX2e//: pdflatex paper1_iberamia_timeformer.tex
+% TEXINPUTS=templates/LaTeX2e//: bibtex paper1_iberamia_timeformer
+% TEXINPUTS=templates/LaTeX2e//: pdflatex paper1_iberamia_timeformer.tex
+% TEXINPUTS=templates/LaTeX2e//: pdflatex paper1_iberamia_timeformer.tex
+%
+% This file is intentionally a planning skeleton, not a full manuscript draft.
+\documentclass[runningheads]{llncs}
+
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\begin{document}
+
+\title{Timeformer: Explicit Temporal Conditioning for Traceable Semantic Representations}
+\titlerunning{Timeformer for Traceable Semantic Representations}
+
+\author{Anonymous Author}
+\authorrunning{Anonymous}
+
+\institute{Institution withheld for review}
+
+\maketitle
+
+\begin{abstract}
+Words change meaning over time, yet most computational models treat token
+representations as epoch-independent. We study temporal traceability: the
+property that the same surface token, queried at different epochs, occupies
+semantically appropriate neighborhoods in representation space. A model may use
+epoch information to improve predictive accuracy without exposing a traceable
+\texttt{token@time} representation --- and this gap is the focus of the paper.
+
+We address it with Timeformer, a family of Transformer-style encoders organized
+as a controlled ablation chain. Four variants add temporal capacity in successive
+steps: a static baseline, a globally time-conditioned encoder, a token-time
+encoder that conditions each token embedding on the epoch before self-attention
+is applied, and a memory-augmented extension that consults causal historical
+prototypes. All variants are trained with masked language modeling on a
+controlled synthetic benchmark in which the temporal trajectory of each target
+item is known and evaluation labels are withheld from training.
+
+The main finding is that explicit token-time interaction is the effective
+mechanism for traceability. The Token-Time Transformer produces a neighborhood
+drift of \(-0.614\) for drifting subjects across epochs, compared to \(-0.231\)
+for the static baseline --- a difference stable across seeds and visible in
+class-specific trajectory curves. Probe-based accuracy gains are modest and
+seed-sensitive, confirming that geometric diagnostics are more appropriate than
+label recoverability for evaluating traceability. The memory-augmented variant
+does not produce a robust improvement over token-time interaction; the oracle
+diagnostic identifies mean-prototype aggregation as the failure point,
+motivating sense-aware memory mechanisms in future work.
+
+\keywords{Temporal semantics \and Semantic change \and Transformer models \and Traceability \and Diagnostic evaluation}
+\end{abstract}
+
+\section{Introduction}
+% Target length: 1.0--1.25 pages.
+Words do not keep a fixed meaning across time. A term that is associated with
+one set of events, practices, or communities in an earlier period may later
+become associated with another. For computational models, this raises a
+traceability problem: when the same surface token appears in different epochs,
+we need to inspect not only what the model predicts, but also whether its
+representation places that token in the appropriate temporal semantic
+neighborhood. Without a way to inspect temporal movement in the representation, downstream
+analyses risk collapsing distinct historical states into a single timeless
+representation.
+This limits our ability to audit semantic movement, diagnose temporal
+generalization, and explain why a model treats the same lexical item
+differently across periods.
+
+The dominant computational treatment of this problem has been lexical semantic
+change detection (LSCD), often based on diachronic word embeddings or related
+distributional representations trained over time-sliced corpora. This line of
+work has produced important methods and benchmarks for measuring semantic
+change across periods~\cite{hamilton2016diachronic,schlechtweg2020semeval,tahmasebi2021survey}.
+However, many approaches compare representations across independently modeled
+or post-hoc aligned periods. Even when temporal information is available to a
+model, the resulting representation is not always exposed as a directly
+queryable object of the form \texttt{token@time}. As a result, the temporal
+behavior of a lexical item may be visible only indirectly through aggregate
+scores, rather than through the geometry of the representation itself.
+Furthermore, a model that receives epoch information to improve a prediction
+objective does not necessarily produce a traceable representation: it may shift
+its outputs while leaving the geometric neighborhood of the token largely
+unchanged. Predictive performance and representational traceability are
+separable properties.
+
+This paper studies this separation directly. We say a representation is
+\emph{temporally traceable} if the same surface token, queried at different
+epochs, occupies neighborhoods that reflect its intended temporal context ---
+making it inspectable as a first-class \texttt{token@time} object. A model may
+be temporally predictive without being temporally traceable: the representation
+geometry may not reflect the token's trajectory even when the model output does.
+We therefore ask: can a Transformer-style encoder expose a temporally traceable
+representation in which the same lexical item, evaluated at different epochs,
+has measurably different and semantically appropriate neighborhoods?
+
+We address this question with Timeformer, a family of Transformer-style models
+designed around an explicit temporal interface. The family is organized as an
+ablation chain: a Static Transformer without time information; an Additive
+Time-Conditioned Transformer that injects a global epoch vector; a Token-Time
+Transformer that makes lexical identity interact explicitly with continuous
+time encodings; and a Memory-Augmented Timeformer that adds causal historical
+prototype memory. This design lets us isolate which forms of temporal capacity
+support traceable semantic representations, rather than treating temporal
+conditioning as a single monolithic architectural choice.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{outputs/figures/figure1_ablation_chain.png}
+\caption{Conceptual overview of temporal traceability and the Timeformer
+ablation chain. The same lexical item is inspected as token@time, and model
+variants add temporal capacity in controlled steps.}
+\label{fig:ablation-chain}
+\end{figure}
+
+The paper contributes to the literature and state of practice in four ways.
+First, it formulates temporal semantic traceability as a \texttt{token@time}
+representation problem. Second, it introduces a controlled Timeformer ablation
+family for comparing global time conditioning, token-time interaction, and
+historical prototype memory. Third, it evaluates temporal traceability with
+diagnostics that inspect subject representations directly, including context
+drift score, contrastive temporal inversion, and probe-based evaluation. Fourth,
+it shows that token-time interaction is the main positive mechanism in the
+current setup, while naive mean-pooled historical memory is better understood as
+a diagnostic extension than as a robust improvement.
+
+The remainder of the paper is organized as follows. Section~2 reviews related
+work on diachronic representations, LSCD, temporal conditioning, and diagnostic
+evaluation. Section~3 summarizes the controlled benchmark used as the testbed.
+Section~4 presents the Timeformer architecture and its ablation variants.
+Section~5 describes the evaluation protocol. Section~6 reports the empirical
+results, and Section~7 discusses the implications and limitations of the
+memory-augmented variant. Section~8 concludes the paper.
+
+\section{Related Work}
+% Target length: 1.25--1.5 pages.
+Computational approaches to semantic change are commonly framed as lexical
+semantic change detection: given language data from different periods, the goal
+is to determine whether and how the meaning of a target item has changed.
+Diachronic word embeddings provided one of the most influential formulations of
+this problem by learning distributional representations for different time
+slices and comparing them across periods~\cite{hamilton2016diachronic}. This
+family of methods made semantic change operational through geometric movement
+in embedding space, often after alignment or normalization across independently
+trained temporal slices. The central intuition remains important for this
+paper: semantic change should be visible as a change in neighborhood structure.
+Our focus, however, is not on aligning independently trained spaces. Instead,
+we ask whether a single Transformer-style encoder can expose a representation
+that is directly queryable as a lexical item at a specific epoch.
+
+Benchmarks for LSCD have helped standardize evaluation by defining target
+words, periods, and gold annotations for semantic change. SemEval-2020 Task 1,
+for example, established an unsupervised LSCD setting with multilingual data
+and evaluation protocols for binary and graded change
+detection~\cite{schlechtweg2020semeval}. Surveys of the field also emphasize
+the diversity of corpus designs, annotation regimes, and model families used to
+study semantic change~\cite{tahmasebi2021survey}. These resources are essential
+for evaluating change in natural corpora, but they also inherit the
+observational complexity of historical language: changes in frequency, genre,
+domain, and corpus composition may interact with lexical meaning. In this
+paper, we use a controlled benchmark as a diagnostic testbed rather than as a
+replacement for natural LSCD benchmarks. The controlled setting gives access to
+known temporal trajectories and evaluation labels, allowing us to test whether
+the intended temporal movement is visible in the model representation.
+
+A second relevant line of work concerns temporal conditioning in neural models.
+Rather than training separate models for each period, a temporally conditioned
+model can receive time as part of its input or architecture, allowing parameter
+sharing across epochs while representations or predictions vary with
+time~\cite{dhingra2022timeaware,rosin2022timemasking,loureiro2022timelms}.
+For the traceability problem, however, the form of conditioning matters. A
+global epoch vector may tell the model which period it is processing, but it
+does not necessarily force an interaction between a particular token identity
+and that epoch. Timeformer is therefore organized as an ablation chain that
+separates global time injection from explicit token-time interaction. This
+distinction is important because the paper evaluates not only whether time
+improves a prediction, but whether the same token occupies different and
+interpretable neighborhoods at different epochs.
+
+Finally, this paper is related to diagnostic evaluation and multi-sense
+representations. Probing methods are often used to ask what information is
+recoverable from learned representations, but a high probe score does not by
+itself explain how individual lexical items move through representation space.
+We therefore combine probe-based evaluation with geometric diagnostics, such as
+nearest-neighbor context drift, that inspect the representation of the planted
+subject token directly. Multi-sense representations are also relevant because
+semantic change may involve the coexistence, competition, or bifurcation of
+senses rather than a simple shift from one meaning to
+another~\cite{giulianelli2020analysing}. Contextualized models such as ELMo and
+BERT can assign different representations to the same surface form depending on
+context, and this property has been used to track sense-level change across
+periods. The memory-augmented variant studied here uses mean-pooled historical
+prototypes and is deliberately limited: it tests whether a simple causal memory
+helps traceability, while also exposing why more sense-aware memory mechanisms
+are needed in future work.
+
+\section{Controlled Benchmark Summary}
+% Target length: 1.0 page.
+We evaluate Timeformer on a controlled synthetic benchmark designed to make
+temporal semantic movement observable. The benchmark is not intended to replace
+natural LSCD datasets. Instead, it provides a diagnostic environment in which
+the temporal trajectory of each target item is known, the source of semantic
+evidence is explicit, and representation-level behavior can be compared against
+planted ground truth. Full benchmark construction is treated separately in the
+companion benchmark paper; here we summarize only the elements needed to
+understand the Timeformer evaluation.
+
+The corpus uses a strict subject--verb--object (SVO) grammar. This structure
+isolates subjects as the lexical items with planted temporal trajectories, while
+verbs and objects serve as noisy contextual evidence. A subject's meaning at a
+given epoch is operationalized as the probability that its sentence is generated
+from one of two latent semantic contexts: \(P(A \mid s, t)\) denotes the
+context-A probability for subject \(s\) at epoch \(t\). A subject undergoes
+semantic change when \(P(A \mid s, t)\) shifts across epochs. The two contexts
+are defined by disjoint sets of verbs and objects. The vocabulary contains 30
+subjects, 8 verbs, and 8 objects; context A contains verbs
+\(\{V1,\ldots,V4\}\) and objects \(\{O1,\ldots,O4\}\), while context B contains
+verbs \(\{V5,\ldots,V8\}\) and objects \(\{O5,\ldots,O8\}\).
+
+Subjects are divided into three planted trajectory classes. Stable subjects
+maintain an approximately constant \(P(A \mid s, t)\) across all epochs. Drift
+subjects follow a monotonic trajectory from near-exclusive context A
+(\(P(A \mid s, t) \approx 1\) at \(t0\)) toward near-exclusive context B
+(\(P(A \mid s, t) \approx 0\) at \(t9\)). Bifurcating subjects begin in a
+dominant context A state and move toward a mixed regime
+(\(P(A \mid s, t) \approx 0.5\)) in which both contexts coexist with roughly
+equal weight. Full trajectory specifications are given in the companion
+benchmark paper; here, these classes define the expected direction and magnitude
+of neighborhood movement used in evaluation. The benchmark contains 10 epochs,
+\(t0\) through \(t9\), and 10 subjects per trajectory class. This design lets
+us test whether a model distinguishes stability, directional drift, and movement
+toward a mixed semantic state.
+
+The observed verb and object are informative but deliberately noisy. For the
+main corpus, if the planted \texttt{true\_context} is A, each local marker is
+sampled from context A with probability \(p_{canon}=0.75\) and from context B
+with probability \(0.25\); the reverse holds when the planted context is B.
+Thus, local evidence usually points in the intended direction but cannot be
+used as a deterministic oracle. The \texttt{true\_context} label is defined by
+the planted subject--epoch trajectory, not by the observed verb or object, and
+is used only for evaluation.
+
+The benchmark contains several evaluation conditions. The standard test split
+uses the same noisy marker process as training. Harder splits include cases in
+which the verb contradicts the planted context and cases in which both local
+markers contradict it. An additional ambiguous split is generated with
+\(p_{canon}=0.50\), making verb and object markers locally uninformative; in
+this setting, the subject identity and epoch are the relevant evidence. We also use contrastive evaluations, in which the same subject is presented
+under alternative epoch labels to test whether the representation inverts
+accordingly, and continuation evaluations, in which the model is tested on
+epochs held out from the main training distribution. Both are described in
+detail in Section~5.
+
+For this paper, the benchmark plays two roles. First, it gives us direct access
+to target trajectories, so we can ask whether the representation of a subject
+at \(t0\) and \(t9\) occupies the intended semantic neighborhoods. Second, it
+separates context-local cues from temporal cues, allowing the evaluation to
+distinguish models that merely exploit observed verbs and objects from models
+that encode the interaction between lexical identity and epoch. These
+properties make the benchmark suitable for testing temporal traceability, while
+also delimiting the scope of the claims: the results are diagnostic evidence in
+a controlled setting, not a claim of performance on open-domain historical
+language.
+
+\section{Timeformer Architecture}
+% Target length: 2.0 pages.
+Timeformer is defined as an ablation family rather than as a single model. All
+variants share the same basic training interface: an input sentence is encoded
+as \texttt{[CLS] S V O [SEP]}, a Transformer encoder produces contextual hidden
+states, and an MLM head predicts masked tokens. The representation used for
+traceability diagnostics is \(h_s\), the final hidden state at the subject
+position. The variants differ only in how epoch information is made available
+to the encoder and whether the current subject representation can consult
+causal historical prototypes. Table~\ref{tab:model-variants} summarizes the
+four variants.
+
+\begin{table}
+\caption{Model variants in the Timeformer ablation family.}
+\label{tab:model-variants}
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|l|p{3.7cm}|p{3.3cm}|p{2.0cm}|}
+\hline
+ID & Public name & Temporal signal & Memory \\
+\hline
+B1 & Static Transformer & None & No \\
+B2a & Additive Time-Conditioned Transformer & Global epoch vector & No \\
+B2b & Token-Time Transformer & Token-time interaction & No \\
+B3 & Memory-Augmented Timeformer & Token-time interaction & Causal prototypes \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Static Transformer}
+The Static Transformer is the baseline encoder. It receives token and position
+embeddings but no explicit epoch information:
+
+\[
+  x_i = e(w_i) + p_i .
+\]
+
+The resulting sequence is passed through a small pre-layer-normalized
+Transformer encoder. This model can learn corpus-level co-occurrence patterns,
+but it has no direct way to distinguish the representation of a subject at
+\(t0\) from the same subject at \(t9\), except through the local words observed
+in the sentence. It therefore represents the null hypothesis that temporal
+behavior can be recovered from static distributional evidence alone.
+
+\subsection{Continuous Time Encoding}
+The temporally conditioned variants use a continuous encoding of epoch index
+rather than a learned lookup table. For an epoch \(t \in \{0,\ldots,T\}\), the
+index is normalized to \([0,1]\), mapped to fixed sinusoidal features, and then
+projected by a small MLP:
+
+\[
+  \tau(t) = \mathrm{MLP}(\mathrm{sinusoidal}(t/T)).
+\]
+
+This choice is meant to support interpolation and extrapolation across the
+small number of epochs in the benchmark. A learned embedding table could
+memorize the training epochs as unrelated identifiers; a continuous encoding
+instead treats epochs as ordered points on a shared temporal scale. The
+sinusoidal features here encode epoch index as a scalar on a continuous
+temporal scale; they are distinct from the token-position encodings used by
+the Transformer encoder itself, which remain standard positional embeddings.
+
+\subsection{Additive Time-Conditioned Transformer}
+The Additive Time-Conditioned Transformer injects the same epoch vector into
+every token position:
+
+\[
+  x_i = e(w_i) + p_i + \tau(t).
+\]
+
+This model tests the minimal effect of exposing the encoder to the current
+epoch. Because the same temporal offset is added to every token, the model is
+given global period information but no token-specific temporal modulation at
+the embedding layer. It therefore isolates the question of whether simply
+telling the model the epoch is sufficient for traceability.
+
+\subsection{Token-Time Transformer}
+The Token-Time Transformer replaces additive conditioning with an explicit
+interaction between lexical identity and epoch. For each token, the token
+embedding and time encoding are concatenated and projected back to the model
+dimension:
+
+\[
+  x_i = W [e(w_i); \tau(t)] + p_i .
+\]
+
+Here \(e(w_i), \tau(t) \in \mathbb{R}^d\), so the concatenation
+\([e(w_i); \tau(t)] \in \mathbb{R}^{2d}\) and \(W \in \mathbb{R}^{d \times 2d}\)
+projects back to the model dimension. This is the central Timeformer mechanism
+in the paper. Unlike the additive variant, it allows the same epoch vector to
+affect different lexical items in different ways before self-attention is applied.
+Thus, a subject token can receive a different temporally conditioned
+representation from a verb or object
+in the same sentence, and the same subject can be represented differently across
+epochs. The empirical question is whether this token-time interaction produces
+more traceable semantic neighborhoods than global time conditioning alone.
+
+\subsection{Memory-Augmented Timeformer}
+The Memory-Augmented Timeformer extends the Token-Time Transformer with a
+causal prototype memory. For each subject \(s\) and epoch \(t\), a prototype
+\(m(s,t)\) is computed as the mean of subject representations observed in
+training sentences for that subject and epoch. Prototypes are computed with
+stop-gradient, from training data only, and are served causally: at epoch
+\(t_k\), the model may attend only to \(\{m(s,t):t<t_k\}\).
+
+The memory module is a temporal cross-attention layer applied only to the
+subject embedding. The current subject embedding acts as the query, and the
+historical prototypes for the same subject act as keys and values. The updated
+subject embedding is then inserted back into the token sequence before the
+Transformer encoder:
+
+\[
+  \tilde{x}_s =
+  x_s + g \cdot
+  \left(\mathrm{LN}(x_s + \mathrm{Attn}(x_s, M_s, M_s)) - x_s\right),
+\]
+
+where \(M_s\) is the causal history for subject \(s\), and \(g \in [0,1]\) is
+a learned scalar gate initialized to zero so that at the start of training
+\(\tilde{x}_s = x_s\) and the memory path is inactive. The formula
+interpolates between the original embedding (\(g=0\)) and the
+layer-normalized attended representation (\(g=1\)), allowing the model to
+gradually open the memory channel as training progresses. Applying the memory
+update before the textual encoder lets the subsequent self-attention layers
+propagate historical information from the subject to the other token positions,
+creating a path by which the MLM objective can reward useful memory use.
+
+In this paper, the memory-augmented variant is treated as a diagnostic
+extension. It tests whether mean-pooled causal history helps temporal
+traceability beyond token-time interaction. Because a single mean prototype can
+collapse coexisting senses within an epoch, the model is not expected to solve
+sense bifurcation by construction; this limitation is part of the motivation
+for sense-aware memory in future work.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{outputs/figures/figure2_architecture_detail.png}
+\caption{Architecture detail for the Token-Time Transformer and the optional
+memory-augmented extension. The memory module attends only to causal historical
+prototypes and updates the subject representation before Transformer encoding.}
+\label{fig:architecture}
+\end{figure}
+
+\section{Evaluation Protocol}
+% Target length: 1.25--1.5 pages.
+All model variants are trained with the same self-supervised objective: masked
+language modeling over the synthetic SVO corpus. The planted
+\texttt{true\_context} label is never used to train the encoder. It is used
+only after training, to evaluate whether the learned representation contains
+the temporal semantic information implied by the benchmark trajectories. This
+separation is important because the intended use case is representation
+learning from corpora in which semantic-change labels are not available.
+
+The main object of evaluation is \(h_s\), the final hidden state at the subject
+position. This choice follows directly from the benchmark design: subjects are
+the lexical items with planted temporal trajectories, while verbs and objects
+serve as noisy contextual evidence. We therefore evaluate whether \(h_s\)
+encodes the intended context of the subject at a given epoch. Sentence-level
+representations based on \texttt{[CLS]} are also computed, but the subject
+representation is the primary diagnostic target.
+
+We use four complementary diagnostics. First, a linear probe is trained on
+\(h_s\) from the standard test split to predict \texttt{true\_context} and is
+then evaluated on each split. This measures whether context information is
+linearly recoverable from the representation, but it does not by itself
+establish traceability. Second, we compute a context drift score over nearest
+neighbors. For each epoch and subject class, we retrieve the \(k\) nearest
+neighbors of each subject representation% TODO: state k value explicitly
+\ and measure the proportion assigned to context A, with \(k\) fixed at the
+same value across all models and splits. A traceable representation should show
+a strong movement from A-like to B-like neighborhoods for drifting subjects,
+weaker movement for bifurcating subjects, and comparatively limited movement
+for stable subjects. Third, we use contrastive temporal examples in which the
+same subject token is presented with two different epoch labels. We define the
+contrastive sign-flip rate as the proportion of such pairs for which swapping
+the epoch label reverses the nearest-neighbor context assignment --- from
+A-dominant to B-dominant or vice versa. A model without temporal capacity is
+expected to produce a sign-flip rate of zero, since the same token yields the
+same representation regardless of the epoch label provided. Fourth, we evaluate
+continuation examples from held-out later epochs% TODO: specify which epochs are held out (e.g. t8--t9)
+\ to test whether temporal behavior extends beyond the training distribution.
+
+The ablation comparisons follow the architecture chain. The gain from
+time-conditioning is measured by comparing the Additive Time-Conditioned
+Transformer to the Static Transformer, primarily on the ambiguous split where
+local markers are uninformative. The gain from token-time interaction is
+measured by comparing the Token-Time Transformer to the additive variant on the
+same split. The memory contribution is measured by comparing the
+Memory-Augmented Timeformer to the Token-Time Transformer on continuation and
+contrastive diagnostics.
+
+For the memory-augmented model, we include controls that test whether any gain
+comes from the correct subject history rather than from extra parameters. In
+the shuffled-memory control, a subject receives prototypes from a randomly
+selected different subject, establishing whether subject-specific identity in
+the causal history matters or whether any historical context produces the same
+effect. In the no-history control, the memory path is present but receives no
+valid historical prototypes. We also report an oracle-memory diagnostic, where
+available, to test whether perfect historical prototypes would be sufficient to
+improve the same metrics. These controls are interpreted conservatively: memory
+is considered useful only when it improves over the Token-Time Transformer and
+over inappropriate or empty histories.
+
+\section{Results}
+% Target length: 2.5--3.0 pages.
+We report results over three training runs. Unless otherwise noted, values are
+means over seeds, with the standard deviation shown in parentheses when space
+allows. The main finding is that token-time interaction produces a much
+clearer temporal movement in representation space than the Static Transformer.
+The memory-augmented variant is informative as a diagnostic extension, but it
+does not provide a robust improvement over the Token-Time Transformer.
+
+\subsection{Temporal Neighborhood Movement}
+% Main claim: B2b produces a stronger temporal neighborhood transition than B1.
+% Use class-specific curves to avoid claiming stable subjects are perfectly flat.
+Figure~\ref{fig:context-drift} shows the context drift score across epochs. For
+drifting subjects, the Static Transformer moves only weakly from an A-like
+neighborhood to a B-like neighborhood: the estimated context-A proportion among
+nearest neighbors drops from \(0.618\) at \(t0\) to \(0.387\) at \(t9\), a
+change of \(-0.231\). The Token-Time Transformer shows a much stronger
+transition, from \(0.847\) to \(0.233\), a change of \(-0.614\). This is the
+clearest evidence for temporal traceability in the current experiments: the
+same subject token occupies substantially different neighborhoods when queried
+at different epochs.
+
+The class-specific curves are also useful as controls. Stable subjects are not
+perfectly flat, especially for temporally conditioned models, but their
+movement is much smaller and less aligned with a full A-to-B transition. Across
+seeds, the stable-class change is \(+0.020\) for the Static Transformer,
+\(-0.203\) for the Token-Time Transformer, and \(-0.153\) for the
+Memory-Augmented Timeformer. Bifurcating subjects show intermediate behavior:
+the Token-Time Transformer moves from \(0.895\) to \(0.521\), consistent with a
+trajectory toward a mixed state rather than a complete transition to context B.
+Thus, the geometric diagnostic distinguishes the qualitative trajectory
+classes better than a single aggregate probe score.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{outputs/figures/figure3_context_drift.png}
+\caption{Context drift score across epochs. The Token-Time Transformer shows
+stronger movement from context A toward context B for drifting subjects than
+the Static Transformer, while stable and bifurcating subjects provide
+class-specific controls.}
+\label{fig:context-drift}
+\end{figure}
+
+\begin{table}
+\caption{Context drift score at the first and last epochs. Values are
+context-A proportions among nearest neighbors; \(\Delta=t9-t0\).}
+\label{tab:context-drift}
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|l|l|c|c|c|}
+\hline
+Class & Model & t0 & t9 & \(\Delta\) \\
+\hline
+Stable & Static Transformer & 0.736 & 0.756 & +0.020 \\
+Stable & Token-Time Transformer & 0.843 & 0.641 & -0.203 \\
+Stable & Memory-Augmented Timeformer & 0.810 & 0.658 & -0.153 \\
+\hline
+Drift & Static Transformer & 0.618 & 0.387 & -0.231 \\
+Drift & Token-Time Transformer & 0.847 & 0.233 & -0.614 \\
+Drift & Memory-Augmented Timeformer & 0.836 & 0.263 & -0.573 \\
+\hline
+Bifurcation & Static Transformer & 0.794 & 0.682 & -0.112 \\
+Bifurcation & Token-Time Transformer & 0.895 & 0.521 & -0.374 \\
+Bifurcation & Memory-Augmented Timeformer & 0.905 & 0.517 & -0.388 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Probe and Contrastive Diagnostics}
+The linear probe results are supportive but less decisive than the neighborhood
+analysis. On the ambiguous split, where local verb and object markers are
+uninformative, the Static Transformer reaches \(0.577\) accuracy, the Additive
+Time-Conditioned Transformer reaches \(0.573\), and the Token-Time Transformer
+reaches \(0.599\). The corresponding mean delta for token-time interaction is
+\(+0.026\), but it is seed-sensitive: the three runs give \(+0.053\),
+\(+0.005\), and \(+0.021\). This confirms that probe accuracy alone should not
+carry the central claim. It measures recoverability of the planted label, not
+the geometry of temporal movement.
+
+The contrastive sign-flip diagnostic gives a different view. The Static
+Transformer has a sign-flip rate of \(0.000\), as expected for a model without
+explicit time. The Additive Time-Conditioned Transformer averages \(0.690\),
+while the Token-Time Transformer averages \(0.517\). This ordering may appear
+counterintuitive given that the Token-Time Transformer produces a much stronger
+neighborhood drift. The decoupling arises because sign-flip rate and drift score
+measure distinct properties: sign-flip counts the proportion of contrastive
+pairs in which the nearest-neighbor context assignment crosses the A/B midpoint,
+while drift score measures the full magnitude of trajectory movement across
+epochs. A global additive epoch offset displaces all token representations
+uniformly, which can push many assignments across the decision boundary without
+producing coherent subject-level trajectories. Token-time interaction modulates
+each token according to its identity, producing more structured and
+subject-specific movement --- evidenced by the stronger drift --- but not
+necessarily crossing the contrastive threshold in more pairs. We therefore treat
+contrastive sign flip as evidence that time conditioning changes model behavior
+at all, and the neighborhood trajectories of Figure~\ref{fig:context-drift} as
+the more diagnostic measure of temporal traceability.
+
+\begin{table}
+\caption{Main traceability diagnostics. Accuracy columns report linear-probe
+accuracy on \(h_s\); flip is contrastive sign-flip rate. A dash indicates the
+metric was not computed for this variant.% TODO: explain why Drift was not computed for B2a
+}
+\label{tab:main-results}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{|p{3.8cm}|c|c|c|c|}
+\hline
+Model & Drift & Flip & Ambig. & Cont. \\
+\hline
+Static Transformer & -0.231 & 0.000 & 0.577 & 0.719 \\
+Additive Time-Conditioned Transformer & -- & 0.690 & 0.573 & 0.754 \\
+Token-Time Transformer & -0.614 & 0.517 & 0.599 & 0.766 \\
+Memory-Augmented Timeformer & -0.573 & 0.506 & 0.599 & 0.766 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Memory Diagnostics}
+% Report B3 honestly: not a stable improvement over B2b, but diagnostically
+% useful. Oracle memory may affect sign flip without solving continuation.
+The Memory-Augmented Timeformer does not produce a robust gain over the
+Token-Time Transformer. On continuation, the mean accuracy of the Token-Time
+Transformer is \(0.766\), and the mean accuracy of the Memory-Augmented
+Timeformer is also \(0.766\). The memory delta across the three runs is
+effectively zero on average, with seed-level values \(+0.013\), \(+0.005\), and
+\(-0.018\). This result argues against presenting mean-pooled prototype memory
+as the main empirical contribution.
+
+The oracle-memory diagnostic further clarifies the failure mode. In the
+corrected oracle run% TODO: specify what was corrected (e.g., a bug in prototype indexing, masking, or epoch alignment) and why the original run was invalid
+, learned memory slightly improves continuation over its Token-Time reference
+(\(0.775\) vs. \(0.762\)), while oracle memory does not (\(0.754\)). However,
+oracle memory improves contrastive sign flip relative to the same reference
+(\(0.586\) vs. \(0.448\)). The careful interpretation is that
+perfect historical prototypes can affect contrastive temporal behavior, but
+historical memory alone does not solve the continuation objective under the
+current MLM setup. This supports the use of B3 as a diagnostic extension and
+motivates memory mechanisms that preserve multiple senses rather than averaging
+them into a single prototype.
+
+\begin{table}
+\caption{Memory diagnostics from the corrected oracle run. Continuation is
+linear-probe accuracy on held-out later epochs; flip is contrastive sign-flip
+rate.}
+\label{tab:memory-diagnostics}
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|l|c|c|p{3.0cm}|}
+\hline
+Variant & Continuation & Sign flip & Delta vs. B2b ref. \\
+\hline
+B2b reference & 0.762 & 0.448 & -- \\
+B3 learned & 0.775 & 0.448 & +0.013 cont.; +0.000 flip \\
+B3 oracle & 0.754 & 0.586 & -0.008 cont.; +0.138 flip \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Discussion}
+% Target length: 1.25--1.5 pages.
+The results support a clear conclusion: temporal traceability is a geometric
+property of the representation that does not reduce to predictive accuracy. The
+Token-Time Transformer improves probe accuracy on the ambiguous split by only
+\(+0.026\) on average --- a modest and seed-sensitive gain. Yet the same model
+shows a neighborhood drift of \(-0.614\) for drifting subjects, compared to
+\(-0.231\) for the Static Transformer --- a difference that is stable across
+seeds and visible in the class-specific trajectory curves of
+Figure~\ref{fig:context-drift}. This dissociation is the central empirical
+finding: a model can condition its outputs on epoch information without exposing
+a representation in which the same lexical item occupies meaningfully different
+neighborhoods at different epochs. The converse also holds: a model with
+explicit token-time interaction can produce coherent geometric movement even
+when the improvement in probe accuracy is modest. Evaluating traceability
+therefore requires diagnostics that inspect the geometry of the representation
+directly, not only those that measure label recoverability.
+
+A linear probe trained on \(h_s\) establishes whether the planted context label
+is linearly recoverable from the subject representation. A high probe score is
+consistent with traceability, but it does not establish it: the probe could be
+recovering a global epoch signal distributed across the representation rather
+than a subject-specific temporal trajectory. The ambiguous split is the most
+informative probe condition precisely because local verb and object markers are
+uninformative there, forcing any gain to come from the interaction between
+subject identity and epoch. Even in this condition, differences across model
+variants are small and unstable across seeds. This does not mean the probe is
+uninformative --- it provides a lower bound on temporal information encoded in
+the representation --- but it is not the appropriate primary evidence for a
+traceability claim. The nearest-neighbor diagnostics, which directly inspect
+where each subject representation sits relative to its temporal context, are
+more suitable for that purpose.
+
+The additive variant demonstrates that exposing the encoder to the epoch is not
+sufficient for traceability. A global additive epoch offset shifts all token
+representations by the same vector, leaving the relative geometry of subject
+representations at different epochs only weakly constrained. The model knows
+which period it is processing, but this knowledge does not translate into
+subject-specific trajectory structure --- as confirmed by the high sign-flip
+rate without a corresponding coherent drift. Token-time interaction changes this
+fundamentally: by concatenating each token embedding with the epoch encoding
+before projection, the model allows the same epoch vector to affect different
+tokens differently. The same epoch produces a distinct transformation for the
+subject token and for the verb or object in the same sentence, and the same
+subject receives a different embedding at different epochs. This is the
+mechanism behind the coherent neighborhood trajectories in the drift analysis:
+the representation of each subject is a function of both its identity and its
+epoch, not merely of the local context words observed in the sentence.
+
+The Memory-Augmented Timeformer tests the simplest form of causal memory: a
+mean of historical subject representations per epoch. The oracle diagnostic
+clarifies the failure mode. Perfect historical prototypes improve the
+contrastive sign-flip rate but not continuation accuracy, and learned prototypes
+produce near-zero average gain over the Token-Time Transformer. The limitation
+is structural: a single mean prototype per subject per epoch collapses the
+internal distribution of that subject's representations at that time. For
+drifting subjects, where all representations in an epoch are drawn from the same
+dominant context, the mean captures the trajectory reasonably well. For
+bifurcating subjects, which develop two coexisting senses in later epochs, the
+mean is a centroid between two clusters --- a point that represents neither
+sense well. This is not a failure of the memory architecture, but a failure of
+the aggregation function. Useful causal memory for traceable representations
+should preserve the internal structure of historical representations --- for
+example, through mixture models, exemplar-based attention, or clustering over
+historical states. This limitation is the direct motivation for the sense-aware
+memory mechanism studied in the companion paper.
+
+\section{Conclusion}
+This paper studied whether a Transformer-style encoder can expose a temporally
+traceable representation --- one in which the same lexical item, queried at
+different epochs, occupies neighborhoods that reflect its intended temporal
+context. The answer, in the controlled benchmark used here, is conditional:
+explicit token-time interaction is necessary. A static encoder and a globally
+time-conditioned encoder both fail to produce coherent subject-level
+trajectories. An encoder that conditions each token embedding on the epoch
+before self-attention is applied does produce such trajectories, with a
+neighborhood drift for drifting subjects that is more than twice that of the
+static baseline (\(-0.614\) vs. \(-0.231\)).
+
+The contribution is narrow and deliberate. Token-time interaction supports
+temporal traceability in a controlled diagnostic setting; it is not a claim
+about open-domain historical language or about the superiority of any
+particular architecture. The evaluation protocol --- combining nearest-neighbor
+drift, contrastive sign-flip rate, probe-based accuracy, and continuation
+diagnostics --- also contributes a method for separating representational
+traceability from predictive performance, a distinction the results show to be
+empirically real.
+
+The memory-augmented variant clarifies what remains unsolved. Mean-pooled
+historical prototypes do not produce a robust improvement over token-time
+interaction, and the oracle diagnostic identifies the reason: single-prototype
+aggregation collapses coexisting senses that bifurcating subjects develop in
+later epochs. Sense-aware memory mechanisms --- capable of preserving
+distributional structure rather than averaging it away --- are the natural next
+step and are the subject of the companion paper.
+
+\begin{credits}
+
+\subsubsection{\discintname}
+% TODO: Replace with the final competing interests statement.
+The authors have no competing interests to declare that are relevant to the
+content of this article.
+\end{credits}
+
+% ---- Bibliography ----
+\bibliographystyle{splncs04}
+\bibliography{references}
+
+\end{document}

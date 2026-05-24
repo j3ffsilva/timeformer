@@ -23,6 +23,7 @@ import torch
 from src.timeformer.dataset import load_corpus, MLMDataset, B3Dataset, make_continuation_split
 from src.timeformer.models import build_model, DEFAULT_HPARAMS
 from src.timeformer.memory import PrototypeMemory
+from src.timeformer.nomenclature import model_label
 from src.timeformer.train import MLMTrainer
 from src.timeformer.eval import Evaluator, save_results
 from src.timeformer.run import RunManager
@@ -56,7 +57,7 @@ def train_all(args: argparse.Namespace, run: RunManager) -> None:
 
     for name in ALL_MODELS:
         print(f"\n{'='*50}")
-        print(f"Treinando {name}")
+        print(f"Treinando {name} — {model_label(name)}")
         print(f"{'='*50}")
 
         model    = build_model(name)
@@ -107,7 +108,7 @@ def eval_all(args: argparse.Namespace, run: RunManager) -> dict:
 
     results = {}
     for name in available:
-        print(f"\n--- {name} ---")
+        print(f"\n--- {name}: {model_label(name)} ---")
         model = build_model(name)
         load_checkpoint(model, run.checkpoint_path(name, "best"))
         model.to(torch.device(args.device))

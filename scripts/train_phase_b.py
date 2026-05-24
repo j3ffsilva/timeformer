@@ -15,6 +15,7 @@ from pathlib import Path
 from src.timeformer.dataset import load_corpus, MLMDataset, B3Dataset, make_continuation_split
 from src.timeformer.models import build_model, DEFAULT_HPARAMS
 from src.timeformer.memory import PrototypeMemory
+from src.timeformer.nomenclature import model_label
 from src.timeformer.train import MLMTrainer
 from src.timeformer.run import RunManager
 
@@ -31,7 +32,7 @@ TRAIN_DEFAULTS = {
 
 def train_model(name: str, args: argparse.Namespace, run: RunManager) -> None:
     print(f"\n{'='*50}")
-    print(f"Treinando {name}")
+    print(f"Treinando {name} — {model_label(name)}")
     print(f"{'='*50}")
 
     rows = load_corpus(CORPUS_PATH)

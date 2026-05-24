@@ -1,23 +1,51 @@
 {
   "ablation_deltas": {
-    "\u0394A_spurious (B3-shuffled \u2212 B2b)": {
+    "delta_spurious_memory": {
       "split": "continuation",
+      "label": "Delta spurious memory",
+      "display": "Shuffled-memory Timeformer - Token-Time Transformer",
+      "legacy_label": "\u0394A_spurious",
+      "base_model": "B2b",
+      "base_model_label": "Token-Time Transformer",
+      "new_model": "B3-shuffled",
+      "new_model_label": "Shuffled-memory Timeformer",
       "B3_shuffled_accuracy": 0.7695214105793451
     },
-    "\u0394T_global": {
+    "delta_time_conditioning": {
       "split": "ambiguous_test",
+      "label": "Delta time-conditioning",
+      "display": "Additive Time-Conditioned Transformer - Static Transformer",
+      "legacy_label": "\u0394T_global",
+      "base_model": "B1",
+      "base_model_label": "Static Transformer",
+      "new_model": "B2a",
+      "new_model_label": "Additive Time-Conditioned Transformer",
       "B1_accuracy": 0.5756,
       "B2a_accuracy": 0.5716,
       "delta": -0.004
     },
-    "\u0394T_inter": {
+    "delta_token_time_interaction": {
       "split": "ambiguous_test",
+      "label": "Delta token-time interaction",
+      "display": "Token-Time Transformer - Additive Time-Conditioned Transformer",
+      "legacy_label": "\u0394T_inter",
+      "base_model": "B2a",
+      "base_model_label": "Additive Time-Conditioned Transformer",
+      "new_model": "B2b",
+      "new_model_label": "Token-Time Transformer",
       "B2a_accuracy": 0.5716,
       "B2b_accuracy": 0.5764,
       "delta": 0.0048
     },
-    "\u0394A": {
+    "delta_memory": {
       "split": "continuation",
+      "label": "Delta memory",
+      "display": "Memory-Augmented Timeformer - Token-Time Transformer",
+      "legacy_label": "\u0394A",
+      "base_model": "B2b",
+      "base_model_label": "Token-Time Transformer",
+      "new_model": "B3",
+      "new_model_label": "Memory-Augmented Timeformer",
       "B2b_accuracy": 0.7644836272040302,
       "B3_accuracy": 0.7695214105793451,
       "delta": 0.005
@@ -28,5 +56,11 @@
     "B2a",
     "B2b",
     "B3"
-  ]
+  ],
+  "model_labels": {
+    "B1": "Static Transformer",
+    "B2a": "Additive Time-Conditioned Transformer",
+    "B2b": "Token-Time Transformer",
+    "B3": "Memory-Augmented Timeformer"
+  }
 }

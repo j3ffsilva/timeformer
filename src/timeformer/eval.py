@@ -21,6 +21,12 @@ from .dataset import (
     make_continuation_split, make_interpolation_split,
 )
 from .memory import PrototypeMemory, make_shuffled, make_nohistory
+from .nomenclature import (
+    ABLATION_DISPLAY,
+    ABLATION_LABELS,
+    LEGACY_ABLATION_ALIASES,
+    model_label,
+)
 from .probe import (
     LinearProbe, extract_reps,
     evaluate_contrastive, precision_at_k, clustering_metrics,
@@ -189,10 +195,10 @@ def compare_models(
 ) -> dict:
     """
     Calcula deltas da cadeia de ablação:
-      ΔT_global = B2a − B1  (ambiguous_test)
-      ΔT_inter  = B2b − B2a (ambiguous_test)
-      ΔA        = B3  − B2b (continuation)
-      ΔA_spurious = B3-shuffled − B2b (continuation)
+      delta_time_conditioning = B2a − B1  (ambiguous_test)
+      delta_token_time_interaction = B2b − B2a (ambiguous_test)
+      delta_memory = B3 − B2b (continuation)
+      delta_spurious_memory = B3-shuffled − B2b (continuation)
     """
     def _acc(res: dict, split: str) -> float:
         try:
@@ -209,15 +215,23 @@ def compare_models(
             shuffled_acc = b3_shuffled.get("accuracy", float("nan"))
         except AttributeError:
             shuffled_acc = float("nan")
-        deltas["ΔA_spurious (B3-shuffled − B2b)"] = {
+        delta_key = "delta_spurious_memory"
+        deltas[delta_key] = {
             "split": b3_split,
+            "label": ABLATION_LABELS[delta_key],
+            "display": ABLATION_DISPLAY[delta_key],
+            "legacy_label": LEGACY_ABLATION_ALIASES[delta_key],
+            "base_model": "B2b",
+            "base_model_label": model_label("B2b"),
+            "new_model": "B3-shuffled",
+            "new_model_label": "Shuffled-memory Timeformer",
             "B3_shuffled_accuracy": shuffled_acc,
         }
 
     pairs = [
-        ("ΔT_global", "B1",  "B2a", primary_split),
-        ("ΔT_inter",  "B2a", "B2b", primary_split),
-        ("ΔA",        "B2b", "B3",  b3_split),
+        ("delta_time_conditioning", "B1",  "B2a", primary_split),
+        ("delta_token_time_interaction",  "B2a", "B2b", primary_split),
+        ("delta_memory",        "B2b", "B3",  b3_split),
     ]
     for label, m_base, m_new, split in pairs:
         if m_base in results_by_model and m_new in results_by_model:
@@ -225,6 +239,13 @@ def compare_models(
             new_acc  = _acc(results_by_model[m_new],  split)
             deltas[label] = {
                 "split":              split,
+                "label":              ABLATION_LABELS[label],
+                "display":            ABLATION_DISPLAY[label],
+                "legacy_label":       LEGACY_ABLATION_ALIASES[label],
+                "base_model":         m_base,
+                "base_model_label":   model_label(m_base),
+                "new_model":          m_new,
+                "new_model_label":    model_label(m_new),
                 f"{m_base}_accuracy": base_acc,
                 f"{m_new}_accuracy":  new_acc,
                 "delta": (
@@ -237,6 +258,9 @@ def compare_models(
     return {
         "ablation_deltas": deltas,
         "models": list(results_by_model.keys()),
+        "model_labels": {
+            model_id: model_label(model_id) for model_id in results_by_model
+        },
     }
 
 
@@ -260,7 +284,11 @@ def save_results(
             split_res = model_res.get(split_name, {})
             if split_res.get("skipped"):
                 continue
-            row = {"model": model_name, "split": split_name}
+            row = {
+                "model": model_name,
+                "model_label": model_label(model_name),
+                "split": split_name,
+            }
             for probe_key in ("probe_subj", "probe_sent"):
                 for metric in ("accuracy", "f1", "auroc"):
                     val = split_res.get(probe_key, {}).get(metric, "")

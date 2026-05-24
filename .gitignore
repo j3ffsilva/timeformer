@@ -4,3 +4,15 @@ __pycache__/
 *.pyo
 .DS_Store
 tmp/
+
+# LaTeX build artifacts
+out/
+*.aux
+*.log
+*.toc
+*.out
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz

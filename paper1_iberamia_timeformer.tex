@@ -59,12 +59,11 @@ motivating sense-aware memory mechanisms in future work.
 Words do not preserve fixed meanings across time. In 1900, \emph{broadcast}
 referred to scattering seeds across a field; by mid-century it denoted radio and
 television transmission; today it describes a social media post reaching millions
-of users. Most language models, however, treat word meanings as fixed: the same word
-produces the same embedding regardless of when it was used. The problem this
-creates is not merely that models ignore historical context. It is that the same
-word at different times does not carry the same meaning, and a model that cannot
-distinguish \texttt{broadcast@1900} from \texttt{broadcast@2020} cannot be
-inspected for semantic movement across time.
+of users. Most language models, however, take no account of when a text was written: a
+word's representation depends on its surrounding context, but not on the
+historical period in which it appeared. A model that cannot distinguish
+\texttt{broadcast@1900} from \texttt{broadcast@2020} cannot be inspected for
+semantic movement across time.
 
 The ability to query a word at a specific epoch matters beyond technical
 benchmarks. Consider \emph{gay}, which in the early twentieth century was
@@ -172,67 +171,69 @@ change may involve bifurcation rather than a simple shift~\cite{giulianelli2020a
 the memory-augmented variant exposes why mean-pooled prototypes are insufficient
 for that structure.
 
-\section{Controlled Benchmark Summary}
+\section{Controlled Temporal Benchmark}
 % Target length: 1.0 page.
-We evaluate Timeformer on a controlled synthetic benchmark that makes temporal
-semantic movement observable. The benchmark provides a diagnostic environment
-with known target trajectories and representation-level comparison against
-planted ground truth; full construction details are in the companion benchmark
-paper.
+The benchmark gives each subject a known temporal trajectory, making it possible
+to ask directly whether a model's representation of a subject at \(t0\) has
+moved toward the expected neighborhood by \(t9\). This distinguishes it from
+natural-language LSCD benchmarks, where ground truth is often annotated or
+inferred post-hoc and corpus confounds are hard to separate from genuine semantic
+change.
 
-The corpus uses a strict subject--verb--object (SVO) grammar. This structure
-isolates subjects as the lexical items with planted temporal trajectories, while
-verbs and objects serve as noisy contextual evidence. A subject's meaning at a
-given epoch is operationalized as the probability that its sentence is generated
-from one of two latent semantic contexts: \(P(A \mid s, t)\) denotes the
-context-A probability for subject \(s\) at epoch \(t\). A subject undergoes
-semantic change when \(P(A \mid s, t)\) shifts across epochs. The two contexts
-are defined by disjoint sets of verbs and objects. The vocabulary contains 30
-subjects, 8 verbs, and 8 objects; context A contains verbs
-\(\{V1,\ldots,V4\}\) and objects \(\{O1,\ldots,O4\}\), while context B contains
-verbs \(\{V5,\ldots,V8\}\) and objects \(\{O5,\ldots,O8\}\).
+The corpus uses a subject--verb--object (SVO) grammar: every sentence consists
+of one subject, one verb, and one object. Two semantic contexts, A and B,
+partition the vocabulary of 8 verbs and 8 objects: context A uses
+\(\{V1,\ldots,V4\}\) and \(\{O1,\ldots,O4\}\); context B uses
+\(\{V5,\ldots,V8\}\) and \(\{O5,\ldots,O8\}\). A sentence generated from
+context A therefore looks like \texttt{S5 V2 O3}, while one from context B
+looks like \texttt{S5 V6 O8}; the subject token is the same in both cases, but
+its co-occurring words differ. Intuitively, the intended meaning of subject
+\(s\) at epoch \(t\) is how often it appears in context-A sentences; formally,
+\(P(A \mid s, t)\) is the probability that a sentence is drawn from context A.
+The vocabulary contains 30 subjects; each subject's trajectory is determined by
+how \(P(A \mid s, t)\) evolves across the 10 epochs \(t0\) through \(t9\).
 
-Subjects are divided into three planted trajectory classes. Stable subjects
-maintain an approximately constant \(P(A \mid s, t)\) across all epochs. Drift
-subjects follow a monotonic trajectory from near-exclusive context A
-(\(P(A \mid s, t) \approx 1\) at \(t0\)) toward near-exclusive context B
-(\(P(A \mid s, t) \approx 0\) at \(t9\)). Bifurcating subjects begin in a
-dominant context A state and move toward a mixed regime
-(\(P(A \mid s, t) \approx 0.5\)) in which both contexts coexist with roughly
-equal weight. Full trajectory specifications are given in the companion
-benchmark paper; here, these classes define the expected direction and magnitude
-of neighborhood movement used in evaluation. The benchmark contains 10 epochs,
-\(t0\) through \(t9\), and 10 subjects per trajectory class. This design lets
-us test whether a model distinguishes stability, directional drift, and movement
-toward a mixed semantic state.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{outputs/figures/figure1_benchmark_design.png}
+\caption{Benchmark design overview. \emph{Left}: SVO sentences for a drifting
+subject across three epochs; a context-A verb appearing in a context-B sentence
+at \(t7\) (marked \({\ast}\)) illustrates the deliberate noise in local markers.
+\emph{Center}: planted \(P(A \mid s, t)\) trajectories for Stable (flat),
+Drift (monotonic), and Bifurcating (levelling at 0.5) subjects across
+\(t0\)--\(t9\). \emph{Right}: expected nearest-neighbor behavior for a traceable representation.}
+\label{fig:benchmark-design}
+\end{figure}
 
-The observed verb and object are informative but deliberately noisy. For the
-main corpus, if the planted \texttt{true\_context} is A, each local marker is
-sampled from context A with probability \(p_{canon}=0.75\) and from context B
-with probability \(0.25\); the reverse holds when the planted context is B.
-Thus, local evidence usually points in the intended direction but cannot be
-used as a deterministic oracle. The \texttt{true\_context} label is defined by
-the planted subject--epoch trajectory, not by the observed verb or object, and
-is used only for evaluation.
+Figure~\ref{fig:benchmark-design} (center) shows the three planted trajectory
+classes. Stable subjects maintain an approximately constant \(P(A \mid s, t)\)
+throughout. Drift subjects follow a monotonic trajectory from near-exclusive
+context A (\(P(A \mid s, t) \approx 1\) at \(t0\)) to near-exclusive context B
+(\(P(A \mid s, t) \approx 0\) at \(t9\)): a drifting subject that appears in
+sentences like \texttt{S5 V2 O3} early on will appear in sentences like
+\texttt{S5 V6 O8} by the final epoch. Bifurcating subjects begin in context A
+and move toward a mixed state (\(P(A \mid s, t) \approx 0.5\)) where both
+contexts appear with equal frequency, approximating two coexisting senses. The
+benchmark contains 10 subjects per class.
 
-The benchmark contains several evaluation conditions. The standard test split
-uses the same noisy marker process as training. Harder splits include cases in
-which the verb contradicts the planted context and cases in which both local
-markers contradict it. An additional ambiguous split is generated with
-\(p_{canon}=0.50\), making verb and object markers locally uninformative; in
-this setting, the subject identity and epoch are the relevant evidence. We also use contrastive evaluations, in which the same subject is presented
-under alternative epoch labels to test whether the representation inverts
-accordingly, and continuation evaluations, in which the model is tested on
-epochs held out from the main training distribution. Both are described in
-detail in Section~5.
+At epoch \(t7\), for example, a sentence for \texttt{S5} might read
+\texttt{S5 V2 O7} (Figure~\ref{fig:benchmark-design}, left): the planted
+context is B, but \texttt{V2} belongs to context A. Each local marker is drawn
+from the opposite context 25\% of the time, so the model cannot recover the
+planted context from the words alone. It must use subject identity together with
+epoch. The \texttt{true\_context} label is determined by the planted trajectory
+and is withheld from training; it is used only for evaluation.
 
-The benchmark plays two roles: it gives direct access to target trajectories,
-allowing us to ask whether a subject's representation at \(t0\) and \(t9\)
-occupies the intended semantic neighborhoods; and it separates context-local
-cues from temporal cues, distinguishing models that exploit observed verbs and
-objects from models that encode the interaction between lexical identity and
-epoch. Results are diagnostic evidence in a controlled setting, not a claim of
-performance on open-domain historical language.
+The benchmark supports several evaluation conditions. The standard split uses
+the same 75\% marker accuracy as training. Two harder splits force the verb, or
+both verb and object, to come from the opposite context. An ambiguous split sets
+fidelity to 50\%, so local markers carry no reliable signal; only subject
+identity and epoch remain. Two additional conditions test temporal behaviour
+directly and are described in Section~5: the contrastive set presents the same
+sentence under two different epoch labels to check whether changing only the
+epoch changes the preferred context; the continuation set uses epochs held out from training to test
+generalisation. Results throughout are diagnostic evidence in a controlled
+setting, not a claim about open-domain historical language.
 
 \section{Timeformer Architecture}
 % Target length: 2.0 pages.
@@ -581,8 +582,9 @@ diagnostic identifies why: perfect historical prototypes improve contrastive
 sign-flip rate but not continuation accuracy. For bifurcating subjects, which
 develop two coexisting senses in later epochs, the mean prototype is a centroid
 between two clusters, representing neither sense well. This motivates
-sense-aware memory mechanisms, studied in the companion paper, that preserve the
-internal structure of historical representations rather than collapsing it.
+sense-aware memory mechanisms that preserve the internal structure of historical
+representations rather than collapsing it, and constitutes the main open
+direction from this work.
 
 \section{Conclusion}
 This paper studied whether a Transformer-style encoder can expose a temporally traceable representation, meaning one in which the same lexical
@@ -601,8 +603,7 @@ historical language. The evaluation protocol also contributes a method for
 separating representational traceability from predictive performance. Mean-pooled
 historical prototypes do not produce a robust improvement, and the oracle
 diagnostic identifies single-prototype aggregation as the failure point.
-Sense-aware memory mechanisms are the natural next step and are studied in the
-companion paper.
+Sense-aware memory mechanisms are the natural next step.
 
 \begin{credits}
 

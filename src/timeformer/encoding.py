@@ -10,7 +10,7 @@ TimeEncoding(t) = MLP(sinusoidal_features(t / T))
        d_hidden <= d_sin para evitar memorização de t0-t7 e extrapolação arbitrária.
 
 TokenTimeInteraction: f(token_emb, time_emb) = Linear(concat(token_emb, time_emb))
-  Usado por B2b para interação token×época.
+  Usado por Joint para interação token×época.
 """
 
 import math
@@ -68,7 +68,7 @@ class TimeEncoding(nn.Module):
 
 class TokenTimeInteraction(nn.Module):
     """
-    Interação token×época para B2b: f(token_emb, time_emb) = Linear(concat(...)).
+    Interação token×época para Joint: f(token_emb, time_emb) = Linear(concat(...)).
 
     Projeta a concatenação [token_emb; time_emb] de volta para d_model.
     A projeção permite que a rede aprenda quais dimensões temporais são

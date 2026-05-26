@@ -1,8 +1,8 @@
 """
 Datasets para a Fase B do Timeformer.
 
-MLMDataset  — uma sentença por item; para B1, B2a, B2b.
-B3Dataset   — item = (sentença atual @t_k, índices de épocas históricas t_0..t_{k-1});
+MLMDataset        — uma sentença por item; para Static, Additive, Joint.
+TimeformerDataset — item = (sentença atual @t_k, índices de épocas históricas t_0..t_{k-1});
                a memória de protótipos é injetada externamente pelo trainer.
 Funções auxiliares:
   make_continuation_split  — t8-t9 held-out (mesmos sujeitos)
@@ -153,7 +153,7 @@ def _mask_sentence(
 
 class MLMDataset(Dataset):
     """
-    Dataset MLM padrão para B1, B2a, B2b.
+    Dataset MLM padrão para Static, Additive, Joint.
 
     Cada item é uma sentença SVO com 1 token mascarado (verbo ou objeto).
     O sujeito permanece sempre visível.
@@ -188,7 +188,7 @@ class MLMDataset(Dataset):
             "epoch_idx":    torch.tensor(row["epoch_idx"], dtype=torch.long),
             "subject_idx":  torch.tensor(TOKEN2ID[row["subject"]] - len(SPECIAL_TOKENS),
                                          dtype=torch.long),
-            "true_context": 0 if row["true_context"] == "A" else 1,
+            "true_context": 0 if row["true_context"] == "N1" else 1,
         }
 
     def __len__(self) -> int:
@@ -198,11 +198,11 @@ class MLMDataset(Dataset):
         return self._items[idx]
 
 
-# ─── B3Dataset ────────────────────────────────────────────────────────────────
+# ─── TimeformerDataset ────────────────────────────────────────────────────────
 
-class B3Dataset(Dataset):
+class TimeformerDataset(Dataset):
     """
-    Dataset para B3 (Timeformer).
+    Dataset para Timeformer.
 
     Cada item é a sentença atual @t_k mais os índices das épocas históricas
     disponíveis [0..k-1]. A memória de protótipos em si (vetores h(S,t)) é
@@ -248,7 +248,7 @@ class B3Dataset(Dataset):
             "subject_idx":     torch.tensor(TOKEN2ID[row["subject"]] - len(SPECIAL_TOKENS),
                                             dtype=torch.long),
             "history_epochs":  history_epochs,   # lista de ints; collate_fn lida com padding
-            "true_context":    0 if row["true_context"] == "A" else 1,
+            "true_context":    0 if row["true_context"] == "N1" else 1,
         }
 
     def __len__(self) -> int:
@@ -258,9 +258,9 @@ class B3Dataset(Dataset):
         return self._items[idx]
 
 
-def b3_collate_fn(batch: list[dict]) -> dict:
+def timeformer_collate_fn(batch: list[dict]) -> dict:
     """
-    Collate para B3Dataset.
+    Collate para TimeformerDataset.
 
     history_epochs tem comprimento variável por item (t0 tem histórico vazio,
     t9 tem 9 épocas). Padeia com -1 e retorna máscara de validade.
@@ -322,7 +322,7 @@ class ContrastiveDataset(Dataset):
                     "epoch_idx":    torch.tensor(epoch_idx, dtype=torch.long),
                     "subject_idx":  torch.tensor(subject_id - len(SPECIAL_TOKENS),
                                                  dtype=torch.long),
-                    "true_context": 0 if row["true_context"] == "A" else 1,
+                    "true_context": 0 if row["true_context"] == "N1" else 1,
                     "pair_id":      int(row["pair_id"]),
                 })
 

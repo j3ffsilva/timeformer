@@ -46,8 +46,12 @@ from sklearn.metrics import accuracy_score
 
 from src.train_embeddings import TOKEN_TO_IDX
 
-CONTEXT_A_VERBS = {"V1", "V2", "V3", "V4"}
-CONTEXT_B_VERBS = {"V5", "V6", "V7", "V8"}
+NEIGH_1_VERBS = {"V1", "V2", "V3", "V4"}
+NEIGH_2_VERBS = {"V5", "V6", "V7", "V8"}
+
+# Backward-compatible aliases
+CONTEXT_A_VERBS = NEIGH_1_VERBS
+CONTEXT_B_VERBS = NEIGH_2_VERBS
 
 SUBJECTS = ["S1", "S2", "S3", "S4", "S5", "S6"]
 EPOCHS = [f"t{i}" for i in range(6)]
@@ -57,7 +61,7 @@ SEED = 42
 
 
 def _label(verb: str) -> int:
-    return 0 if verb in CONTEXT_A_VERBS else 1
+    return 0 if verb in NEIGH_1_VERBS else 1
 
 
 def _features(sentences: list[str], embeddings: np.ndarray, rep: str) -> tuple[np.ndarray, np.ndarray]:

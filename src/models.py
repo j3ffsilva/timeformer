@@ -32,8 +32,10 @@ from src.train_embeddings import (
     VOCAB_SIZE,
     EMBEDDING_DIM,
     TOKEN_TO_IDX,
-    CONTEXT_A_INDICES,
-    CONTEXT_B_INDICES,
+    NEIGH_1_INDICES,
+    NEIGH_2_INDICES,
+    CONTEXT_A_INDICES,   # backward-compatible alias
+    CONTEXT_B_INDICES,   # backward-compatible alias
     EPOCHS_ORDER,
 )
 
@@ -230,7 +232,7 @@ def compute_p_pred_trajectory(
                     logits = model(torch.tensor([token_idx]))
 
                 probs = torch.softmax(logits, dim=-1).squeeze()
-                p_a   = float(probs[CONTEXT_A_INDICES].sum())
+                p_a   = float(probs[NEIGH_1_INDICES].sum())
                 p_preds.append(p_a)
 
             result[subject] = p_preds

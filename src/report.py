@@ -112,9 +112,9 @@ def generate_report(
         aligned_embeddings["t5"][TOKEN_TO_IDX["S2"]],
     )
 
-    s3_a_t5 = affinities["S3"]["A"][-1]
-    s3_b_t5 = affinities["S3"]["B"][-1]
-    s3_gap_t0 = abs(affinities["S3"]["A"][0] - affinities["S3"]["B"][0])
+    s3_a_t5 = affinities["S3"]["N1"][-1]
+    s3_b_t5 = affinities["S3"]["N2"][-1]
+    s3_gap_t0 = abs(affinities["S3"]["N1"][0] - affinities["S3"]["N2"][0])
     s3_gap_t5 = abs(s3_a_t5 - s3_b_t5)
 
     # Critério S1: deve derivar menos que S2 (comparação relativa)
@@ -141,7 +141,7 @@ def generate_report(
         "Os embeddings padrão (skip-gram por época) capturam deriva suave (S2) e\n"
         "posição de equilíbrio ambígua (S3), mas NÃO representam a bifurcação como\n"
         "dois vetores distintos coexistindo. S3 converge para um único ponto médio\n"
-        "entre os contextos A e B — este é exatamente o limite que o TimeEncoding\n"
+        "entre as vizinhanças N1 e N2 — este é exatamente o limite que o TimeEncoding\n"
         "da Fase B precisa superar, representando S3 como uma trajetória que se ramifica,\n"
         "não como um ponto fixo de ambiguidade."
     )

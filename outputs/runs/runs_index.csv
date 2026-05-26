@@ -1,4 +1,4 @@
-run_id,date,epochs,lr,batch_size,d_model,B1_test_acc,B2b_test_acc,B3_test_acc,B2b_ambiguous_acc,B3_ambiguous_acc,B3_continuation_acc,B3_sign_flip,notes
+run_id,date,epochs,lr,batch_size,d_model,Static_test_acc,Joint_test_acc,Timeformer_test_acc,Joint_ambiguous_acc,Timeformer_ambiguous_acc,Timeformer_continuation_acc,Timeformer_sign_flip,notes
 20260523_001,2026-05-23 20:03,5,0.001,64,64,0.8899,0.8820,0.8702,0.5990,0.6054,0.7620,0.4483,
 20260523_002,2026-05-23 20:06,30,0.001,64,64,0.8847,0.8860,0.8362,0.5798,0.6730,0.7985,0.4483,
 20260523_003,2026-05-23 20:15,100,0.001,64,64,0.8834,0.8860,0.8834,0.5772,0.5822,0.7670,0.4483,

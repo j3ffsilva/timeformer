@@ -1,5 +1,5 @@
 """
-Prototype Memory Manager para o B3 (Timeformer).
+Prototype Memory Manager para o Timeformer.
 
 m(S, t) = mean_pool(h(S) nas frases de treino de S em época t)
 
@@ -10,8 +10,8 @@ Propriedades:
   - Fonte: apenas frases de split='train' (sem vazamento de test/continuation)
   - t0 sem histórico: get() retorna tensor vazio (batch, 0, d_model)
 
-Para B3-shuffled: make_shuffled() permuta a associação sujeito→protótipos.
-Para B3-nohistory: make_nohistory() retorna zeros para todos os sujeitos/épocas.
+Para Timeformer-shuffled: make_shuffled() permuta a associação sujeito→protótipos.
+Para Timeformer-nohistory: make_nohistory() retorna zeros para todos os sujeitos/épocas.
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ from .dataset import SUBJECTS, N_EPOCHS
 
 class PrototypeMemory:
     """
-    Armazena e serve protótipos m(S, t) para o B3.
+    Armazena e serve protótipos m(S, t) para o Timeformer.
 
     Args:
         n_subjects: número de sujeitos (30)
@@ -84,8 +84,8 @@ class PrototypeMemory:
 
             # Forward pass sem gradiente
             if hasattr(model, "encode"):
-                if isinstance(model, type) or "B3" in type(model).__name__:
-                    # B3 precisa de memory=None para esta passagem
+                if isinstance(model, type) or "Timeformer" in type(model).__name__:
+                    # Timeformer precisa de memory=None para esta passagem
                     hidden = model.encode(input_ids_e, epoch_idx_e, memory=None)
                 else:
                     try:
@@ -161,14 +161,14 @@ def make_shuffled(
     seed: int = 0,
 ) -> PrototypeMemory:
     """
-    Cria uma PrototypeMemory com protótipos embaralhados para controle B3-shuffled.
+    Cria uma PrototypeMemory com protótipos embaralhados para controle Timeformer-shuffled.
 
     mode="subject": permuta a associação sujeito→protótipos
                     (sujeito S recebe o histórico de outro sujeito S')
     mode="time":    embaralha a ordem das épocas para cada sujeito
                     (ordem temporal incorreta, sujeito correto)
 
-    Se B3 real não vencer B3-shuffled com margem, o ganho não é pela trajetória.
+    Se Timeformer real não vencer Timeformer-shuffled com margem, o ganho não é pela trajetória.
     """
     import random
     rng = random.Random(seed)
@@ -205,11 +205,11 @@ def make_nohistory(
     device: torch.device | str = "cpu",
 ) -> PrototypeMemory:
     """
-    PrototypeMemory zerada — mesma arquitetura de B3, sem informação histórica.
+    PrototypeMemory zerada — mesma arquitetura de Timeformer, sem informação histórica.
 
-    Controle B3-nohistory:
-      B3 > B3-nohistory → arquitetura temporal tem efeito mesmo sem histórico real
-      B3 > B3-shuffled  → o histórico correto especificamente importa
+    Controle Timeformer-nohistory:
+      Timeformer > Timeformer-nohistory → arquitetura temporal tem efeito mesmo sem histórico real
+      Timeformer > Timeformer-shuffled  → o histórico correto especificamente importa
     """
     return PrototypeMemory(n_subjects, n_epochs, d_model, device)
     # Retorna zeros (inicialização padrão) — _valid permanece False

@@ -7,15 +7,15 @@ labels are for tables, plots, and paper text.
 """
 
 MODEL_LABELS = {
-    "B1": "Static Transformer",
-    "B2a": "Additive Time-Conditioned Transformer",
-    "B2b": "Token-Time Transformer",
-    "B3": "Memory-Augmented Timeformer",
-    "B2b_ref": "Token-Time Transformer (reference)",
-    "B3_learned": "Memory-Augmented Timeformer (learned memory)",
-    "B3_oracle": "Oracle-Memory Timeformer",
-    "B3_shuffled": "Shuffled-Memory Timeformer",
-    "B3_nohistory": "No-History Timeformer",
+    "Static": "Static Transformer",
+    "Additive": "Additive Time-Conditioned Transformer",
+    "Joint": "Token-Time Transformer",
+    "Timeformer": "Memory-Augmented Timeformer",
+    "Joint_ref": "Token-Time Transformer (reference)",
+    "Timeformer_learned": "Memory-Augmented Timeformer (learned memory)",
+    "Timeformer_oracle": "Oracle-Memory Timeformer",
+    "Timeformer_shuffled": "Shuffled-Memory Timeformer",
+    "Timeformer_nohistory": "No-History Timeformer",
 }
 
 ABLATION_LABELS = {

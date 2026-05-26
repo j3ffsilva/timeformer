@@ -48,8 +48,8 @@ SUBJECT_CLASSES: dict[str, str] = {
     for i, s in enumerate(SUBJECTS)
 }
 
-CONTEXT_A = {"verbs": ["V1", "V2", "V3", "V4"], "objects": ["O1", "O2", "O3", "O4"]}
-CONTEXT_B = {"verbs": ["V5", "V6", "V7", "V8"], "objects": ["O5", "O6", "O7", "O8"]}
+NEIGH_1 = {"verbs": ["V1", "V2", "V3", "V4"], "objects": ["O1", "O2", "O3", "O4"]}
+NEIGH_2 = {"verbs": ["V5", "V6", "V7", "V8"], "objects": ["O5", "O6", "O7", "O8"]}
 
 # ─── Trajetórias paramétricas ─────────────────────────────────────────────────
 
@@ -209,24 +209,24 @@ def generate_trajectories(
 def _make_sentence_probabilistic(
     subject: str, use_context_a: bool, rng: random.Random, p_canon: float
 ) -> tuple[str, str]:
-    canon = CONTEXT_A if use_context_a else CONTEXT_B
-    cross = CONTEXT_B if use_context_a else CONTEXT_A
+    canon = NEIGH_1 if use_context_a else NEIGH_2
+    cross = NEIGH_2 if use_context_a else NEIGH_1
     verb = rng.choice(canon["verbs"] if rng.random() < p_canon else cross["verbs"])
     obj  = rng.choice(canon["objects"] if rng.random() < p_canon else cross["objects"])
-    true_ctx = "A" if use_context_a else "B"
+    true_ctx = "N1" if use_context_a else "N2"
     return f"{subject} {verb} {obj}", true_ctx
 
 
 def _verb_is_cross(sentence: str, true_context: str) -> bool:
     verb = sentence.split()[1]
-    return (true_context == "A" and verb in CONTEXT_B["verbs"]) or \
-           (true_context == "B" and verb in CONTEXT_A["verbs"])
+    return (true_context == "N1" and verb in NEIGH_2["verbs"]) or \
+           (true_context == "N2" and verb in NEIGH_1["verbs"])
 
 
 def _obj_is_cross(sentence: str, true_context: str) -> bool:
     obj = sentence.split()[2]
-    return (true_context == "A" and obj in CONTEXT_B["objects"]) or \
-           (true_context == "B" and obj in CONTEXT_A["objects"])
+    return (true_context == "N1" and obj in NEIGH_2["objects"]) or \
+           (true_context == "N2" and obj in NEIGH_1["objects"])
 
 
 def _assign_splits(rows: list[dict], seed: int) -> list[dict]:
@@ -436,7 +436,7 @@ CONTEXT_A_FRACTIONS: dict[str, list[float]] = {
 
 
 def _make_sentence_v1(subject: str, use_context_a: bool, rng: random.Random) -> str:
-    ctx = CONTEXT_A if use_context_a else CONTEXT_B
+    ctx = NEIGH_1 if use_context_a else NEIGH_2
     return f"{subject} {rng.choice(ctx['verbs'])} {rng.choice(ctx['objects'])}"
 
 
@@ -445,7 +445,7 @@ def _assign_splits_v1(rows: list[dict]) -> list[dict]:
     groups: dict[tuple, list[int]] = defaultdict(list)
     for i, row in enumerate(rows):
         tokens = row["sentence"].split()
-        ctx = "A" if tokens[1] in CONTEXT_A["verbs"] else "B"
+        ctx = "N1" if tokens[1] in NEIGH_1["verbs"] else "N2"
         groups[(row["epoch"], tokens[0], ctx)].append(i)
     splits = ["train"] * len(rows)
     for indices in groups.values():
@@ -524,11 +524,11 @@ def generate_corpus_probabilistic(
             n_ctx_b = n_total - n_ctx_a
 
             def _make_prob(use_a):
-                canon = CONTEXT_A if use_a else CONTEXT_B
-                cross = CONTEXT_B if use_a else CONTEXT_A
+                canon = NEIGH_1 if use_a else NEIGH_2
+                cross = NEIGH_2 if use_a else NEIGH_1
                 verb = rng.choice(canon["verbs"] if rng.random() < p_canon else cross["verbs"])
                 obj  = rng.choice(canon["objects"] if rng.random() < p_canon else cross["objects"])
-                return f"{subject} {verb} {obj}", "A" if use_a else "B"
+                return f"{subject} {verb} {obj}", "N1" if use_a else "N2"
 
             for _ in range(n_ctx_a):
                 sent, true_ctx = _make_prob(True)

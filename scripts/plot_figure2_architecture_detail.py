@@ -1,6 +1,6 @@
 """
 Create Figure 2 for the IBERAMIA paper:
-Timeformer ablation chain — 4-column layout showing B1 → B2a → B2b → B3.
+Timeformer ablation chain — 4-column layout showing Static → Additive → Joint → Timeformer.
 
 Each column is one variant; new components added at each step are highlighted.
 Columns share the same vertical alignment so differences are immediately visible.
@@ -50,29 +50,29 @@ COL_W  = 0.11    # half-width of each box
 BOX_H  = 0.055   # half-height of standard boxes
 
 # Row centers (y) — shared by all four columns.
-# B1-B2b: token → [time] → [interact] → encoder → h_s   (h_s at ROWS["memory"])
-# B3:     token → time → interact → encoder              (memory+attn at ROWS["memory"])
-#                                                         (h_s at HS_Y_B3, below)
+# Static-Joint: token → [time] → [interact] → encoder → h_s   (h_s at ROWS["memory"])
+# Timeformer:   token → time → interact → encoder              (memory+attn at ROWS["memory"])
+#                                                               (h_s at HS_Y_TF, below)
 ROWS = {
     "token":    0.87,
     "time":     0.73,
     "interact": 0.59,
     "encoder":  0.45,
-    "memory":   0.27,   # B1-B2b output (h_s); B3 memory+attn level
+    "memory":   0.27,   # Static/Additive/Joint output (h_s); Timeformer memory+attn level
 }
 
-# B3-specific vertical positions (memory module + h_s below it)
+# Timeformer-specific vertical positions (memory module + h_s below it)
 MEM_BOX_Y0  = 0.215   # bottom of Prototype Memory / Temporal Attention boxes
 MEM_BOX_Y1  = 0.325   # top    of Prototype Memory / Temporal Attention boxes
-HALF_W_B3   = 0.042   # half-width of each B3 sub-box
+HALF_W_TF   = 0.042   # half-width of each Timeformer sub-box
 MEM_OFFSET  = COL_W * 0.45   # horizontal offset of sub-boxes from column center
-HS_Y_B3     = 0.11    # center of the h_s output box for B3
+HS_Y_TF     = 0.11    # center of the h_s output box for Timeformer
 
 VARIANT_LABELS = [
-    "B1  Static<br>Transformer",
-    "B2a  Additive<br>Time-Conditioned",
-    "B2b  Token-Time<br>Transformer",
-    "B3  Memory-Augmented<br>Timeformer",
+    "Static<br>Transformer",
+    "Additive<br>Time-Conditioned",
+    "Joint<br>Token-Time",
+    "Timeformer<br>Memory-Augmented",
 ]
 
 
@@ -141,7 +141,7 @@ def build_figure() -> go.Figure:
         box(fig, cx, ROWS["token"],
             "Token input", "S V O + position", C["token"])
 
-    # ── Row: Time input (B2a, B2b, B3); absent in B1 ─────────────────────────
+    # ── Row: Time input (Additive, Joint, Timeformer); absent in Static ─────────
     box(fig, COL_CENTERS[0], ROWS["time"],
         "Time input", "— absent —", C["time"], absent=True)
     for cx in COL_CENTERS[1:]:
@@ -149,7 +149,7 @@ def build_figure() -> go.Figure:
         box(fig, cx, ROWS["time"],
             "Time input", "τ(t)  continuous", C["time"], fill=fill)
 
-    # ── Row: Token-Time Interaction (B2b, B3); absent in B1 and B2a ──────────
+    # ── Row: Token-Time Interaction (Joint, Timeformer); absent in Static and Additive ──
     for cx in COL_CENTERS[:2]:
         box(fig, cx, ROWS["interact"],
             "Token-Time<br>Interaction", "— absent —", C["interaction"],
@@ -166,19 +166,19 @@ def build_figure() -> go.Figure:
             "Transformer<br>Encoder", "contextualizes sentence", C["encoder"])
 
     # ── Row: output / memory ──────────────────────────────────────────────────
-    # B1, B2a, B2b: h_s sits at ROWS["memory"]
+    # Static, Additive, Joint: h_s sits at ROWS["memory"]
     for cx in COL_CENTERS[:3]:
         box(fig, cx, ROWS["memory"],
             "h_s", "token@time state", C["output"])
 
-    # B3: Prototype Memory + Temporal Attention side by side at this level
+    # Timeformer: Prototype Memory + Temporal Attention side by side at this level
     mem_cx  = COL_CENTERS[3] - MEM_OFFSET
     attn_cx = COL_CENTERS[3] + MEM_OFFSET
 
     # Prototype Memory box
     fig.add_shape(type="rect",
-                  x0=mem_cx  - HALF_W_B3, y0=MEM_BOX_Y0,
-                  x1=mem_cx  + HALF_W_B3, y1=MEM_BOX_Y1,
+                  x0=mem_cx  - HALF_W_TF, y0=MEM_BOX_Y0,
+                  x1=mem_cx  + HALF_W_TF, y1=MEM_BOX_Y1,
                   line={"color": C["memory"], "width": 2},
                   fillcolor=C["new_fill"], layer="below")
     fig.add_annotation(x=mem_cx, y=MEM_BOX_Y1 - 0.022,
@@ -192,8 +192,8 @@ def build_figure() -> go.Figure:
 
     # Temporal Attention box
     fig.add_shape(type="rect",
-                  x0=attn_cx - HALF_W_B3, y0=MEM_BOX_Y0,
-                  x1=attn_cx + HALF_W_B3, y1=MEM_BOX_Y1,
+                  x0=attn_cx - HALF_W_TF, y0=MEM_BOX_Y0,
+                  x1=attn_cx + HALF_W_TF, y1=MEM_BOX_Y1,
                   line={"color": C["memory"], "width": 2},
                   fillcolor=C["new_fill"], layer="below")
     fig.add_annotation(x=attn_cx, y=MEM_BOX_Y1 - 0.022,
@@ -205,17 +205,17 @@ def build_figure() -> go.Figure:
                        showarrow=False,
                        font={"size": 8, "color": C["ink"]}, align="center")
 
-    # h_s for B3 sits below the memory boxes
+    # h_s for Timeformer sits below the memory boxes
     fig.add_shape(type="rect",
-                  x0=COL_CENTERS[3] - COL_W, y0=HS_Y_B3 - BOX_H * 0.8,
-                  x1=COL_CENTERS[3] + COL_W, y1=HS_Y_B3 + BOX_H * 0.8,
+                  x0=COL_CENTERS[3] - COL_W, y0=HS_Y_TF - BOX_H * 0.8,
+                  x1=COL_CENTERS[3] + COL_W, y1=HS_Y_TF + BOX_H * 0.8,
                   line={"color": C["output"], "width": 2},
                   fillcolor=C["base_fill"], layer="below")
-    fig.add_annotation(x=COL_CENTERS[3], y=HS_Y_B3 + BOX_H * 0.45,
+    fig.add_annotation(x=COL_CENTERS[3], y=HS_Y_TF + BOX_H * 0.45,
                        text="<b>h_s</b>",
                        showarrow=False,
                        font={"size": 10, "color": C["output"]}, align="center")
-    fig.add_annotation(x=COL_CENTERS[3], y=HS_Y_B3 - BOX_H * 0.45,
+    fig.add_annotation(x=COL_CENTERS[3], y=HS_Y_TF - BOX_H * 0.45,
                        text="token@time state",
                        showarrow=False,
                        font={"size": 9, "color": C["ink"]}, align="center")
@@ -228,13 +228,13 @@ def build_figure() -> go.Figure:
     int_bot = ROWS["interact"] - BOX_H
     enc_top = ROWS["encoder"] + BOX_H
     enc_bot = ROWS["encoder"] - BOX_H
-    hs_top  = ROWS["memory"]  + BOX_H   # top of h_s for B1-B2b
+    hs_top  = ROWS["memory"]  + BOX_H   # top of h_s for Static/Additive/Joint
 
-    # B1: Token → Encoder → h_s  (skips time and interact rows)
+    # Static: Token → Encoder → h_s  (skips time and interact rows)
     arrow(fig, COL_CENTERS[0], tok_bot, COL_CENTERS[0], enc_top, C["token"])
     arrow(fig, COL_CENTERS[0], enc_bot, COL_CENTERS[0], hs_top,  C["encoder"])
 
-    # B2a: Token → Encoder; Time → Encoder (by addition); Encoder → h_s
+    # Additive: Token → Encoder; Time → Encoder (by addition); Encoder → h_s
     arrow(fig, COL_CENTERS[1], tok_bot, COL_CENTERS[1], enc_top, C["token"])
     arrow(fig, COL_CENTERS[1], tim_bot, COL_CENTERS[1], enc_top, C["time"])
     arrow(fig, COL_CENTERS[1], enc_bot, COL_CENTERS[1], hs_top,  C["encoder"])
@@ -244,25 +244,25 @@ def build_figure() -> go.Figure:
                        showarrow=False,
                        font={"size": 9, "color": C["time"]})
 
-    # B2b: Token → Interact; Time → Interact; Interact → Encoder → h_s
+    # Joint: Token → Interact; Time → Interact; Interact → Encoder → h_s
     arrow(fig, COL_CENTERS[2], tok_bot, COL_CENTERS[2], int_top, C["token"])
     arrow(fig, COL_CENTERS[2], tim_bot, COL_CENTERS[2], int_top, C["time"])
     arrow(fig, COL_CENTERS[2], int_bot, COL_CENTERS[2], enc_top, C["interaction"])
     arrow(fig, COL_CENTERS[2], enc_bot, COL_CENTERS[2], hs_top,  C["encoder"])
 
-    # B3: same as B2b up to encoder, then memory gates into encoder, then h_s
+    # Timeformer: same as Joint up to encoder, then memory gates into encoder, then h_s
     arrow(fig, COL_CENTERS[3], tok_bot, COL_CENTERS[3], int_top, C["token"])
     arrow(fig, COL_CENTERS[3], tim_bot, COL_CENTERS[3], int_top, C["time"])
     arrow(fig, COL_CENTERS[3], int_bot, COL_CENTERS[3], enc_top, C["interaction"])
     # Memory → Temporal Attention (horizontal, through the gap between boxes)
-    arrow(fig, mem_cx  + HALF_W_B3, (MEM_BOX_Y0 + MEM_BOX_Y1) / 2,
-               attn_cx - HALF_W_B3, (MEM_BOX_Y0 + MEM_BOX_Y1) / 2,
+    arrow(fig, mem_cx  + HALF_W_TF, (MEM_BOX_Y0 + MEM_BOX_Y1) / 2,
+               attn_cx - HALF_W_TF, (MEM_BOX_Y0 + MEM_BOX_Y1) / 2,
                C["memory"])
     # Temporal Attention → Encoder (diagonal upward)
     arrow(fig, attn_cx, MEM_BOX_Y1, COL_CENTERS[3], enc_bot, C["memory"])
     # Encoder → h_s (vertical; passes through the gap between the two sub-boxes)
     arrow(fig, COL_CENTERS[3], enc_bot,
-               COL_CENTERS[3], HS_Y_B3 + BOX_H * 0.8, C["encoder"])
+               COL_CENTERS[3], HS_Y_TF + BOX_H * 0.8, C["encoder"])
 
     # ── Legend ────────────────────────────────────────────────────────────────
     fig.add_shape(type="rect", x0=0.03, y0=0.033, x1=0.085, y1=0.062,

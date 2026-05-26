@@ -1,5 +1,5 @@
 {
-  "B1": {
+  "Static": {
     "test": {
       "n": 763,
       "probe_subj": {
@@ -102,7 +102,7 @@
       "n_correct": 0
     }
   },
-  "B2a": {
+  "Additive": {
     "test": {
       "n": 763,
       "probe_subj": {
@@ -205,7 +205,7 @@
       "n_correct": 26
     }
   },
-  "B2b": {
+  "Joint": {
     "test": {
       "n": 763,
       "probe_subj": {
@@ -308,7 +308,7 @@
       "n_correct": 21
     }
   },
-  "B3": {
+  "Timeformer": {
     "test": {
       "n": 763,
       "probe_subj": {

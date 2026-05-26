@@ -13,8 +13,8 @@ from collections import defaultdict
 from src.corpus_generator import (
     SUBJECTS,
     SUBJECT_CLASSES,
-    CONTEXT_A,
-    CONTEXT_B,
+    NEIGH_1,
+    NEIGH_2,
     generate_corpus_v2,
     generate_ambiguous_eval,
 )
@@ -70,8 +70,8 @@ def verify_main_corpus(rows: list[dict]) -> None:
     print("\n── split × true_context ────────────────────────────────────────")
     for sp in ["test", "hard_verb", "hard_both"]:
         sp_rows = [r for r in rows if r["split"] == sp]
-        n_a = sum(1 for r in sp_rows if r["true_context"] == "A")
-        n_b = sum(1 for r in sp_rows if r["split"] == sp and r["true_context"] == "B")
+        n_a = sum(1 for r in sp_rows if r["true_context"] == "N1")
+        n_b = sum(1 for r in sp_rows if r["split"] == sp and r["true_context"] == "N2")
         total_sp = len(sp_rows)
         if total_sp:
             print(f"  {sp:<12}: ctx_A={n_a} ({100*n_a/total_sp:.0f}%)  ctx_B={n_b} ({100*n_b/total_sp:.0f}%)")
@@ -96,8 +96,8 @@ def verify_main_corpus(rows: list[dict]) -> None:
         verb = r["sentence"].split()[1]
         obj  = r["sentence"].split()[2]
         tc   = r["true_context"]
-        v_cross = (tc == "A" and verb in CONTEXT_B["verbs"]) or (tc == "B" and verb in CONTEXT_A["verbs"])
-        o_cross = (tc == "A" and obj  in CONTEXT_B["objects"]) or (tc == "B" and obj  in CONTEXT_A["objects"])
+        v_cross = (tc == "N1" and verb in NEIGH_2["verbs"]) or (tc == "N2" and verb in NEIGH_1["verbs"])
+        o_cross = (tc == "N1" and obj  in NEIGH_2["objects"]) or (tc == "N2" and obj  in NEIGH_1["objects"])
         if r["split"] == "hard_verb" and not (v_cross and not o_cross):
             errors_hv += 1
         if r["split"] == "hard_both" and not (v_cross and o_cross):
@@ -112,15 +112,15 @@ def verify_ambiguous(rows: list[dict]) -> None:
     print(f"\n── ambiguous_test: {total} frases ───────────────────────────────")
 
     # proporção de verbo e objeto canônicos por true_context
-    for tc in ["A", "B"]:
+    for tc in ["N1", "N2"]:
         tc_rows = [r for r in rows if r["true_context"] == tc]
         if not tc_rows:
             continue
-        canon_v = CONTEXT_A["verbs"] if tc == "A" else CONTEXT_B["verbs"]
-        canon_o = CONTEXT_A["objects"] if tc == "A" else CONTEXT_B["objects"]
+        canon_v = NEIGH_1["verbs"] if tc == "N1" else NEIGH_2["verbs"]
+        canon_o = NEIGH_1["objects"] if tc == "N1" else NEIGH_2["objects"]
         pct_v = 100 * sum(1 for r in tc_rows if r["sentence"].split()[1] in canon_v) / len(tc_rows)
         pct_o = 100 * sum(1 for r in tc_rows if r["sentence"].split()[2] in canon_o) / len(tc_rows)
-        print(f"  ctx={tc}  verbo canônico={pct_v:.1f}%  objeto canônico={pct_o:.1f}%  (esperado≈50%)")
+        print(f"  neigh={tc}  verbo canônico={pct_v:.1f}%  objeto canônico={pct_o:.1f}%  (esperado≈50%)")
 
     # distribuição por classe
     counts_cls: dict[str, int] = defaultdict(int)

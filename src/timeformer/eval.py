@@ -86,7 +86,7 @@ class Evaluator:
         Avalia modelo em todos os splits.
 
         Probe treinada em h(sujeito) do split 'test', avaliada em cada split.
-        Para B3: requer PrototypeMemory já atualizada após treino.
+        Para Timeformer: requer PrototypeMemory já atualizada após treino.
 
         Retorna dict aninhado: {split: {métrica: valor}}
         """
@@ -107,8 +107,8 @@ class Evaluator:
         # Avaliação contrastiva
         results["contrastive"] = self._eval_contrastive(model, memory)
 
-        # Controles B3 (apenas se modelo é B3 e memória disponível)
-        if type(model).__name__ == "B3" and memory is not None:
+        # Controles Timeformer (apenas se modelo é Timeformer e memória disponível)
+        if type(model).__name__ == "Timeformer" and memory is not None:
             results.update(self._eval_b3_controls(model, memory, test_ds))
 
         return results
@@ -165,8 +165,8 @@ class Evaluator:
         cont_ds   = MLMDataset(cont_rows)
 
         for ctrl_name, ctrl_mem in [
-            ("b3_shuffled_subject", make_shuffled(memory, mode="subject")),
-            ("b3_nohistory",        make_nohistory(
+            ("timeformer_shuffled_subject", make_shuffled(memory, mode="subject")),
+            ("timeformer_nohistory",        make_nohistory(
                 memory.n_subjects, memory.n_epochs, memory.d_model, self.device
             )),
         ]:
@@ -195,10 +195,10 @@ def compare_models(
 ) -> dict:
     """
     Calcula deltas da cadeia de ablação:
-      delta_time_conditioning = B2a − B1  (ambiguous_test)
-      delta_token_time_interaction = B2b − B2a (ambiguous_test)
-      delta_memory = B3 − B2b (continuation)
-      delta_spurious_memory = B3-shuffled − B2b (continuation)
+      delta_time_conditioning = Additive − Static  (ambiguous_test)
+      delta_token_time_interaction = Joint − Additive (ambiguous_test)
+      delta_memory = Timeformer − Joint (continuation)
+      delta_spurious_memory = Timeformer-shuffled − Joint (continuation)
     """
     def _acc(res: dict, split: str) -> float:
         try:
@@ -208,9 +208,9 @@ def compare_models(
 
     deltas: dict[str, dict] = {}
 
-    if "B3" in results_by_model:
-        b3_res      = results_by_model["B3"]
-        b3_shuffled = b3_res.get("b3_shuffled_subject", {})
+    if "Timeformer" in results_by_model:
+        b3_res      = results_by_model["Timeformer"]
+        b3_shuffled = b3_res.get("timeformer_shuffled_subject", {})
         try:
             shuffled_acc = b3_shuffled.get("accuracy", float("nan"))
         except AttributeError:
@@ -221,17 +221,17 @@ def compare_models(
             "label": ABLATION_LABELS[delta_key],
             "display": ABLATION_DISPLAY[delta_key],
             "legacy_label": LEGACY_ABLATION_ALIASES[delta_key],
-            "base_model": "B2b",
-            "base_model_label": model_label("B2b"),
-            "new_model": "B3-shuffled",
+            "base_model": "Joint",
+            "base_model_label": model_label("Joint"),
+            "new_model": "Timeformer-shuffled",
             "new_model_label": "Shuffled-memory Timeformer",
-            "B3_shuffled_accuracy": shuffled_acc,
+            "Timeformer_shuffled_accuracy": shuffled_acc,
         }
 
     pairs = [
-        ("delta_time_conditioning", "B1",  "B2a", primary_split),
-        ("delta_token_time_interaction",  "B2a", "B2b", primary_split),
-        ("delta_memory",        "B2b", "B3",  b3_split),
+        ("delta_time_conditioning", "Static",  "Additive", primary_split),
+        ("delta_token_time_interaction",  "Additive", "Joint", primary_split),
+        ("delta_memory",        "Joint", "Timeformer",  b3_split),
     ]
     for label, m_base, m_new, split in pairs:
         if m_base in results_by_model and m_new in results_by_model:

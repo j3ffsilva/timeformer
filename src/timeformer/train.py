@@ -1,8 +1,8 @@
 """
 Loop de treino MLM genérico para a Fase B.
 
-Funciona para B1, B2a, B2b, B3.
-Para B3, aceita PrototypeMemory e atualiza os protótipos ao fim de cada época
+Funciona para Static, Additive, Joint, Timeformer.
+Para Timeformer, aceita PrototypeMemory e atualiza os protótipos ao fim de cada época
 (stop-gradient — não no loop de batch).
 """
 
@@ -18,7 +18,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.utils.data import DataLoader, Dataset
 
-from .dataset import b3_collate_fn
+from .dataset import timeformer_collate_fn
 from .memory import PrototypeMemory
 
 
@@ -43,7 +43,7 @@ def _forward(
 ) -> dict:
     """
     Forward pass unificado para todos os modelos.
-    Injeta memória no B3 quando disponível.
+    Injeta memória no Timeformer quando disponível.
     """
     input_ids   = batch["input_ids"].to(device)
     epoch_idx   = batch["epoch_idx"].to(device)
@@ -52,11 +52,11 @@ def _forward(
 
     model_name = type(model).__name__
 
-    if model_name == "B1":
+    if model_name == "Static":
         out = model(input_ids)
-    elif model_name in ("B2a", "B2b"):
+    elif model_name in ("Additive", "Joint"):
         out = model(input_ids, epoch_idx)
-    else:  # B3
+    else:  # Timeformer
         if memory is not None and "history_epochs" in batch:
             # Injeta memória histórica por sujeito
             mem_list, mask_list = [], []
@@ -89,7 +89,7 @@ class MLMTrainer:
     Treina um modelo com objetivo MLM.
 
     Args:
-        model:      B1, B2a, B2b ou B3
+        model:      Static, Additive, Joint ou Timeformer
         output_dir: diretório para salvar checkpoints e log
         device:     dispositivo de treino
     """
@@ -119,18 +119,18 @@ class MLMTrainer:
         """
         Treina o modelo por n_epochs e retorna histórico de loss por época.
 
-        Para B3: memory deve ser uma PrototypeMemory inicializada.
+        Para Timeformer: memory deve ser uma PrototypeMemory inicializada.
         A memória é atualizada (stop-gradient) ao fim de cada época de treino.
         """
         torch.manual_seed(seed)
 
-        use_b3_collate = type(self.model).__name__ == "B3"
+        use_tf_collate = type(self.model).__name__ == "Timeformer"
 
         train_loader = DataLoader(
             train_dataset,
             batch_size=batch_size,
             shuffle=True,
-            collate_fn=b3_collate_fn if use_b3_collate else None,
+            collate_fn=timeformer_collate_fn if use_tf_collate else None,
         )
         # Val loader usa collate padrão — memória injetada via subject_idx/epoch_idx
         val_loader = DataLoader(
@@ -169,7 +169,7 @@ class MLMTrainer:
                     with open(self.output_dir / "memory_best.pkl", "wb") as _f:
                         pickle.dump(memory, _f)
 
-            # Atualiza protótipos de B3 ao fim da época (stop-gradient)
+            # Atualiza protótipos de Timeformer ao fim da época (stop-gradient)
             if memory is not None:
                 for ep_idx in range(10):
                     memory.update(self.model, train_loader, epoch=ep_idx)

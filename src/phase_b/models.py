@@ -2,10 +2,10 @@
 Modelos da Fase B do Timeformer.
 
 Cadeia de ablação:
-  B1   — Transformer textual sem época
-  B2a  — B1 + TimeEncoding aditivo global
-  B2b  — B1 + interação token×época (TokenTimeInteraction)
-  B3   — B2b + atenção temporal fatorada sobre memória histórica (Timeformer)
+  Static     — Transformer textual sem época
+  Additive   — Static + TimeEncoding aditivo global
+  Joint      — Static + interação token×época (TokenTimeInteraction)
+  Timeformer — Joint + atenção temporal fatorada sobre memória histórica (Timeformer)
 
 Todos os modelos:
   - Entrada: [CLS] S V O [SEP]  (SEQ_LEN=5)
@@ -63,9 +63,9 @@ class MLMHead(nn.Module):
         return self.proj(F.gelu(self.norm(hidden)))
 
 
-# ─── B1: Transformer sem tempo ────────────────────────────────────────────────
+# ─── Static: Transformer sem tempo ───────────────────────────────────────────
 
-class B1(nn.Module):
+class Static(nn.Module):
     """
     Transformer contextual padrão sem informação de época.
 
@@ -116,11 +116,11 @@ class B1(nn.Module):
         }
 
 
-# ─── B2a: Transformer + TimeEncoding aditivo global ───────────────────────────
+# ─── Additive: Transformer + TimeEncoding aditivo global ─────────────────────
 
-class B2a(B1):
+class Additive(Static):
     """
-    B1 + TimeEncoding aditivo global.
+    Static + TimeEncoding aditivo global.
 
     embedding = TokenEmbedding(token) + PositionalEncoding(pos) + TimeEncoding(t)
 
@@ -155,16 +155,16 @@ class B2a(B1):
         }
 
 
-# ─── B2b: Transformer + interação token×época ─────────────────────────────────
+# ─── Joint: Transformer + interação token×época ───────────────────────────────
 
-class B2b(nn.Module):
+class Joint(nn.Module):
     """
     Transformer com interação token×época.
 
     embedding = TokenTimeInteraction(TokenEmbedding(token), TimeEncoding(t))
                 + PositionalEncoding(pos)
 
-    A época interage com cada token individualmente — diferente de B2a
+    A época interage com cada token individualmente — diferente de Additive
     que soma o mesmo vetor a todos os tokens.
     """
 
@@ -209,7 +209,7 @@ class B2b(nn.Module):
         }
 
 
-# ─── B3: Timeformer ────────────────────────────────────────────────────────────
+# ─── Timeformer ───────────────────────────────────────────────────────────────
 
 class _TemporalCrossAttention(nn.Module):
     """
@@ -277,12 +277,12 @@ class _TemporalCrossAttention(nn.Module):
         return updated
 
 
-class B3(nn.Module):
+class Timeformer(nn.Module):
     """
     Timeformer: atenção textual + atenção temporal fatorada.
 
     Arquitetura:
-      1. embedding: TokenTimeInteraction (igual ao B2b)
+      1. embedding: TokenTimeInteraction (igual ao Joint)
       2. encoder textual: Transformer sobre tokens da sentença atual
       3. atenção temporal: cross-attention de h(sujeito) sobre memória histórica
       4. residual + LayerNorm na camada temporal
@@ -353,7 +353,7 @@ class B3(nn.Module):
 
 # ─── Fábrica de modelos ────────────────────────────────────────────────────────
 
-_MODEL_CLASSES = {"B1": B1, "B2a": B2a, "B2b": B2b, "B3": B3}
+_MODEL_CLASSES = {"Static": Static, "Additive": Additive, "Joint": Joint, "Timeformer": Timeformer}
 
 DEFAULT_HPARAMS = {
     "d_model":  64,
@@ -371,13 +371,13 @@ def build_model(name: str, **hparams) -> nn.Module:
     Instancia um modelo pelo nome com hiperparâmetros opcionais.
     Valores não fornecidos usam DEFAULT_HPARAMS.
 
-    Ex: build_model("B3", d_model=128)
+    Ex: build_model("Timeformer", d_model=128)
     """
     if name not in _MODEL_CLASSES:
         raise ValueError(f"Modelo desconhecido: {name!r}. Opções: {list(_MODEL_CLASSES)}")
     params = {**DEFAULT_HPARAMS, **hparams}
     cls = _MODEL_CLASSES[name]
-    # B1 não aceita d_sin/n_epochs — filtra kwargs irrelevantes
+    # Static não aceita d_sin/n_epochs — filtra kwargs irrelevantes
     import inspect
     valid = inspect.signature(cls.__init__).parameters
     filtered = {k: v for k, v in params.items() if k in valid}

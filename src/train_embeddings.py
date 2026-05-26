@@ -106,11 +106,17 @@ def _train_one_epoch(
     return model.embeddings.weight.detach().cpu().numpy(), model
 
 
-# Tokens de cada contexto — usados para computar probabilidades de predição
-CONTEXT_A_TOKENS = ["V1", "V2", "V3", "V4", "O1", "O2", "O3", "O4"]
-CONTEXT_B_TOKENS = ["V5", "V6", "V7", "V8", "O5", "O6", "O7", "O8"]
-CONTEXT_A_INDICES = [TOKEN_TO_IDX[t] for t in CONTEXT_A_TOKENS]
-CONTEXT_B_INDICES = [TOKEN_TO_IDX[t] for t in CONTEXT_B_TOKENS]
+# Tokens de cada vizinhança — usados para computar probabilidades de predição
+NEIGH_1_TOKENS = ["V1", "V2", "V3", "V4", "O1", "O2", "O3", "O4"]
+NEIGH_2_TOKENS = ["V5", "V6", "V7", "V8", "O5", "O6", "O7", "O8"]
+NEIGH_1_INDICES = [TOKEN_TO_IDX[t] for t in NEIGH_1_TOKENS]
+NEIGH_2_INDICES = [TOKEN_TO_IDX[t] for t in NEIGH_2_TOKENS]
+
+# Backward-compatible aliases
+CONTEXT_A_TOKENS = NEIGH_1_TOKENS
+CONTEXT_B_TOKENS = NEIGH_2_TOKENS
+CONTEXT_A_INDICES = NEIGH_1_INDICES
+CONTEXT_B_INDICES = NEIGH_2_INDICES
 
 
 def compute_context_probs(model: "SkipGram") -> dict[str, tuple[float, float]]:
@@ -128,8 +134,8 @@ def compute_context_probs(model: "SkipGram") -> dict[str, tuple[float, float]]:
         for subject in ["S1", "S2", "S3", "S4", "S5", "S6"]:
             logits = model(torch.tensor([TOKEN_TO_IDX[subject]]))
             probs = torch.softmax(logits, dim=-1).squeeze()
-            prob_a = float(probs[CONTEXT_A_INDICES].sum())
-            prob_b = float(probs[CONTEXT_B_INDICES].sum())
+            prob_a = float(probs[NEIGH_1_INDICES].sum())
+            prob_b = float(probs[NEIGH_2_INDICES].sum())
             result[subject] = (prob_a, prob_b)
     return result
 

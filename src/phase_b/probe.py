@@ -1,7 +1,7 @@
 """
 Pipeline de avaliação de representações para a Fase B.
 
-LinearProbe        — classifica true_context ∈ {A, B} a partir de h(sujeito) ou h([CLS])
+LinearProbe        — classifica true_context ∈ {N1, N2} a partir de h(sujeito) ou h([CLS])
 ContrastiveEval    — avalia inversão de distribuição em pares (mesma superfície, épocas distintas)
 precision_at_k     — qualidade de vizinhança semântica
 clustering_metrics — ARI e NMI dos clusters por true_context
@@ -38,13 +38,13 @@ def extract_reps(
     Extrai h(sujeito), h([CLS]), logits e labels de true_context para todos
     os exemplos do dataset.
 
-    Para B3, injeta memória causal via PrototypeMemory.get().
+    Para Timeformer, injeta memória causal via PrototypeMemory.get().
     A memória deve ter sido atualizada antes desta chamada.
 
     Retorna dict com:
       h_subj:      (N, d_model)
       h_cls:       (N, d_model)
-      true_context:(N,)  int  0=A, 1=B
+      true_context:(N,)  int  0=N1, 1=N2
       epoch_idx:   (N,)  int
       subject_idx: (N,)  int
       logits:      (N, seq, vocab_size)
@@ -64,11 +64,11 @@ def extract_reps(
         epoch_idx   = batch["epoch_idx"].to(device)
         subject_idx = batch["subject_idx"].to(device)
 
-        if model_name == "B1":
+        if model_name == "Static":
             out = model(input_ids)
-        elif model_name in ("B2a", "B2b"):
+        elif model_name in ("Additive", "Joint"):
             out = model(input_ids, epoch_idx)
-        else:  # B3
+        else:  # Timeformer
             if memory is not None:
                 mem_list, mask_list = [], []
                 for i in range(input_ids.size(0)):
@@ -159,21 +159,21 @@ def evaluate_contrastive(
 
     Métrica principal: fração de pares com sign_flip correto.
     """
-    ctx_a_verb_ids, ctx_b_verb_ids = _get_verb_ids()
+    n1_verb_ids, n2_verb_ids = _get_verb_ids()
 
     reps = extract_reps(model, contrastive_dataset, memory, batch_size, device)
     logits     = reps["logits"]         # (N, seq, vocab_size)
-    ctx_labels = reps["true_context"]   # (N,) 0=A, 1=B
+    ctx_labels = reps["true_context"]   # (N,) 0=N1, 1=N2
     pair_ids   = np.array([
         contrastive_dataset[i]["pair_id"]
         for i in range(len(contrastive_dataset))
     ])
 
-    # Probabilidade de verbos de contexto A vs B na posição mascarada (pos=2 = verbo)
+    # Probabilidade de verbos de N1 vs N2 na posição mascarada (pos=2 = verbo)
     verb_pos = 2
     verb_logits = logits[:, verb_pos, :]   # (N, vocab_size)
-    p_a = _softmax_sum(verb_logits, ctx_a_verb_ids)  # (N,)
-    p_b = _softmax_sum(verb_logits, ctx_b_verb_ids)  # (N,)
+    p_a = _softmax_sum(verb_logits, n1_verb_ids)  # (N,)
+    p_b = _softmax_sum(verb_logits, n2_verb_ids)  # (N,)
 
     # Agrupa por pair_id
     unique_pairs = np.unique(pair_ids)
@@ -185,7 +185,7 @@ def evaluate_contrastive(
             continue
         idxs = np.where(mask)[0]
         ctx0, ctx1 = ctx_labels[idxs[0]], ctx_labels[idxs[1]]
-        # Identifica qual item é o early (ctx=A=0) e qual é o late (ctx=B=1)
+        # Identifica qual item é o early (ctx=N1=0) e qual é o late (ctx=N2=1)
         if ctx0 == 0 and ctx1 == 1:
             i_early, i_late = idxs[0], idxs[1]
         elif ctx0 == 1 and ctx1 == 0:
@@ -193,8 +193,8 @@ def evaluate_contrastive(
         else:
             continue  # par inconsistente
 
-        correct_early = p_a[i_early] > p_b[i_early]   # early deve favorecer A
-        correct_late  = p_b[i_late]  > p_a[i_late]    # late deve favorecer B
+        correct_early = p_a[i_early] > p_b[i_early]   # early deve favorecer N1
+        correct_late  = p_b[i_late]  > p_a[i_late]    # late deve favorecer N2
         n_correct += int(correct_early and correct_late)
         n_pairs   += 1
 
@@ -256,15 +256,19 @@ def _build_context_verb_ids() -> tuple[list[int], list[int]]:
 
 
 # Inicialização lazy para evitar import circular
-_CONTEXT_A_VERB_IDS: list[int] | None = None
-_CONTEXT_B_VERB_IDS: list[int] | None = None
+_NEIGH_1_VERB_IDS: list[int] | None = None
+_NEIGH_2_VERB_IDS: list[int] | None = None
+
+# Backward-compatible alias names
+_CONTEXT_A_VERB_IDS = _NEIGH_1_VERB_IDS
+_CONTEXT_B_VERB_IDS = _NEIGH_2_VERB_IDS
 
 
 def _get_verb_ids() -> tuple[list[int], list[int]]:
-    global _CONTEXT_A_VERB_IDS, _CONTEXT_B_VERB_IDS
-    if _CONTEXT_A_VERB_IDS is None:
-        _CONTEXT_A_VERB_IDS, _CONTEXT_B_VERB_IDS = _build_context_verb_ids()
-    return _CONTEXT_A_VERB_IDS, _CONTEXT_B_VERB_IDS
+    global _NEIGH_1_VERB_IDS, _NEIGH_2_VERB_IDS
+    if _NEIGH_1_VERB_IDS is None:
+        _NEIGH_1_VERB_IDS, _NEIGH_2_VERB_IDS = _build_context_verb_ids()
+    return _NEIGH_1_VERB_IDS, _NEIGH_2_VERB_IDS
 
 
 # Patch para o módulo conseguir importar as constantes
@@ -273,9 +277,14 @@ _mod = _sys.modules[__name__]
 
 
 def __getattr__(name: str):
-    if name in ("CONTEXT_A_VERB_IDS", "CONTEXT_B_VERB_IDS"):
+    if name in ("NEIGH_1_VERB_IDS", "CONTEXT_A_VERB_IDS"):
         a, b = _get_verb_ids()
-        _mod.CONTEXT_A_VERB_IDS = a
-        _mod.CONTEXT_B_VERB_IDS = b
-        return a if name == "CONTEXT_A_VERB_IDS" else b
+        _mod.NEIGH_1_VERB_IDS = a
+        _mod.NEIGH_2_VERB_IDS = b
+        return a
+    if name in ("NEIGH_2_VERB_IDS", "CONTEXT_B_VERB_IDS"):
+        a, b = _get_verb_ids()
+        _mod.NEIGH_1_VERB_IDS = a
+        _mod.NEIGH_2_VERB_IDS = b
+        return b
     raise AttributeError(name)

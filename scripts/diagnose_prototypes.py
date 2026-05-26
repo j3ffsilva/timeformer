@@ -1,5 +1,5 @@
 """
-Diagnóstico da PrototypeMemory do B3.
+Diagnóstico da PrototypeMemory do Timeformer.
 
 Métricas calculadas:
   1. Separabilidade inter vs intra-sujeito por época
@@ -45,9 +45,9 @@ CLASS_INT      = [0] * 10 + [1] * 10 + [2] * 10   # para sklearn
 
 
 def load_memory(run: RunManager) -> PrototypeMemory:
-    mem = run.load_memory("B3")
+    mem = run.load_memory("Timeformer")
     if mem is None:
-        raise FileNotFoundError(f"memory.pkl não encontrado em {run.run_dir}/B3/")
+        raise FileNotFoundError(f"memory.pkl não encontrado em {run.run_dir}/Timeformer/")
     return mem
 
 
@@ -293,7 +293,7 @@ def shuffled_overlap(mem: PrototypeMemory) -> None:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Diagnóstico da PrototypeMemory do B3")
+    parser = argparse.ArgumentParser(description="Diagnóstico da PrototypeMemory do Timeformer")
     parser.add_argument("--run-id", type=str, default=None,
                         help="ID da run (default: mais recente)")
     args = parser.parse_args()
@@ -303,7 +303,7 @@ def main() -> None:
     else:
         run = RunManager.load_latest()
 
-    print(f"Run: {run.run_id}  |  {run.run_dir}/B3/memory.pkl")
+    print(f"Run: {run.run_id}  |  {run.run_dir}/Timeformer/memory.pkl")
 
     mem    = load_memory(run)
     protos, valid = proto_matrix(mem)

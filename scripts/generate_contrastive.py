@@ -108,8 +108,8 @@ def generate(p_high: float = P_HIGH) -> list[dict]:
 
         # Gera um par por objeto (até 4 para não sobrecarregar)
         for obj in all_objs[:4]:
-            true_ctx_early = "A"
-            true_ctx_late  = "B"
+            true_ctx_early = "N1"
+            true_ctx_late  = "N2"
             rows.append({
                 "pair_id":      pair_id,
                 "subject":      subj,

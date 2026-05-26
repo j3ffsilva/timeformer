@@ -13,7 +13,7 @@ Métricas secundárias:
   MAE   — erro absoluto médio |P_real - P_pred|
   Brier — erro quadrático médio (P_real - P_pred)²
 
-Referência para P_real: CONTEXT_A_FRACTIONS em corpus_generator.py.
+Referência para P_real: N1 fractions em corpus_generator.py.
 """
 
 import numpy as np

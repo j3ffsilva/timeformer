@@ -6,7 +6,7 @@ Requer checkpoints salvos por scripts/train_phase_b.py.
 Uso:
   python scripts/eval_phase_b.py --run-id 20260523_001   # avalia run específica
   python scripts/eval_phase_b.py                         # avalia run mais recente
-  python scripts/eval_phase_b.py --model B3              # avalia apenas B3
+  python scripts/eval_phase_b.py --model Timeformer       # avalia apenas Timeformer
 """
 
 import argparse
@@ -23,7 +23,7 @@ from src.timeformer.run import RunManager
 CORPUS_PATH      = Path("data/corpus.tsv")
 AMBIGUOUS_PATH   = Path("data/corpus_ambiguous.tsv")
 CONTRASTIVE_PATH = Path("data/contrastive_set.tsv")
-ALL_MODELS       = ["B1", "B2a", "B2b", "B3"]
+ALL_MODELS       = ["Static", "Additive", "Joint", "Timeformer"]
 
 
 def load_model_and_memory(name: str, run: RunManager, device: str):
@@ -39,10 +39,10 @@ def load_model_and_memory(name: str, run: RunManager, device: str):
     model.to(torch.device(device))
 
     memory = None
-    if name == "B3":
+    if name == "Timeformer":
         memory = run.load_memory(name)
         if memory is None:
-            print(f"  Aviso: memory.pkl não encontrado para B3 — avaliando sem memória")
+            print(f"  Aviso: memory.pkl não encontrado para Timeformer — avaliando sem memória")
         else:
             memory.to(device)
 
@@ -54,7 +54,7 @@ def main() -> None:
     parser.add_argument("--run-id", type=str, default=None,
                         help="ID da run a avaliar (default: mais recente)")
     parser.add_argument("--model",  type=str, default=None, choices=ALL_MODELS,
-                        help="Modelo a avaliar (default: todos)")
+                        help="Modelo a avaliar (default: todos) — use Static, Additive, Joint, ou Timeformer")
     parser.add_argument("--device", type=str, default="cpu")
     args = parser.parse_args()
 

@@ -3,8 +3,8 @@ Orquestrador da Fase B do Timeformer.
 
 Executa em sequência dentro do mesmo processo:
   1. Gera conjunto contrastivo (data/contrastive_set.tsv)
-  2. Treina B1, B2a, B2b, B3  (outputs/runs/{run_id}/{model}/)
-  3. Avalia todos os modelos  (outputs/runs/{run_id}/results/)
+  2. Treina Static, Additive, Joint, Timeformer  (outputs/runs/{run_id}/{model}/)
+  3. Avalia todos os modelos                     (outputs/runs/{run_id}/results/)
 
 Uso:
   python run_phase_b.py
@@ -20,7 +20,7 @@ from pathlib import Path
 
 import torch
 
-from src.timeformer.dataset import load_corpus, MLMDataset, B3Dataset, make_continuation_split
+from src.timeformer.dataset import load_corpus, MLMDataset, TimeformerDataset, make_continuation_split
 from src.timeformer.models import build_model, DEFAULT_HPARAMS
 from src.timeformer.memory import PrototypeMemory
 from src.timeformer.nomenclature import model_label
@@ -31,7 +31,7 @@ from src.timeformer.run import RunManager
 CORPUS_PATH      = Path("data/corpus.tsv")
 AMBIGUOUS_PATH   = Path("data/corpus_ambiguous.tsv")
 CONTRASTIVE_PATH = Path("data/contrastive_set.tsv")
-ALL_MODELS       = ["B1", "B2a", "B2b", "B3"]
+ALL_MODELS       = ["Static", "Additive", "Joint", "Timeformer"]
 
 
 # ── Geração do conjunto contrastivo ───────────────────────────────────────────
@@ -64,9 +64,9 @@ def train_all(args: argparse.Namespace, run: RunManager) -> None:
         n_params = sum(p.numel() for p in model.parameters())
         print(f"Parâmetros: {n_params:,}")
 
-        train_ds = B3Dataset(train_rows, seed=args.seed) if name == "B3" else MLMDataset(train_rows, seed=args.seed)
+        train_ds = TimeformerDataset(train_rows, seed=args.seed) if name == "Timeformer" else MLMDataset(train_rows, seed=args.seed)
         val_ds   = MLMDataset(val_rows, seed=args.seed)
-        memory   = PrototypeMemory(d_model=DEFAULT_HPARAMS["d_model"]) if name == "B3" else None
+        memory   = PrototypeMemory(d_model=DEFAULT_HPARAMS["d_model"]) if name == "Timeformer" else None
 
         trainer = MLMTrainer(model, output_dir=run.model_dir(name), device=args.device)
         history = trainer.train(
@@ -114,12 +114,12 @@ def eval_all(args: argparse.Namespace, run: RunManager) -> dict:
         model.to(torch.device(args.device))
 
         memory = None
-        if name == "B3":
+        if name == "Timeformer":
             memory = run.load_memory(name)
             if memory is not None:
                 memory.to(args.device)
             else:
-                print("  Aviso: memory.pkl não encontrado para B3")
+                print("  Aviso: memory.pkl não encontrado para Timeformer")
 
         res = evaluator.evaluate(model, memory=memory)
         results[name] = res

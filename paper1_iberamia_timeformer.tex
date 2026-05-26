@@ -181,46 +181,46 @@ inferred post-hoc and corpus confounds are hard to separate from genuine semanti
 change.
 
 The corpus uses a subject--verb--object (SVO) grammar: every sentence consists
-of one subject, one verb, and one object. Two semantic contexts, A and B,
-partition the vocabulary of 8 verbs and 8 objects: context A uses
-\(\{V1,\ldots,V4\}\) and \(\{O1,\ldots,O4\}\); context B uses
+of one subject, one verb, and one object. Two semantic neighborhoods, $N_1$ and $N_2$,
+partition the vocabulary of 8 verbs and 8 objects: $N_1$ uses
+\(\{V1,\ldots,V4\}\) and \(\{O1,\ldots,O4\}\); $N_2$ uses
 \(\{V5,\ldots,V8\}\) and \(\{O5,\ldots,O8\}\). A sentence generated from
-context A therefore looks like \texttt{S5 V2 O3}, while one from context B
+$N_1$ therefore looks like \texttt{S5 V2 O3}, while one from $N_2$
 looks like \texttt{S5 V6 O8}; the subject token is the same in both cases, but
 its co-occurring words differ. Intuitively, the intended meaning of subject
-\(s\) at epoch \(t\) is how often it appears in context-A sentences; formally,
-\(P(A \mid s, t)\) is the probability that a sentence is drawn from context A.
+\(s\) at epoch \(t\) is how often it appears in $N_1$ sentences; formally,
+\(P(N_1 \mid s, t)\) is the probability that a sentence is drawn from $N_1$.
 The vocabulary contains 30 subjects; each subject's trajectory is determined by
-how \(P(A \mid s, t)\) evolves across the 10 epochs \(t0\) through \(t9\).
+how \(P(N_1 \mid s, t)\) evolves across the 10 epochs \(t0\) through \(t9\).
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{outputs/figures/figure1_benchmark_design.png}
 \caption{Benchmark design overview. \emph{Left}: SVO sentences for a drifting
-subject across three epochs; a context-A verb appearing in a context-B sentence
+subject across three epochs; an $N_1$ verb appearing in an $N_2$ sentence
 at \(t7\) (marked \({\ast}\)) illustrates the deliberate noise in local markers.
-\emph{Center}: planted \(P(A \mid s, t)\) trajectories for Stable (flat),
+\emph{Center}: planted \(P(N_1 \mid s, t)\) trajectories for Stable (flat),
 Drift (monotonic), and Bifurcating (levelling at 0.5) subjects across
 \(t0\)--\(t9\). \emph{Right}: expected nearest-neighbor behavior for a traceable representation.}
 \label{fig:benchmark-design}
 \end{figure}
 
 Figure~\ref{fig:benchmark-design} (center) shows the three planted trajectory
-classes. Stable subjects maintain an approximately constant \(P(A \mid s, t)\)
+classes. Stable subjects maintain an approximately constant \(P(N_1 \mid s, t)\)
 throughout. Drift subjects follow a monotonic trajectory from near-exclusive
-context A (\(P(A \mid s, t) \approx 1\) at \(t0\)) to near-exclusive context B
-(\(P(A \mid s, t) \approx 0\) at \(t9\)): a drifting subject that appears in
+$N_1$ (\(P(N_1 \mid s, t) \approx 1\) at \(t0\)) to near-exclusive $N_2$
+(\(P(N_1 \mid s, t) \approx 0\) at \(t9\)): a drifting subject that appears in
 sentences like \texttt{S5 V2 O3} early on will appear in sentences like
-\texttt{S5 V6 O8} by the final epoch. Bifurcating subjects begin in context A
-and move toward a mixed state (\(P(A \mid s, t) \approx 0.5\)) where both
-contexts appear with equal frequency, approximating two coexisting senses. The
+\texttt{S5 V6 O8} by the final epoch. Bifurcating subjects begin in $N_1$
+and move toward a mixed state (\(P(N_1 \mid s, t) \approx 0.5\)) where both
+neighborhoods appear with equal frequency, approximating two coexisting senses. The
 benchmark contains 10 subjects per class.
 
 At epoch \(t7\), for example, a sentence for \texttt{S5} might read
 \texttt{S5 V2 O7} (Figure~\ref{fig:benchmark-design}, left): the planted
-context is B, but \texttt{V2} belongs to context A. Each local marker is drawn
-from the opposite context 25\% of the time, so the model cannot recover the
-planted context from the words alone. It must use subject identity together with
+neighborhood is $N_2$, but \texttt{V2} belongs to $N_1$. Each local marker is drawn
+from the opposite neighborhood 25\% of the time, so the model cannot recover the
+planted neighborhood from the words alone. It must use subject identity together with
 epoch. The \texttt{true\_context} label is determined by the planted trajectory
 and is withheld from training; it is used only for evaluation.
 
@@ -253,12 +253,12 @@ Table~\ref{tab:model-variants} summarizes the four variants.
 \centering
 \includegraphics[width=\textwidth]{outputs/figures/figure2_architecture_detail.png}
 \caption{Timeformer ablation chain. Each column adds exactly one new component
-(highlighted in yellow) over the previous variant. \textbf{B1} (Static
-Transformer) encodes tokens with no temporal information. \textbf{B2a}
-(Additive) introduces the Time input \(\tau(t)\) added directly to token
-embeddings. \textbf{B2b} (Token-Time) routes both token and time through a
+(highlighted in yellow) over the previous variant. \textbf{Static}
+(Static Transformer) encodes tokens with no temporal information. \textbf{Additive}
+introduces the Time input \(\tau(t)\) added directly to token
+embeddings. \textbf{Joint} (Token-Time) routes both token and time through a
 joint projection \(W[\,e(w);\tau(t)\,]\) via the Token-Time Interaction box.
-\textbf{B3} (Memory-Augmented Timeformer) extends B2b with Prototype Memory
+\textbf{Timeformer} (Memory-Augmented) extends Joint with Prototype Memory
 and Temporal Attention that gate historical context into the encoder. Dashed
 grey boxes mark components absent in a given variant.}
 \label{fig:architecture}
@@ -274,16 +274,16 @@ grey boxes mark components absent in a given variant.}
 \hline
 ID & Public name & Temporal signal & Memory \\
 \hline
-B1 & Static Transformer & None & No \\
-B2a & Additive Time-Conditioned Transformer & Global epoch vector & No \\
-B2b & Token-Time Transformer & Token-time interaction & No \\
-B3 & Memory-Augmented Timeformer & Token-time interaction & Causal prototypes \\
+Static & Static Transformer & None & No \\
+Additive & Additive Time-Conditioned Transformer & Global epoch vector & No \\
+Joint & Token-Time Transformer & Token-time interaction & No \\
+Timeformer & Memory-Augmented Timeformer & Token-time interaction & Causal prototypes \\
 \hline
 \end{tabular}
 \end{table}
 
 \subsection{Static Transformer}
-The Static Transformer (B1) uses only the Token input box in
+The Static Transformer (Static) uses only the Token input box in
 Figure~\ref{fig:architecture}: no Time input, no Token-Time Interaction. For
 each input token \(w_i\), the embedding combines a learned token embedding
 \(e(w_i) \in \mathbb{R}^d\) with a fixed sinusoidal position embedding
@@ -301,7 +301,7 @@ traceability.
 
 \subsection{Shared Component: Continuous Time Encoding}
 The Time input box (lower left of Figure~\ref{fig:architecture}) is shared by
-B2a, B2b, and B3. Rather than a learned lookup table -- which would memorize
+Additive, Joint, and Timeformer. Rather than a learned lookup table -- which would memorize
 training epochs as unrelated identifiers -- a continuous encoding treats epochs
 as ordered points on a shared scale, supporting interpolation and
 extrapolation. The epoch index \(t\) is normalized to \([0,1]\), passed through
@@ -315,7 +315,7 @@ These features encode epoch index only and are entirely distinct from the
 token-position encodings already present in the Transformer.
 
 \subsection{Additive Time-Conditioned Transformer}
-The Additive variant (B2a) routes \(\tau(t)\) from the Time input box directly
+The Additive variant routes \(\tau(t)\) from the Time input box directly
 into the token embeddings by addition, without passing through the Token-Time
 Interaction box:
 
@@ -330,7 +330,7 @@ The model learns that a sentence belongs to epoch \(t\), but not that subject
 whether global period information alone is sufficient for traceability.
 
 \subsection{Token-Time Transformer}
-The Token-Time Transformer (B2b) activates the Token-Time Interaction box in
+The Token-Time Transformer (Joint) activates the Token-Time Interaction box in
 Figure~\ref{fig:architecture}: the token embedding and time encoding are
 concatenated and jointly projected before self-attention:
 
@@ -347,7 +347,7 @@ initial embedding differs before any self-attention, giving the subject a
 distinct starting point at each epoch.
 
 \subsection{Memory-Augmented Timeformer}
-The Memory-Augmented Timeformer (B3) adds the lower section of
+The Memory-Augmented Timeformer adds the lower section of
 Figure~\ref{fig:architecture}: a Prototype Memory and Temporal Attention gate
 that update the subject embedding before it enters the encoder. For each
 subject \(s\) and epoch \(t\), prototype \(m(s,t)\) is the mean of \(s\)'s
@@ -391,23 +391,23 @@ linearly recoverable from the representation, but it does not by itself
 establish traceability. Second, we compute a context drift score over nearest
 neighbors. For each epoch and subject class, we retrieve the \(k\) nearest
 neighbors of each subject representation% TODO: state k value explicitly
-\ and measure the proportion assigned to context A, with \(k\) fixed at the
+\ and measure the proportion assigned to $N_1$, with \(k\) fixed at the
 same value across all models and splits. A traceable representation should show
-a strong movement from A-like to B-like neighborhoods for drifting subjects,
+a strong movement from $N_1$-like to $N_2$-like neighborhoods for drifting subjects,
 weaker movement for bifurcating subjects, and comparatively limited movement
 for stable subjects. Third, we use contrastive temporal examples in which the
 same subject token is presented with two different epoch labels. We define the
 contrastive sign-flip rate as the proportion of such pairs for which swapping
-the epoch label reverses the nearest-neighbor context assignment (from
-A-dominant to B-dominant or vice versa). A model without temporal capacity is
+the epoch label reverses the nearest-neighbor assignment (from
+$N_1$-dominant to $N_2$-dominant or vice versa). A model without temporal capacity is
 expected to produce a sign-flip rate of zero, since the same token yields the
 same representation regardless of the epoch label provided. Fourth, we evaluate
 continuation examples from held-out later epochs% TODO: specify which epochs are held out (e.g. t8--t9)
 \ to test whether temporal behavior extends beyond the training distribution.
 
-Comparisons follow the ablation chain: B2a vs.\ B1 isolates the effect of
-global time conditioning; B2b vs.\ B2a isolates token-time interaction; B3
-vs.\ B2b isolates the memory contribution, evaluated on continuation and
+Comparisons follow the ablation chain: Additive vs.\ Static isolates the effect of
+global time conditioning; Joint vs.\ Additive isolates token-time interaction; Timeformer
+vs.\ Joint isolates the memory contribution, evaluated on continuation and
 contrastive diagnostics.
 
 For the memory-augmented model, we include a shuffled-memory control (a
@@ -427,7 +427,7 @@ The memory-augmented variant is informative as a diagnostic extension, but it
 does not provide a robust improvement over the Token-Time Transformer.
 
 \subsection{Temporal Neighborhood Movement}
-% Main claim: B2b produces a stronger temporal neighborhood transition than B1.
+% Main claim: Joint produces a stronger temporal neighborhood transition than Static.
 % Use class-specific curves to avoid claiming stable subjects are perfectly flat.
 Figure~\ref{fig:context-drift} and Table~\ref{tab:context-drift} show the
 context drift score across epochs. For drifting subjects, the Static
@@ -448,7 +448,7 @@ aggregate score.
 \centering
 \includegraphics[width=\textwidth]{outputs/figures/figure3_context_drift.png}
 \caption{Context drift score across epochs. The Token-Time Transformer shows
-stronger movement from context A toward context B for drifting subjects than
+stronger movement from $N_1$ toward $N_2$ for drifting subjects than
 the Static Transformer, while stable and bifurcating subjects provide
 class-specific controls.}
 \label{fig:context-drift}
@@ -456,7 +456,7 @@ class-specific controls.}
 
 \begin{table}[t]
 \caption{Context drift score at the first and last epochs. Values are
-context-A proportions among nearest neighbors; \(\Delta=t9-t0\).}
+$N_1$ proportions among nearest neighbors; \(\Delta=t9-t0\).}
 \label{tab:context-drift}
 \centering
 \small
@@ -507,7 +507,7 @@ trajectories as the more diagnostic measure of traceability.
 \begin{table}[t]
 \caption{Main traceability diagnostics. Accuracy columns report linear-probe
 accuracy on \(h_s\); flip is contrastive sign-flip rate. A dash indicates the
-metric was not computed for this variant.% TODO: explain why Drift was not computed for B2a
+metric was not computed for this variant.% TODO: explain why Drift was not computed for Additive
 }
 \label{tab:main-results}
 \centering
@@ -526,7 +526,7 @@ Memory-Augmented Timeformer & -0.573 & 0.506 & 0.599 & 0.766 \\
 \end{table}
 
 \subsection{Memory Diagnostics}
-% Report B3 honestly: not a stable improvement over B2b, but diagnostically
+% Report Timeformer honestly: not a stable improvement over Joint, but diagnostically
 % useful. Oracle memory may affect sign flip without solving continuation.
 The Memory-Augmented Timeformer does not produce a robust gain over the
 Token-Time Transformer. On continuation, both models average \(0.766\), and
@@ -536,7 +536,7 @@ oracle diagnostic% TODO: specify what was corrected in the oracle run
 (\(0.586\) vs. \(0.448\) for the Token-Time reference) but not continuation
 (\(0.754\) vs. \(0.762\)). Perfect historical prototypes can affect contrastive
 temporal behavior, but do not solve the continuation objective under the current
-MLM setup, supporting the use of B3 as a diagnostic extension.
+MLM setup, supporting the use of Timeformer as a diagnostic extension.
 
 \begin{table}[t]
 \caption{Memory diagnostics from the corrected oracle run. Continuation is
@@ -548,11 +548,11 @@ rate.}
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{|l|c|c|p{3.0cm}|}
 \hline
-Variant & Continuation & Sign flip & Delta vs. B2b ref. \\
+Variant & Continuation & Sign flip & Delta vs. Joint ref. \\
 \hline
-B2b reference & 0.762 & 0.448 & -- \\
-B3 learned & 0.775 & 0.448 & +0.013 cont.; +0.000 flip \\
-B3 oracle & 0.754 & 0.586 & -0.008 cont.; +0.138 flip \\
+Joint reference & 0.762 & 0.448 & -- \\
+Timeformer learned & 0.775 & 0.448 & +0.013 cont.; +0.000 flip \\
+Timeformer oracle & 0.754 & 0.586 & -0.008 cont.; +0.138 flip \\
 \hline
 \end{tabular}
 \end{table}

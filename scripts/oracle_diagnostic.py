@@ -1,17 +1,17 @@
 """
-Oracle Memory Diagnostic para o B3.
+Oracle Memory Diagnostic para o Timeformer.
 
 Substitui os protótipos aprendidos por vetores que codificam explicitamente
-P(ctx=A | S, t) calculado do split de treino do corpus (ground truth).
+P(N1 | S, t) calculado do split de treino do corpus (ground truth).
 
 Hipótese testada:
-  Se B3-oracle > B2b  →  arquitetura funciona; problema são os protótipos aprendidos
-  Se B3-oracle ≈ B2b  →  MLM/SVO não beneficia de memória independente da qualidade
+  Se Timeformer-oracle > Joint  →  arquitetura funciona; problema são os protótipos aprendidos
+  Se Timeformer-oracle ≈ Joint  →  MLM/SVO não beneficia de memória independente da qualidade
 
 Protocolo:
-  1. Constrói OracleMemory a partir do corpus (ground truth P(A|S,t))
-  2. Treina B3 com oracle memory fixada (não atualizada durante treino)
-  3. Avalia B3-oracle e compara com B2b e B3-learned da run de referência
+  1. Constrói OracleMemory a partir do corpus (ground truth P(N1|S,t))
+  2. Treina Timeformer com oracle memory fixada (não atualizada durante treino)
+  3. Avalia Timeformer-oracle e compara com Joint e Timeformer-learned da run de referência
 
 Uso:
   python scripts/oracle_diagnostic.py                        # run mais recente como referência
@@ -27,7 +27,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from src.timeformer.dataset import load_corpus, MLMDataset, B3Dataset, SUBJECTS, N_EPOCHS, make_continuation_split
+from src.timeformer.dataset import load_corpus, MLMDataset, TimeformerDataset, SUBJECTS, N_EPOCHS, make_continuation_split
 from src.timeformer.models import build_model, DEFAULT_HPARAMS
 from src.timeformer.memory import PrototypeMemory
 from src.timeformer.train import MLMTrainer, load_checkpoint
@@ -70,7 +70,7 @@ def build_oracle_memory(
         s = subj2idx[r["subject"]]
         t = int(r["epoch"][1:])   # "t3" → 3
         counts_total[s, t] += 1
-        if r["true_context"] == "A":
+        if r["true_context"] == "N1":
             counts_a[s, t] += 1
 
     p_a = np.where(counts_total > 0, counts_a / counts_total, 0.5)  # (n_subjects, N_EPOCHS)
@@ -99,7 +99,7 @@ def build_oracle_memory(
     return mem
 
 
-# ── Treino de B3 com oracle memory ───────────────────────────────────────────
+# ── Treino de Timeformer com oracle memory ───────────────────────────────────
 
 class _OracleMLMTrainer(MLMTrainer):
     """
@@ -124,12 +124,12 @@ def _patch_trainer_no_memory_update(trainer: MLMTrainer) -> None:
                        n_epochs=30, batch_size=64, lr=1e-3, seed=42):
         import time, torch, torch.nn as nn
         from torch.utils.data import DataLoader
-        from src.timeformer.dataset import b3_collate_fn
+        from src.timeformer.dataset import timeformer_collate_fn
 
         torch.manual_seed(seed)
         train_loader = DataLoader(
             train_dataset, batch_size=batch_size, shuffle=True,
-            collate_fn=b3_collate_fn,
+            collate_fn=timeformer_collate_fn,
         )
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False) \
             if val_dataset is not None else None
@@ -168,7 +168,7 @@ def _patch_trainer_no_memory_update(trainer: MLMTrainer) -> None:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Oracle Memory Diagnostic para B3")
+    parser = argparse.ArgumentParser(description="Oracle Memory Diagnostic para Timeformer")
     parser.add_argument("--run-id",     type=str, default=None)
     parser.add_argument("--epochs",     type=int, default=50)
     parser.add_argument("--batch-size", type=int, default=64)
@@ -188,7 +188,7 @@ def main() -> None:
         CORPUS_PATH, d_model=DEFAULT_HPARAMS["d_model"], device=args.device
     )
 
-    # Cria nova run para o B3-oracle
+    # Cria nova run para o Timeformer-oracle
     config = {
         "experiment": "oracle_diagnostic",
         "ref_run": ref_run.run_id,
@@ -201,16 +201,16 @@ def main() -> None:
     oracle_run.setup(config)
     print(f"Oracle run: {oracle_run.run_id}")
 
-    print(f"\n=== Treinando B3-oracle ({args.epochs} épocas) ===")
+    print(f"\n=== Treinando Timeformer-oracle ({args.epochs} épocas) ===")
     rows       = load_corpus(CORPUS_PATH)
     train_rows, _ = make_continuation_split(rows)
     val_rows      = [r for r in rows if r["split"] == "test"]
 
-    train_ds = B3Dataset(train_rows, seed=args.seed)
+    train_ds = TimeformerDataset(train_rows, seed=args.seed)
     val_ds   = MLMDataset(val_rows, seed=args.seed)
 
-    model_oracle = build_model("B3")
-    out_dir = oracle_run.model_dir("B3_oracle")
+    model_oracle = build_model("Timeformer")
+    out_dir = oracle_run.model_dir("Timeformer_oracle")
     trainer = MLMTrainer(model_oracle, output_dir=out_dir, device=args.device)
     _patch_trainer_no_memory_update(trainer)
 
@@ -223,7 +223,7 @@ def main() -> None:
         seed=args.seed,
     )
     best_val = min(r["val_loss"] for r in history if r["val_loss"] is not None)
-    print(f"\nB3-oracle: best_val={best_val:.4f}")
+    print(f"\nTimeformer-oracle: best_val={best_val:.4f}")
 
     # Gate aprendido
     gate_val = model_oracle.temp_attn.gate.item()
@@ -239,46 +239,46 @@ def main() -> None:
 
     results = {}
 
-    # B3-oracle (checkpoint do treino com oracle memory)
+    # Timeformer-oracle (checkpoint do treino com oracle memory)
     load_checkpoint(model_oracle, out_dir / "best.pt")
-    results["B3_oracle"] = evaluator.evaluate(model_oracle, memory=oracle_mem)
+    results["Timeformer_oracle"] = evaluator.evaluate(model_oracle, memory=oracle_mem)
 
-    # B2b de referência (para comparação direta)
-    b2b_ckpt = ref_run.checkpoint_path("B2b", "best")
-    if b2b_ckpt.exists():
-        model_b2b = build_model("B2b")
-        load_checkpoint(model_b2b, b2b_ckpt)
-        results["B2b_ref"] = evaluator.evaluate(model_b2b, memory=None)
+    # Joint de referência (para comparação direta)
+    joint_ckpt = ref_run.checkpoint_path("Joint", "best")
+    if joint_ckpt.exists():
+        model_joint = build_model("Joint")
+        load_checkpoint(model_joint, joint_ckpt)
+        results["Joint_ref"] = evaluator.evaluate(model_joint, memory=None)
 
-    # B3-learned de referência (checkpoint treinado com protótipos aprendidos)
-    b3_ckpt = ref_run.checkpoint_path("B3", "best")
-    if b3_ckpt.exists():
-        model_b3 = build_model("B3")
-        load_checkpoint(model_b3, b3_ckpt)
-        learned_mem = ref_run.load_memory("B3")
+    # Timeformer-learned de referência (checkpoint treinado com protótipos aprendidos)
+    tf_ckpt = ref_run.checkpoint_path("Timeformer", "best")
+    if tf_ckpt.exists():
+        model_tf = build_model("Timeformer")
+        load_checkpoint(model_tf, tf_ckpt)
+        learned_mem = ref_run.load_memory("Timeformer")
         if learned_mem:
             learned_mem.to(args.device)
-        results["B3_learned"] = evaluator.evaluate(model_b3, memory=learned_mem)
+        results["Timeformer_learned"] = evaluator.evaluate(model_tf, memory=learned_mem)
 
     # Sumário
-    print(f"\n{'model':<15} {'test':<8} {'ambig':<8} {'cont':<8} {'sign_flip':<10}")
-    print("-" * 50)
+    print(f"\n{'model':<20} {'test':<8} {'ambig':<8} {'cont':<8} {'sign_flip':<10}")
+    print("-" * 55)
     for name, res in results.items():
         t   = res.get("test", {}).get("probe_subj", {}).get("accuracy", float("nan"))
         a   = res.get("ambiguous_test", {}).get("probe_subj", {}).get("accuracy", float("nan"))
         c   = res.get("continuation", {}).get("probe_subj", {}).get("accuracy", float("nan"))
         sfr = res.get("contrastive", {}).get("sign_flip_rate", float("nan"))
-        print(f"{name:<15} {t:<8.3f} {a:<8.3f} {c:<8.3f} {sfr:<10.3f}")
+        print(f"{name:<20} {t:<8.3f} {a:<8.3f} {c:<8.3f} {sfr:<10.3f}")
 
     print(f"\nInterpretação:")
-    b2b_c  = results.get("B2b_ref", {}).get("continuation", {}).get("probe_subj", {}).get("accuracy", float("nan"))
-    bor_c  = results.get("B3_oracle", {}).get("continuation", {}).get("probe_subj", {}).get("accuracy", float("nan"))
-    bln_c  = results.get("B3_learned", {}).get("continuation", {}).get("probe_subj", {}).get("accuracy", float("nan"))
-    delta_oracle  = bor_c - b2b_c
-    delta_learned = bln_c - b2b_c
+    joint_c  = results.get("Joint_ref", {}).get("continuation", {}).get("probe_subj", {}).get("accuracy", float("nan"))
+    bor_c  = results.get("Timeformer_oracle", {}).get("continuation", {}).get("probe_subj", {}).get("accuracy", float("nan"))
+    bln_c  = results.get("Timeformer_learned", {}).get("continuation", {}).get("probe_subj", {}).get("accuracy", float("nan"))
+    delta_oracle  = bor_c - joint_c
+    delta_learned = bln_c - joint_c
 
-    print(f"  ΔA oracle  (B3-oracle  − B2b): {delta_oracle:+.4f}")
-    print(f"  ΔA learned (B3-learned − B2b): {delta_learned:+.4f}")
+    print(f"  Δ oracle  (Timeformer-oracle  − Joint): {delta_oracle:+.4f}")
+    print(f"  Δ learned (Timeformer-learned − Joint): {delta_learned:+.4f}")
 
     if delta_oracle > 0.01:
         print("  → Arquitetura FUNCIONA com oracle; problema são os protótipos aprendidos")

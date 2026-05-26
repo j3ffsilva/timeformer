@@ -24,9 +24,13 @@ from src.train_embeddings import TOKEN_TO_IDX, VOCAB
 EPOCHS = [f"t{i}" for i in range(6)]
 SUBJECTS = ["S1", "S2", "S3", "S4", "S5", "S6"]
 
-# Tokens que definem cada contexto semântico
-CONTEXT_A_TOKENS = ["V1", "V2", "V3", "V4", "O1", "O2", "O3", "O4"]
-CONTEXT_B_TOKENS = ["V5", "V6", "V7", "V8", "O5", "O6", "O7", "O8"]
+# Tokens que definem cada vizinhança semântica
+NEIGH_1_TOKENS = ["V1", "V2", "V3", "V4", "O1", "O2", "O3", "O4"]
+NEIGH_2_TOKENS = ["V5", "V6", "V7", "V8", "O5", "O6", "O7", "O8"]
+
+# Backward-compatible aliases
+CONTEXT_A_TOKENS = NEIGH_1_TOKENS
+CONTEXT_B_TOKENS = NEIGH_2_TOKENS
 
 SUBJECT_PALETTES = {
     "S1": "Blues", "S4": "Blues",
@@ -177,24 +181,24 @@ def plot_context_affinity(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     affinities: dict[str, dict[str, list[float]]] = {
-        s: {"A": [], "B": []} for s in SUBJECTS
+        s: {"N1": [], "N2": []} for s in SUBJECTS
     }
 
     for ep in EPOCHS:
         if all_models and ep in all_models:
             probs = compute_context_probs(all_models[ep])
             for subject in SUBJECTS:
-                affinities[subject]["A"].append(probs[subject][0])
-                affinities[subject]["B"].append(probs[subject][1])
+                affinities[subject]["N1"].append(probs[subject][0])
+                affinities[subject]["N2"].append(probs[subject][1])
         else:
             # Fallback: similaridade cosseno com centroides (menos preciso)
             emb = all_embeddings[ep]
-            centroid_a = _context_centroid(emb, CONTEXT_A_TOKENS)
-            centroid_b = _context_centroid(emb, CONTEXT_B_TOKENS)
+            centroid_a = _context_centroid(emb, NEIGH_1_TOKENS)
+            centroid_b = _context_centroid(emb, NEIGH_2_TOKENS)
             for subject in SUBJECTS:
                 vec = emb[TOKEN_TO_IDX[subject]]
-                affinities[subject]["A"].append(_cosine_similarity(vec, centroid_a))
-                affinities[subject]["B"].append(_cosine_similarity(vec, centroid_b))
+                affinities[subject]["N1"].append(_cosine_similarity(vec, centroid_a))
+                affinities[subject]["N2"].append(_cosine_similarity(vec, centroid_b))
 
     using_probs = all_models is not None
     ylabel = "P(contexto)" if using_probs else "Similaridade cosseno"
@@ -213,10 +217,10 @@ def plot_context_affinity(
     x = list(range(len(EPOCHS)))
 
     for ax, subject in zip(axes, SUBJECTS):
-        aff_a = affinities[subject]["A"]
-        aff_b = affinities[subject]["B"]
-        ax.plot(x, aff_a, "o-", color="#1565C0", label="Contexto A", linewidth=2, markersize=8)
-        ax.plot(x, aff_b, "s--", color="#C62828", label="Contexto B", linewidth=2, markersize=8)
+        aff_a = affinities[subject]["N1"]
+        aff_b = affinities[subject]["N2"]
+        ax.plot(x, aff_a, "o-", color="#1565C0", label="N1", linewidth=2, markersize=8)
+        ax.plot(x, aff_b, "s--", color="#C62828", label="N2", linewidth=2, markersize=8)
         ax.set_xticks(x)
         ax.set_xticklabels(EPOCHS)
         ax.set_title(SUBJECT_LABELS[subject], fontsize=10)

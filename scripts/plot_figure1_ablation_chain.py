@@ -31,8 +31,8 @@ COLORS = {
     "time": "#EF553B",
     "token": "#00CC96",
     "memory": "#AB63FA",
-    "context_a": "#2f80ed",
-    "context_b": "#e05252",
+    "n1": "#2f80ed",
+    "n2": "#e05252",
 }
 
 
@@ -126,7 +126,7 @@ def build_figure() -> go.Figure:
         y0=0.56,
         x1=0.145,
         y1=0.70,
-        line={"color": COLORS["context_a"], "width": 2},
+        line={"color": COLORS["n1"], "width": 2},
         fillcolor="#e8f1ff",
     )
     fig.add_shape(
@@ -135,22 +135,22 @@ def build_figure() -> go.Figure:
         y0=0.30,
         x1=0.255,
         y1=0.44,
-        line={"color": COLORS["context_b"], "width": 2},
+        line={"color": COLORS["n2"], "width": 2},
         fillcolor="#fff0f0",
     )
     fig.add_annotation(
         x=0.105,
         y=0.63,
-        text="<b>S11@t2</b><br>near context A",
+        text="<b>S11@t2</b><br>near N1",
         showarrow=False,
-        font={"size": 12, "color": COLORS["context_a"]},
+        font={"size": 12, "color": COLORS["n1"]},
     )
     fig.add_annotation(
         x=0.215,
         y=0.37,
-        text="<b>S11@t8</b><br>near context B",
+        text="<b>S11@t8</b><br>near N2",
         showarrow=False,
-        font={"size": 12, "color": COLORS["context_b"]},
+        font={"size": 12, "color": COLORS["n2"]},
     )
     add_arrow(fig, 0.135, 0.56, 0.19, 0.45)
     fig.add_annotation(

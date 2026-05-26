@@ -1,9 +1,9 @@
 """
-Treina os modelos da Fase B (B1, B2a, B2b, B3) e salva checkpoints via RunManager.
+Treina os modelos da Fase B (Static, Additive, Joint, Timeformer) e salva checkpoints via RunManager.
 
 Uso:
-  python scripts/train_phase_b.py                   # treina todos
-  python scripts/train_phase_b.py --model B3        # treina apenas B3
+  python scripts/train_phase_b.py                        # treina todos
+  python scripts/train_phase_b.py --model Timeformer     # treina apenas Timeformer
   python scripts/train_phase_b.py --epochs 50 --lr 5e-4
   python scripts/train_phase_b.py --run-id 20260523_001  # continua run existente
 """
@@ -12,7 +12,7 @@ import argparse
 import pickle
 from pathlib import Path
 
-from src.timeformer.dataset import load_corpus, MLMDataset, B3Dataset, make_continuation_split
+from src.timeformer.dataset import load_corpus, MLMDataset, TimeformerDataset, make_continuation_split
 from src.timeformer.models import build_model, DEFAULT_HPARAMS
 from src.timeformer.memory import PrototypeMemory
 from src.timeformer.nomenclature import model_label
@@ -20,7 +20,7 @@ from src.timeformer.train import MLMTrainer
 from src.timeformer.run import RunManager
 
 CORPUS_PATH = Path("data/corpus.tsv")
-ALL_MODELS  = ["B1", "B2a", "B2b", "B3"]
+ALL_MODELS  = ["Static", "Additive", "Joint", "Timeformer"]
 
 TRAIN_DEFAULTS = {
     "n_epochs":   30,
@@ -44,9 +44,9 @@ def train_model(name: str, args: argparse.Namespace, run: RunManager) -> None:
     n_params = sum(p.numel() for p in model.parameters())
     print(f"Parâmetros: {n_params:,}")
 
-    train_ds = B3Dataset(train_rows, seed=args.seed) if name == "B3" else MLMDataset(train_rows, seed=args.seed)
+    train_ds = TimeformerDataset(train_rows, seed=args.seed) if name == "Timeformer" else MLMDataset(train_rows, seed=args.seed)
     val_ds   = MLMDataset(val_rows,  seed=args.seed)
-    memory   = PrototypeMemory(d_model=DEFAULT_HPARAMS["d_model"]) if name == "B3" else None
+    memory   = PrototypeMemory(d_model=DEFAULT_HPARAMS["d_model"]) if name == "Timeformer" else None
 
     out_dir = run.model_dir(name)
     trainer = MLMTrainer(model, output_dir=out_dir, device=args.device)
@@ -69,7 +69,7 @@ def train_model(name: str, args: argparse.Namespace, run: RunManager) -> None:
 
     if memory is not None:
         run.save_memory(name, memory)
-        print(f"Memória B3 salva em {out_dir}/memory.pkl")
+        print(f"Memória Timeformer salva em {out_dir}/memory.pkl")
 
 
 def main() -> None:

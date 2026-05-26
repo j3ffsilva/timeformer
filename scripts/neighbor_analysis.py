@@ -1,9 +1,9 @@
 """
 Análise de vizinhança temporal — demonstração de rastreabilidade semântica.
 
-Extrai h(sujeito) do split de teste para B1, B2b e B3 e computa:
+Extrai h(sujeito) do split de teste para Static, Joint e Timeformer e computa:
 
-  1. context_drift_score: p̂(ctx=A | epoch) entre os k-NN por classe de sujeito
+  1. context_drift_score: p̂(ctx=N1 | epoch) entre os k-NN por classe de sujeito
      → mostra se o modelo "move" a vizinhança em sujeitos com drift, mantendo
        sujeitos estáveis como controle
 
@@ -19,7 +19,7 @@ Extrai h(sujeito) do split de teste para B1, B2b e B3 e computa:
 Uso:
   python scripts/neighbor_analysis.py                     # run mais recente
   python scripts/neighbor_analysis.py --run-id 20260523_006
-  python scripts/neighbor_analysis.py --k 10 --models B1 B2b B3
+  python scripts/neighbor_analysis.py --k 10 --models Static Joint Timeformer
 """
 
 from __future__ import annotations
@@ -70,10 +70,10 @@ def load_model_reps(
     model.to(torch.device(device))
 
     memory = None
-    if name == "B3":
+    if name == "Timeformer":
         memory = run.load_memory(name)   # prefere memory_best.pkl
         if memory is None:
-            print(f"  B3: memory não encontrada — avaliando sem memória")
+            print(f"  Timeformer: memory não encontrada — avaliando sem memória")
         else:
             memory.to(device)
 
@@ -307,7 +307,7 @@ def main() -> None:
     parser.add_argument("--run-id",  type=str, default=None)
     parser.add_argument("--k",       type=int, default=10)
     parser.add_argument("--device",  type=str, default="cpu")
-    parser.add_argument("--models",  nargs="+", default=["B1", "B2b", "B3"])
+    parser.add_argument("--models",  nargs="+", default=["Static", "Joint", "Timeformer"])
     parser.add_argument("--subject", type=int, default=None,
                         help="Índice 0-based do sujeito para tabela qualitativa")
     args = parser.parse_args()

@@ -41,9 +41,9 @@ def draw_svo_panel(ax: plt.Axes) -> None:
 
     # (epoch, subj, verb, obj, true_ctx, verb_ctx, obj_ctx)
     rows = [
-        ("t0", "S5", "V2", "O3", "A", "A", "A"),
-        ("t7", "S5", "V2", "O7", "B", "A", "B"),   # V2 is noisy: A-verb in B sentence
-        ("t9", "S5", "V6", "O8", "B", "B", "B"),
+        ("t0", "S5", "V2", "O3", "N1", "N1", "N1"),
+        ("t7", "S5", "V2", "O7", "N2", "N1", "N2"),   # V2 is noisy: N1-verb in N2 sentence
+        ("t9", "S5", "V6", "O8", "N2", "N2", "N2"),
     ]
 
     col_x = [0.05, 0.23, 0.41, 0.59, 0.79]   # epoch / subj / verb / obj / label
@@ -57,7 +57,7 @@ def draw_svo_panel(ax: plt.Axes) -> None:
                 ha="center", va="center", fontsize=7.5,
                 fontweight="bold", color="#444444")
 
-    ctx_color = {"A": C_A, "B": C_B}
+    ctx_color = {"N1": C_A, "N2": C_B}
 
     for ri, (ep, subj, verb, obj, true_ctx, verb_ctx, obj_ctx) in enumerate(rows):
         y = row_y[ri]
@@ -125,7 +125,7 @@ def draw_trajectory_panel(ax: plt.Axes) -> None:
     ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_yticklabels(["0", ".25", ".50", ".75", "1"], fontsize=7.5)
     ax.set_xlabel("Epoch", fontsize=8)
-    ax.set_ylabel(r"$P(A \mid s,\,t)$", fontsize=8)
+    ax.set_ylabel(r"$P(N_1 \mid s,\,t)$", fontsize=8)
     ax.set_title("Planted trajectories", fontsize=9, fontweight="bold", pad=6)
     ax.legend(fontsize=7.5, loc="center right",
               framealpha=0.88, edgecolor="#cccccc", handlelength=2.0)
@@ -147,9 +147,9 @@ def draw_matrix_panel(ax: plt.Axes) -> None:
 
     # (display text, background colour)
     cells: list[list[tuple[str, str]]] = [
-        [("A",     C_A),     ("A",      C_A),     ("A",   C_A)],
-        [("A",     C_A),     ("~A→B",   C_TRANS),  ("B",   C_B)],
-        [("A",     C_A),     ("A",      C_A),      ("A/B", C_MIX)],
+        [("N1",      C_A),   ("N1",      C_A),    ("N1",    C_A)],
+        [("N1",      C_A),   ("~N1→N2",  C_TRANS), ("N2",   C_B)],
+        [("N1",      C_A),   ("N1",      C_A),    ("N1/N2", C_MIX)],
     ]
 
     col_x = [0.38, 0.60, 0.82]
@@ -182,9 +182,9 @@ def draw_matrix_panel(ax: plt.Axes) -> None:
                     fontsize=7.5, color="white", fontweight="bold", zorder=3)
 
     legend_handles = [
-        mpatches.Patch(facecolor=C_A,    alpha=0.82, label="Context A"),
-        mpatches.Patch(facecolor=C_B,    alpha=0.82, label="Context B"),
-        mpatches.Patch(facecolor=C_MIX,  alpha=0.82, label="A/B mixed"),
+        mpatches.Patch(facecolor=C_A,    alpha=0.82, label="N1"),
+        mpatches.Patch(facecolor=C_B,    alpha=0.82, label="N2"),
+        mpatches.Patch(facecolor=C_MIX,  alpha=0.82, label="N1/N2 mixed"),
     ]
     ax.legend(handles=legend_handles, fontsize=7, loc="lower center",
               ncol=3, framealpha=0.75, edgecolor="#cccccc",

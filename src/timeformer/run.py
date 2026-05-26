@@ -9,13 +9,13 @@ Estrutura de saída:
   outputs/runs/
     20260523_001/
       config.json          — hiperparâmetros e configuração da run
-      B1/
+      Static/
         train_history.json — loss por época
         best.pt            — melhor checkpoint por val_loss
         final.pt           — checkpoint ao fim do treino
-      B2a/ ...
-      B2b/ ...
-      B3/
+      Additive/ ...
+      Joint/ ...
+      Timeformer/
         train_history.json
         best.pt  final.pt
         memory.pkl         — PrototypeMemory serializada
@@ -39,9 +39,9 @@ RUNS_ROOT    = Path("outputs/runs")
 INDEX_FILE   = RUNS_ROOT / "runs_index.csv"
 INDEX_FIELDS = [
     "run_id", "date", "epochs", "lr", "batch_size", "d_model",
-    "B1_test_acc", "B2b_test_acc", "B3_test_acc",
-    "B2b_ambiguous_acc", "B3_ambiguous_acc",
-    "B3_continuation_acc", "B3_sign_flip",
+    "Static_test_acc", "Joint_test_acc", "Timeformer_test_acc",
+    "Joint_ambiguous_acc", "Timeformer_ambiguous_acc",
+    "Timeformer_continuation_acc", "Timeformer_sign_flip",
     "notes",
 ]
 
@@ -53,7 +53,7 @@ class RunManager:
     Uso típico:
         run = RunManager()
         run.setup(config)
-        trainer = MLMTrainer(model, run.model_dir("B1"))
+        trainer = MLMTrainer(model, run.model_dir("Static"))
         ...
         run.update_index(results, config)
     """
@@ -91,7 +91,7 @@ class RunManager:
         d.mkdir(parents=True, exist_ok=True)
         return d
 
-    # ── Persistência de memória B3 ────────────────────────────────────────
+    # ── Persistência de memória Timeformer ───────────────────────────────
 
     def save_memory(self, model_name: str, memory) -> Path:
         """Serializa PrototypeMemory em {model_dir}/memory.pkl."""
@@ -148,13 +148,13 @@ class RunManager:
             "lr":                  self._config.get("lr", ""),
             "batch_size":          self._config.get("batch_size", ""),
             "d_model":             self._config.get("d_model", ""),
-            "B1_test_acc":         _acc("B1",  "test"),
-            "B2b_test_acc":        _acc("B2b", "test"),
-            "B3_test_acc":         _acc("B3",  "test"),
-            "B2b_ambiguous_acc":   _acc("B2b", "ambiguous_test"),
-            "B3_ambiguous_acc":    _acc("B3",  "ambiguous_test"),
-            "B3_continuation_acc": _acc("B3",  "continuation"),
-            "B3_sign_flip":        _sfr("B3"),
+            "Static_test_acc":         _acc("Static",     "test"),
+            "Joint_test_acc":          _acc("Joint",      "test"),
+            "Timeformer_test_acc":     _acc("Timeformer", "test"),
+            "Joint_ambiguous_acc":     _acc("Joint",      "ambiguous_test"),
+            "Timeformer_ambiguous_acc":  _acc("Timeformer", "ambiguous_test"),
+            "Timeformer_continuation_acc": _acc("Timeformer", "continuation"),
+            "Timeformer_sign_flip":    _sfr("Timeformer"),
             "notes":               notes,
         }
 

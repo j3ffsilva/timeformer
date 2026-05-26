@@ -25,31 +25,26 @@
 
 \begin{abstract}
 Words change meaning over time, yet most computational models treat token
-representations as epoch-independent. We study temporal traceability: the
-property that the same surface token, queried at different epochs, occupies
-semantically appropriate neighborhoods in representation space. A model may use
-epoch information to improve predictive accuracy without exposing a traceable
-\texttt{token@time} representation: this gap is the focus of the paper.
+representations as epoch-independent. We study \emph{temporal traceability}:
+whether the same surface token, queried at different epochs, occupies
+epoch-appropriate neighborhoods. A model may improve predictive accuracy with
+temporal information while still assigning nearly identical neighborhoods across
+epochs; this gap is our focus.
 
-We address it with Timeformer, a family of Transformer-style encoders organized
-as a controlled ablation chain. Four variants add temporal capacity in successive
-steps: a static baseline, a globally time-conditioned encoder, a token-time
-encoder that conditions each token embedding on the epoch before self-attention
-is applied, and a memory-augmented extension that consults causal historical
-prototypes. All variants are trained with masked language modeling on a
-controlled synthetic benchmark in which the temporal trajectory of each target
-item is known and evaluation labels are withheld from training.
+We introduce Timeformer, a family of Transformer encoders organized as a
+controlled ablation chain. Four variants add temporal capacity incrementally:
+Static (no time information), Additive (global epoch vector), Joint (token and
+epoch projected jointly before self-attention), and Memory-Augmented (causal
+prototype memory). All are trained with masked language modeling on a synthetic
+benchmark with known ground-truth trajectories.
 
-The main finding is that explicit token-time interaction is the effective
-mechanism for traceability. The Token-Time Transformer produces a neighborhood
-drift of \(-0.614\) for drifting subjects across epochs, compared to \(-0.231\)
-for the static baseline (a difference stable across seeds and visible in
-class-specific trajectory curves). Probe-based accuracy gains are modest and
-seed-sensitive, confirming that geometric diagnostics are more appropriate than
-label recoverability for evaluating traceability. The memory-augmented variant
-does not produce a robust improvement over token-time interaction; the oracle
-diagnostic identifies mean-prototype aggregation as the failure point,
-motivating sense-aware memory mechanisms in future work.
+The main finding is that token-time interaction is the effective traceability
+mechanism. The Joint variant produces a neighborhood drift of \(-0.614\) for
+drifting subjects, versus \(-0.231\) for Static (stable across seeds).
+Probe-based accuracy gains are modest and seed-sensitive, confirming that
+geometric diagnostics are more informative than label recoverability. The
+Memory-Augmented variant shows no robust improvement; oracle analysis identifies
+mean-prototype aggregation as the failure point.
 
 \keywords{Temporal semantics \and Semantic change \and Transformer models \and Traceability \and Diagnostic evaluation}
 \end{abstract}
@@ -57,62 +52,47 @@ motivating sense-aware memory mechanisms in future work.
 \section{Introduction}
 % Target length: 1.0--1.25 pages.
 Words do not preserve fixed meanings across time. In 1900, \emph{broadcast}
-referred to scattering seeds across a field; by mid-century it denoted radio and
-television transmission; today it describes a social media post reaching millions
-of users. Most language models, however, take no account of when a text was written: a
-word's representation depends on its surrounding context, but not on the
-historical period in which it appeared. A model that cannot distinguish
-\texttt{broadcast@1900} from \texttt{broadcast@2020} cannot be inspected for
-semantic movement across time.
+referred to scattering seeds across a field; today it describes a social media
+post reaching millions of users. Most language models, however, take no account
+of when a text was written: a word's representation depends on its surrounding
+context, but not on the historical period in which it appeared.
 
 The ability to query a word at a specific epoch matters beyond technical
 benchmarks. Consider \emph{gay}, which in the early twentieth century was
-predominantly associated with terms such as \emph{cheerful}, \emph{merry}, and
-\emph{carefree}, and by the late twentieth century with \emph{queer},
-\emph{lesbian}, and \emph{bisexual}~\cite{hamilton2016diachronic}. Whether this
-transition involved a shift toward or away from terms linked to social stigma,
-and when exactly that shift occurred, is an empirical question. To answer it,
-one needs a representation that exposes \texttt{gay@1920} and \texttt{gay@1980}
-as directly comparable objects in a shared space. Without such a representation,
-the question can only be addressed through aggregate statistics that conflate
-meaning with unrelated features of the corpus.
+associated with \emph{cheerful}, \emph{merry}, and \emph{carefree}, and by the
+late twentieth century with \emph{queer}, \emph{lesbian}, and
+\emph{bisexual}~\cite{hamilton2016diachronic}. Whether this transition involved
+a shift toward or away from terms linked to social stigma is an empirical
+question that requires a representation exposing \texttt{gay@1920} and
+\texttt{gay@1980} as directly comparable objects in a shared space.
 
 The dominant computational approach, lexical semantic change detection (LSCD),
-measures this kind of shift by training distributional representations on
-time-sliced corpora and comparing them across
+measures such shifts by training distributional representations on time-sliced
+corpora and comparing them across
 periods~\cite{schlechtweg2020semeval,tahmasebi2021survey}. One model may
 associate \emph{broadcast} in 1900 with \emph{sow} and \emph{field}, while
-another, trained on 2020 data, associates it with \emph{signal} and
-\emph{audience}; semantic change is inferred from the distance between the two
-spaces. This approach has produced important methods and benchmarks, but it
-summarizes the change as a single similarity score between two separately
-trained models, not as a queryable \texttt{token@time} object.
-\texttt{broadcast@1900} and \texttt{broadcast@2020} are implicit in the models
-but not directly inspectable within a single shared space.
+another associates it with \emph{signal} and \emph{audience}; change is inferred
+from the distance between the two spaces. It summarizes the shift as a single
+similarity score between separately trained models, not as a queryable
+\texttt{token@time} object.
 
 A subtler limitation arises when a single model receives temporal information
 during training. A model may correctly interpret \emph{virus} as biological
-infection in a 1900 sentence and as malicious software in a 2020 sentence,
-improving its word-prediction accuracy, while still assigning nearly identical
-neighborhoods to the token across epochs. Temporal information can improve
-prediction without producing a representation in which the same word occupies
-measurably different neighborhoods at different epochs. Prediction accuracy and
-geometric traceability are separable properties.
+infection in 1900 and as malicious software in 2020, improving word-prediction
+accuracy, while still assigning nearly identical neighborhoods across epochs.
+Prediction accuracy and geometric traceability are separable properties.
 
 We call a representation \emph{temporally traceable} if the same surface token,
 queried at different epochs, occupies neighborhoods consistent with its meaning
 at that epoch, making \texttt{token@time} a directly inspectable object. This
-paper introduces Timeformer, a family of Transformer-style encoders designed
-around this property. The family is organized as a controlled ablation chain: a
-Static Transformer with no time information; an Additive Time-Conditioned
-Transformer that injects a global epoch vector; a Token-Time Transformer that
-conditions each token embedding on the epoch before self-attention is applied;
-and a Memory-Augmented Timeformer that consults causal historical prototypes.
-This design lets us isolate which form of temporal conditioning produces
-traceability, rather than treating it as a single architectural choice. We study
-this in a controlled synthetic benchmark in which the temporal trajectory of each
-subject is known, giving diagnostic access to target neighborhoods without the
-confounds of natural historical corpora.
+paper introduces Timeformer, a family of Transformer encoders organized as a
+controlled ablation chain: Static (no time information), Additive (global epoch
+vector), Joint (token and epoch projected jointly before self-attention), and
+Memory-Augmented (causal prototype memory). This design isolates which form of
+temporal conditioning produces traceability. We study this in a controlled
+synthetic benchmark in which the temporal trajectory of each subject is known,
+giving diagnostic access to target neighborhoods without the confounds of natural
+historical corpora.
 
 The paper makes four contributions: it formulates temporal traceability as a
 \texttt{token@time} representation problem; introduces the Timeformer ablation

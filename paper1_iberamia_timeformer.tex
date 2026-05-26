@@ -26,16 +26,16 @@
 
 \begin{abstract}
 Words change meaning over time, yet most computational models treat token
-representations as epoch-independent. We study \emph{temporal traceability}:
-whether the same surface token, queried at different epochs, occupies
-epoch-appropriate neighborhoods. A model may improve predictive accuracy with
+representations as period-independent. We study \emph{temporal traceability}:
+whether the same surface token, queried at different periods, occupies
+period-appropriate neighborhoods. A model may improve predictive accuracy with
 temporal information while still assigning nearly identical neighborhoods across
-epochs; this gap is our focus.
+periods; this gap is our focus.
 
 We introduce Timeformer, a family of Transformer encoders organized as a
 controlled ablation chain. Four variants add temporal capacity incrementally:
-Static (no time information), Additive (global epoch vector), Joint (token and
-epoch projected jointly before self-attention), and Memory-Augmented (causal
+Static (no time information), Additive (global time vector), Joint (token and
+time projected jointly before self-attention), and Memory-Augmented (causal
 prototype memory). All are trained with masked language modeling on a synthetic
 benchmark with known ground-truth trajectories.
 
@@ -58,7 +58,7 @@ post reaching millions of users. Most language models, however, take no account
 of when a text was written: a word's representation depends on its surrounding
 context, but not on the historical period in which it appeared.
 
-The ability to query a word at a specific epoch matters beyond technical
+The ability to query a word at a specific period matters beyond technical
 benchmarks. Consider \emph{gay}, which in the early twentieth century was
 associated with \emph{cheerful}, \emph{merry}, and \emph{carefree}, and by the
 late twentieth century with \emph{queer}, \emph{lesbian}, and
@@ -80,15 +80,15 @@ similarity score between separately trained models, not as a queryable
 A subtler limitation arises when a single model receives temporal information
 during training. A model may correctly interpret \emph{virus} as biological
 infection in 1900 and as malicious software in 2020, improving word-prediction
-accuracy, while still assigning nearly identical neighborhoods across epochs.
+accuracy, while still assigning nearly identical neighborhoods across periods.
 Prediction accuracy and geometric traceability are separable properties.
 
 We call a representation \emph{temporally traceable} if the same surface token,
-queried at different epochs, occupies neighborhoods consistent with its meaning
-at that epoch, making \texttt{token@time} a directly inspectable object. This
+queried at different periods, occupies neighborhoods consistent with its meaning
+at that period, making \texttt{token@time} a directly inspectable object. This
 paper introduces Timeformer, a family of Transformer encoders organized as a
-controlled ablation chain: Static (no time information), Additive (global epoch
-vector), Joint (token and epoch projected jointly before self-attention), and
+controlled ablation chain: Static (no time information), Additive (global time
+vector), Joint (token and time projected jointly before self-attention), and
 Memory-Augmented (causal prototype memory). This design isolates which form of
 temporal conditioning produces traceability. We study this in a controlled
 synthetic benchmark in which the temporal trajectory of each subject is known,
@@ -120,7 +120,7 @@ trained temporal slices. The central intuition remains important for this
 paper: semantic change should be visible as a change in neighborhood structure.
 Our focus, however, is not on aligning independently trained spaces. Instead,
 we ask whether a single Transformer-style encoder can expose a representation
-that is directly queryable as a lexical item at a specific epoch.
+that is directly queryable as a lexical item at a specific period.
 
 Benchmarks for LSCD have helped standardize evaluation by defining target
 words, periods, and gold annotations for semantic change~\cite{schlechtweg2020semeval,tahmasebi2021survey}.
@@ -134,16 +134,16 @@ planted trajectories and evaluation labels.
 A second relevant line of work concerns temporal conditioning in neural models.
 Rather than training separate models for each period, a temporally conditioned
 model can receive time as part of its input or architecture, allowing parameter
-sharing across epochs while representations or predictions vary with
+sharing across periods while representations or predictions vary with
 time~\cite{dhingra2022timeaware,rosin2022timemasking,loureiro2022timelms}.
 For the traceability problem, however, the form of conditioning matters. A
-global epoch vector may tell the model which period it is processing, but it
+global time vector may tell the model which period it is processing, but it
 does not necessarily force an interaction between a particular token identity
-and that epoch. Timeformer is therefore organized as an ablation chain that
+and that period. Timeformer is therefore organized as an ablation chain that
 separates global time injection from explicit token-time interaction. This
 distinction is important because the paper evaluates not only whether time
 improves a prediction, but whether the same token occupies different and
-interpretable neighborhoods at different epochs.
+interpretable neighborhoods at different periods.
 
 Finally, this paper draws on diagnostic evaluation and multi-sense
 representations. Probe accuracy does not establish traceability, so we combine
@@ -169,16 +169,16 @@ partition the vocabulary of 8 verbs and 8 objects: $N_1$ uses
 $N_1$ therefore looks like \texttt{S5 V2 O3}, while one from $N_2$
 looks like \texttt{S5 V6 O8}; the subject token is the same in both cases, but
 its co-occurring words differ. Intuitively, the intended meaning of subject
-\(s\) at epoch \(t\) is how often it appears in $N_1$ sentences; formally,
+\(s\) at period \(t\) is how often it appears in $N_1$ sentences; formally,
 \(P(N_1 \mid s, t)\) is the probability that a sentence is drawn from $N_1$.
 The vocabulary contains 30 subjects; each subject's trajectory is determined by
-how \(P(N_1 \mid s, t)\) evolves across the 10 epochs \(t0\) through \(t9\).
+how \(P(N_1 \mid s, t)\) evolves across the 10 periods \(t0\) through \(t9\).
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{outputs/figures/figure1_benchmark_design.png}
 \caption{Benchmark design overview. \emph{Left}: SVO sentences for a drifting
-subject across three epochs; an $N_1$ verb appearing in an $N_2$ sentence
+subject across three periods; an $N_1$ verb appearing in an $N_2$ sentence
 at \(t7\) (marked \({\ast}\)) illustrates the deliberate noise in local markers.
 \emph{Center}: planted \(P(N_1 \mid s, t)\) trajectories for Stable (flat),
 Drift (monotonic), and Bifurcating (levelling at 0.5) subjects across
@@ -192,61 +192,76 @@ throughout. Drift subjects follow a monotonic trajectory from near-exclusive
 $N_1$ (\(P(N_1 \mid s, t) \approx 1\) at \(t0\)) to near-exclusive $N_2$
 (\(P(N_1 \mid s, t) \approx 0\) at \(t9\)): a drifting subject that appears in
 sentences like \texttt{S5 V2 O3} early on will appear in sentences like
-\texttt{S5 V6 O8} by the final epoch. Bifurcating subjects begin in $N_1$
+\texttt{S5 V6 O8} by the final period. Bifurcating subjects begin in $N_1$
 and move toward a mixed state (\(P(N_1 \mid s, t) \approx 0.5\)) where both
 neighborhoods appear with equal frequency, approximating two coexisting senses. The
 benchmark contains 10 subjects per class.
 
-At epoch \(t7\), for example, a sentence for \texttt{S5} might read
+At period \(t7\), for example, a sentence for \texttt{S5} might read
 \texttt{S5 V2 O7} (Figure~\ref{fig:benchmark-design}, left): the planted
 neighborhood is $N_2$, but \texttt{V2} belongs to $N_1$. Each local marker is drawn
 from the opposite neighborhood 25\% of the time, so the model cannot recover the
 planted neighborhood from the words alone. It must use subject identity together with
-epoch. The \texttt{true\_context} label is determined by the planted trajectory
+the period. The \texttt{true\_context} label is determined by the planted trajectory
 and is withheld from training; it is used only for evaluation.
 
 The benchmark supports several evaluation conditions. The standard split uses
 the same 75\% marker accuracy as training. Two harder splits force the verb, or
 both verb and object, to come from the opposite context. An ambiguous split sets
 fidelity to 50\%, so local markers carry no reliable signal; only subject
-identity and epoch remain. Two additional conditions test temporal behaviour
+identity and period remain. Two additional conditions test temporal behaviour
 directly and are described in Section~5: the contrastive set presents the same
-sentence under two different epoch labels to check whether changing only the
-epoch changes the preferred context; the continuation set uses epochs held out from training to test
+sentence under two different period labels to check whether changing only the
+period changes the preferred context; the continuation set uses periods held out from training to test
 generalisation. Results throughout are diagnostic evidence in a controlled
 setting, not a claim about open-domain historical language.
 
 \section{Timeformer Architecture}
 % Target length: 2.0 pages.
-Timeformer is organized as a controlled ablation chain: each variant adds
-exactly one new capability over the previous one, so that any difference in
-traceability can be attributed to that single change.
-Figure~\ref{fig:architecture} shows the complete forward path; the simpler
-variants are special cases of the same diagram. All variants share the same
-training interface: a sentence from the SVO corpus (Section~3) is encoded as
-\texttt{[CLS] S V O [SEP]}, a Transformer encoder produces contextual hidden
-states, and \(h_s\) -- the final hidden state at the subject position -- is the
-representation used for all traceability diagnostics. Variants differ only in
-which boxes in Figure~\ref{fig:architecture} are active.
-Table~\ref{tab:model-variants} summarizes the four variants.
+Timeformer is a Transformer encoder with two targeted modifications for
+period-indexed representations. The \emph{input embedding layer} conditions each
+token on time \(t\) before self-attention; the \emph{pre-encoder
+memory gate} attends to causal historical prototypes of the subject token. The
+self-attention core and feed-forward layers are unchanged from a standard
+Transformer. Timeformer is designed as a \emph{specialized encoder replacement}:
+trained from scratch when period-indexed representations are the goal rather than
+general-purpose language modeling. The input-layer modification is orthogonal to
+the attention mechanism and could in principle be applied as an adapter on a
+pre-trained backbone, though the present work trains from scratch.
+
+To isolate which component drives traceability, we evaluate three progressive
+ablations against the full model. \textbf{Static} (standard Transformer, no
+temporal conditioning) is the null hypothesis. \textbf{Additive} adds a global
+time offset to all input embeddings. \textbf{Joint} replaces the offset with a
+joint token-time projection — Timeformer without the memory gate.
+Figure~\ref{fig:architecture} and Table~\ref{tab:model-variants} show all four
+configurations.
+
+All configurations share the same forward structure: a sentence is tokenized as
+\texttt{[CLS] S V O [SEP]}, each token \(w_i\) is mapped to an input embedding
+\(x_i \in \mathbb{R}^d\) (the only thing that differs across configurations),
+the sequence \((x_1,\ldots,x_n)\) is processed by the encoder, and the hidden
+state at the subject position defines
+\[
+  h_s = \mathrm{Enc}(x_1,\ldots,x_n)[s] \;\in\; \mathbb{R}^d,
+\]
+the \texttt{token@time} representation queried by all diagnostics.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{outputs/figures/figure2_architecture_detail.png}
-\caption{Timeformer ablation chain. Each column adds exactly one new component
-(highlighted in yellow) over the previous variant. \textbf{Static}
-(Static Transformer) encodes tokens with no temporal information. \textbf{Additive}
-introduces the Time input \(\tau(t)\) added directly to token
-embeddings. \textbf{Joint} (Token-Time) routes both token and time through a
-joint projection \(W[\,e(w);\tau(t)\,]\) via the Token-Time Interaction box.
-\textbf{Timeformer} (Memory-Augmented) extends Joint with Prototype Memory
-and Temporal Attention that gate historical context into the encoder. Dashed
-grey boxes mark components absent in a given variant.}
+\caption{Timeformer (rightmost column) and its three ablations.
+Each column activates one additional component (highlighted in yellow).
+\textbf{Static}: standard Transformer with no temporal signal — the null
+hypothesis. \textbf{Additive}: global time offset added to all embeddings.
+\textbf{Joint}: joint token-time projection — Timeformer without memory.
+\textbf{Timeformer}: full model, extending Joint with Prototype Memory and
+Temporal Attention. Dashed grey boxes mark inactive components.}
 \label{fig:architecture}
 \end{figure}
 
 \begin{table}[t]
-\caption{Model variants in the Timeformer ablation family.}
+\caption{Timeformer and its three ablations.}
 \label{tab:model-variants}
 \centering
 \footnotesize
@@ -257,17 +272,17 @@ grey boxes mark components absent in a given variant.}
 \textbf{Variant} & \textbf{Full name} & \textbf{Temporal signal} & \textbf{Memory} \\
 \midrule
 Static     & Static Transformer              & None                   & No \\
-Additive   & Additive Time-Conditioned       & Global epoch vector    & No \\
+Additive   & Additive Time-Conditioned       & Global time vector    & No \\
 Joint      & Token-Time Transformer          & Token-time interaction & No \\
 Timeformer & Memory-Augmented Timeformer     & Token-time interaction & Causal prototypes \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Static Transformer}
-The Static Transformer (Static) uses only the Token input box in
-Figure~\ref{fig:architecture}: no Time input, no Token-Time Interaction. For
-each input token \(w_i\), the embedding combines a learned token embedding
+\subsection{Baseline: Static Transformer}
+Static is a standard pre-layer-normalized Transformer encoder with no temporal
+conditioning — it serves as the null hypothesis against which all ablations are
+compared. The input embedding combines a learned token embedding
 \(e(w_i) \in \mathbb{R}^d\) with a fixed sinusoidal position embedding
 \(p_i \in \mathbb{R}^d\):
 
@@ -275,30 +290,29 @@ each input token \(w_i\), the embedding combines a learned token embedding
   x_i = e(w_i) + p_i .
 \]
 
-The sequence is passed through a pre-layer-normalized Transformer encoder with
-no epoch signal. As a consequence, the sentence \texttt{S5 V2 O3} at \(t0\)
-and the same sentence at \(t9\) produce the same \(h_s\): without a temporal
-signal, the model cannot distinguish them. This is the null hypothesis for
-traceability.
+No period signal enters \(x_i\), so the sentence \texttt{S5 V2 O3} at \(t0\)
+and at \(t9\) produce identical sequences \((x_1,\ldots,x_n)\) and therefore
+the same \(h_s\). This is the null hypothesis for traceability.
 
-\subsection{Shared Component: Continuous Time Encoding}
+\subsection{Continuous Time Encoding}
 The Time input box (lower left of Figure~\ref{fig:architecture}) is shared by
 Additive, Joint, and Timeformer. Rather than a learned lookup table -- which would memorize
-training epochs as unrelated identifiers -- a continuous encoding treats epochs
+training periods as unrelated identifiers -- a continuous encoding treats periods
 as ordered points on a shared scale, supporting interpolation and
-extrapolation. The epoch index \(t\) is normalized to \([0,1]\), passed through
-fixed sinusoidal features, and projected by a small MLP:
+extrapolation. The period index \(t\) is normalized by the total number of
+training periods \(T\), passed through fixed sinusoidal features, and projected
+by a small multilayer perceptron (MLP):
 
 \[
   \tau(t) = \mathrm{MLP}(\mathrm{sinusoidal}(t/T)).
 \]
 
-These features encode epoch index only and are entirely distinct from the
-token-position encodings already present in the Transformer.
+These features encode period index only and are entirely distinct from the
+token-position encodings \(p_i\) already present in the Transformer.
 
 \subsection{Additive Time-Conditioned Transformer}
 The Additive variant routes \(\tau(t)\) from the Time input box directly
-into the token embeddings by addition, without passing through the Token-Time
+into the input embedding by addition, without passing through the Token-Time
 Interaction box:
 
 \[
@@ -306,42 +320,44 @@ Interaction box:
 \]
 
 Because the same \(\tau(t)\) is added to every token regardless of its
-identity, the subject, verb, and object all receive the same temporal push.
-The model learns that a sentence belongs to epoch \(t\), but not that subject
+identity, the subject, verb, and object all receive the same temporal offset.
+The model learns that a sentence belongs to period \(t\), but not that subject
 \texttt{S5} specifically has shifted meaning by \(t\). This variant isolates
 whether global period information alone is sufficient for traceability.
 
 \subsection{Token-Time Transformer}
 The Token-Time Transformer (Joint) activates the Token-Time Interaction box in
-Figure~\ref{fig:architecture}: the token embedding and time encoding are
-concatenated and jointly projected before self-attention:
+Figure~\ref{fig:architecture}: the input embedding is computed by concatenating
+the token embedding and time encoding and projecting them jointly:
 
 \[
   x_i = W [e(w_i);\, \tau(t)] + p_i ,
 \]
 
 where \(e(w_i), \tau(t) \in \mathbb{R}^d\) and \(W \in \mathbb{R}^{d \times
-2d}\). The projection \(W\) sees token identity and epoch simultaneously, so
-the same epoch can affect different tokens differently. Concretely,
+2d}\). The projection \(W\) sees token identity and time simultaneously, so
+the same period can affect different tokens differently. Concretely,
 \texttt{S5} at \(t0\) receives \(W[e(\texttt{S5});\,\tau(0)] + p_1\) while
 \texttt{S5} at \(t9\) receives \(W[e(\texttt{S5});\,\tau(9)] + p_1\): the
 initial embedding differs before any self-attention, giving the subject a
-distinct starting point at each epoch.
+distinct starting point at each period.
 
-\subsection{Memory-Augmented Timeformer}
-The Memory-Augmented Timeformer adds the lower section of
+\subsection{Timeformer: Full Architecture}
+Timeformer extends Joint with the lower section of
 Figure~\ref{fig:architecture}: a Prototype Memory and Temporal Attention gate
 that update the subject embedding before it enters the encoder. For each
-subject \(s\) and epoch \(t\), prototype \(m(s,t)\) is the mean of \(s\)'s
-hidden states across all training sentences at that epoch. Prototypes are fixed
+subject \(s\) and period \(t\), prototype \(m(s,t)\) is the mean of \(s\)'s
+hidden states across all training sentences at that period. Prototypes are fixed
 during the forward pass (no gradients flow back through them) and served in
 causal order: at \(t_k\), the model attends only to \(\{m(s,t) : t < t_k\}\).
 For example, at \(t7\) the memory for \texttt{S5} is
 \(\{m(\texttt{S5},0),\ldots,m(\texttt{S5},6)\}\) -- a summary of how that
-subject has appeared in each of the six preceding epochs.
+subject has appeared in each of the seven preceding periods.
 
-The cross-attention layer uses the current subject embedding as the query and
-the historical prototypes as keys and values. The updated embedding is:
+Let \(x_s\) denote \(x_i\) at the subject position (computed by the Joint
+formula above). The cross-attention layer uses \(x_s\) as query and the
+historical prototypes as keys and values, producing an updated subject
+embedding:
 
 \[
   \tilde{x}_s =
@@ -352,8 +368,10 @@ the historical prototypes as keys and values. The updated embedding is:
 where \(M_s\) collects the causal prototypes for subject \(s\). The scalar
 gate \(g \in [0,1]\) is initialized to zero: when \(g=0\) the output equals
 \(x_s\) unchanged; when \(g=1\) it is the layer-normalized result of attending
-over past prototypes. The model opens the memory channel only if it proves
-useful under the MLM objective.
+over past prototypes. The updated \(\tilde{x}_s\) replaces \(x_s\) in the
+input sequence before the encoder, so \(h_s = \mathrm{Enc}(\ldots,
+\tilde{x}_s, \ldots)[s]\). The model opens the memory channel only if it
+proves useful under the MLM objective.
 
 \section{Evaluation Protocol}
 % Target length: 1.25--1.5 pages.
@@ -371,20 +389,20 @@ We use four complementary diagnostics. First, a linear probe is trained on
 then evaluated on each split. This measures whether context information is
 linearly recoverable from the representation, but it does not by itself
 establish traceability. Second, we compute a context drift score over nearest
-neighbors. For each epoch and subject class, we retrieve the \(k\) nearest
+neighbors. For each period and subject class, we retrieve the \(k\) nearest
 neighbors of each subject representation% TODO: state k value explicitly
 \ and measure the proportion assigned to $N_1$, with \(k\) fixed at the
 same value across all models and splits. A traceable representation should show
 a strong movement from $N_1$-like to $N_2$-like neighborhoods for drifting subjects,
 weaker movement for bifurcating subjects, and comparatively limited movement
 for stable subjects. Third, we use contrastive temporal examples in which the
-same subject token is presented with two different epoch labels. We define the
+same subject token is presented with two different period labels. We define the
 contrastive sign-flip rate as the proportion of such pairs for which swapping
-the epoch label reverses the nearest-neighbor assignment (from
+the period label reverses the nearest-neighbor assignment (from
 $N_1$-dominant to $N_2$-dominant or vice versa). A model without temporal capacity is
 expected to produce a sign-flip rate of zero, since the same token yields the
-same representation regardless of the epoch label provided. Fourth, we evaluate
-continuation examples from held-out later epochs% TODO: specify which epochs are held out (e.g. t8--t9)
+same representation regardless of the period label provided. Fourth, we evaluate
+continuation examples from held-out later periods% TODO: specify which periods are held out (e.g. t8--t9)
 \ to test whether temporal behavior extends beyond the training distribution.
 
 Comparisons follow the ablation chain: Additive vs.\ Static isolates the effect of
@@ -412,12 +430,12 @@ does not provide a robust improvement over the Token-Time Transformer.
 % Main claim: Joint produces a stronger temporal neighborhood transition than Static.
 % Use class-specific curves to avoid claiming stable subjects are perfectly flat.
 Figure~\ref{fig:context-drift} and Table~\ref{tab:context-drift} show the
-context drift score across epochs. For drifting subjects, the Static
+context drift score across periods. For drifting subjects, the Static
 Transformer drops from \(0.618\) to \(0.387\) (\(\Delta=-0.231\)), while the
 Token-Time Transformer shows a much stronger transition from \(0.847\) to
 \(0.233\) (\(\Delta=-0.614\)). This is the clearest evidence for temporal
 traceability: the same subject token occupies substantially different
-neighborhoods when queried at different epochs.
+neighborhoods when queried at different periods.
 
 The class-specific curves serve as controls (Table~\ref{tab:context-drift}).
 Stable subjects show much smaller movement and no coherent A-to-B trend.
@@ -429,7 +447,7 @@ aggregate score.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{outputs/figures/figure3_context_drift.png}
-\caption{Context drift score across epochs. The Token-Time Transformer shows
+\caption{Context drift score across periods. The Token-Time Transformer shows
 stronger movement from $N_1$ toward $N_2$ for drifting subjects than
 the Static Transformer, while stable and bifurcating subjects provide
 class-specific controls.}
@@ -437,7 +455,7 @@ class-specific controls.}
 \end{figure}
 
 \begin{table}[t]
-\caption{Context drift score at the first and last epochs. Values are
+\caption{Context drift score at the first and last periods. Values are
 $N_1$ proportions among nearest neighbors; \(\Delta=t9-t0\).}
 \label{tab:context-drift}
 \centering
@@ -524,7 +542,7 @@ MLM setup, supporting the use of Timeformer as a diagnostic extension.
 
 \begin{table}[t]
 \caption{Memory diagnostics from the corrected oracle run. Continuation is
-linear-probe accuracy on held-out later epochs; flip is contrastive sign-flip
+linear-probe accuracy on held-out later periods; flip is contrastive sign-flip
 rate.}
 \label{tab:memory-diagnostics}
 \centering
@@ -549,25 +567,25 @@ property that does not reduce to predictive accuracy. The Token-Time Transformer
 improves probe accuracy by only \(+0.026\) on average (modest and
 seed-sensitive), yet shows a neighborhood drift of \(-0.614\) vs. \(-0.231\)
 for the static baseline. This dissociation is the central empirical finding: a
-model can use epoch information to improve predictions without exposing a
+model can use period information to improve predictions without exposing a
 representation in which the same lexical item occupies meaningfully different
-neighborhoods at different epochs. Evaluating traceability therefore requires
+neighborhoods at different periods. Evaluating traceability therefore requires
 geometric diagnostics, not only label recoverability.
 
-The additive variant shows that knowing the epoch is not sufficient. A global
+The additive variant shows that knowing the period is not sufficient. A global
 additive offset shifts all token representations by the same vector, leaving
 subject-level trajectory geometry weakly constrained. Token-time interaction
-changes this: concatenating each token embedding with the epoch encoding before
-projection allows the same epoch to affect different tokens differently, so the
-same subject receives a distinct embedding at each epoch. This is the mechanism
+changes this: concatenating each token embedding with the time encoding before
+projection allows the same period to affect different tokens differently, so the
+same subject receives a distinct embedding at each period. This is the mechanism
 behind the coherent neighborhood trajectories in the drift analysis.
 
 The Memory-Augmented Timeformer tests the simplest form of causal memory: a
-mean of historical subject representations per epoch. Learned prototypes produce
+mean of historical subject representations per period. Learned prototypes produce
 near-zero average gain over the Token-Time Transformer, and the oracle
 diagnostic identifies why: perfect historical prototypes improve contrastive
 sign-flip rate but not continuation accuracy. For bifurcating subjects, which
-develop two coexisting senses in later epochs, the mean prototype is a centroid
+develop two coexisting senses in later periods, the mean prototype is a centroid
 between two clusters, representing neither sense well. This motivates
 sense-aware memory mechanisms that preserve the internal structure of historical
 representations rather than collapsing it, and constitutes the main open
@@ -575,11 +593,11 @@ direction from this work.
 
 \section{Conclusion}
 This paper studied whether a Transformer-style encoder can expose a temporally traceable representation, meaning one in which the same lexical
-item, queried at different epochs, occupies neighborhoods that reflect its
+item, queried at different periods, occupies neighborhoods that reflect its
 intended temporal context. The answer, in the controlled benchmark used here, is conditional:
 explicit token-time interaction is necessary. A static encoder and a globally
 time-conditioned encoder both fail to produce coherent subject-level
-trajectories. An encoder that conditions each token embedding on the epoch
+trajectories. An encoder that conditions each token embedding on time
 before self-attention is applied does produce such trajectories, with a
 neighborhood drift for drifting subjects that is more than twice that of the
 static baseline (\(-0.614\) vs. \(-0.231\)).

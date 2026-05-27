@@ -49,6 +49,13 @@ CLASS_OF = {i: "stable" for i in STABLE_IDX}
 CLASS_OF.update({i: "drift"  for i in DRIFT_IDX})
 CLASS_OF.update({i: "bifurc" for i in BIFURC_IDX})
 
+LEGACY_MODEL_DIRS = {
+    "Static": "B1",
+    "Additive": "B2a",
+    "Joint": "B2b",
+    "Timeformer": "B3",
+}
+
 
 # ── Carregamento ──────────────────────────────────────────────────────────────
 
@@ -60,7 +67,11 @@ def load_model_reps(
     batch_size: int = 128,
 ) -> dict:
     """Carrega modelo + memória e extrai representações do test_ds."""
-    ckpt = run.checkpoint_path(name, "best")
+    model_dir_name = name
+    ckpt = run.checkpoint_path(model_dir_name, "best")
+    if not ckpt.exists() and name in LEGACY_MODEL_DIRS:
+        model_dir_name = LEGACY_MODEL_DIRS[name]
+        ckpt = run.checkpoint_path(model_dir_name, "best")
     if not ckpt.exists():
         print(f"  {name}: checkpoint não encontrado — skip")
         return {}
@@ -71,7 +82,7 @@ def load_model_reps(
 
     memory = None
     if name == "Timeformer":
-        memory = run.load_memory(name)   # prefere memory_best.pkl
+        memory = run.load_memory(model_dir_name)   # prefere memory_best.pkl
         if memory is None:
             print(f"  Timeformer: memory não encontrada — avaliando sem memória")
         else:

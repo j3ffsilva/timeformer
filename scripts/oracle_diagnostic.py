@@ -27,7 +27,15 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from src.timeformer.dataset import load_corpus, MLMDataset, TimeformerDataset, SUBJECTS, N_EPOCHS, make_continuation_split
+from src.timeformer.dataset import (
+    context_to_id,
+    load_corpus,
+    MLMDataset,
+    TimeformerDataset,
+    SUBJECTS,
+    N_EPOCHS,
+    make_continuation_split,
+)
 from src.timeformer.models import build_model, DEFAULT_HPARAMS
 from src.timeformer.memory import PrototypeMemory
 from src.timeformer.train import MLMTrainer, load_checkpoint
@@ -70,7 +78,7 @@ def build_oracle_memory(
         s = subj2idx[r["subject"]]
         t = int(r["epoch"][1:])   # "t3" → 3
         counts_total[s, t] += 1
-        if r["true_context"] == "N1":
+        if context_to_id(r["true_context"]) == 0:
             counts_a[s, t] += 1
 
     p_a = np.where(counts_total > 0, counts_a / counts_total, 0.5)  # (n_subjects, N_EPOCHS)

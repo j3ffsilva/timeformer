@@ -55,6 +55,14 @@ N_EPOCHS = 10
 
 # ─── Carregamento do corpus ───────────────────────────────────────────────────
 
+def context_to_id(label: str) -> int:
+    """Map legacy A/B and current N1/N2 context labels to integer ids."""
+    if label in {"N1", "A"}:
+        return 0
+    if label in {"N2", "B"}:
+        return 1
+    raise ValueError(f"Unknown true_context label: {label!r}")
+
 def load_corpus(path: str | Path) -> list[dict]:
     """
     Lê corpus.tsv e retorna lista de dicts com keys:
@@ -188,7 +196,7 @@ class MLMDataset(Dataset):
             "epoch_idx":    torch.tensor(row["epoch_idx"], dtype=torch.long),
             "subject_idx":  torch.tensor(TOKEN2ID[row["subject"]] - len(SPECIAL_TOKENS),
                                          dtype=torch.long),
-            "true_context": 0 if row["true_context"] == "N1" else 1,
+            "true_context": context_to_id(row["true_context"]),
         }
 
     def __len__(self) -> int:
@@ -248,7 +256,7 @@ class TimeformerDataset(Dataset):
             "subject_idx":     torch.tensor(TOKEN2ID[row["subject"]] - len(SPECIAL_TOKENS),
                                             dtype=torch.long),
             "history_epochs":  history_epochs,   # lista de ints; collate_fn lida com padding
-            "true_context":    0 if row["true_context"] == "N1" else 1,
+            "true_context":    context_to_id(row["true_context"]),
         }
 
     def __len__(self) -> int:
@@ -322,7 +330,7 @@ class ContrastiveDataset(Dataset):
                     "epoch_idx":    torch.tensor(epoch_idx, dtype=torch.long),
                     "subject_idx":  torch.tensor(subject_id - len(SPECIAL_TOKENS),
                                                  dtype=torch.long),
-                    "true_context": 0 if row["true_context"] == "N1" else 1,
+                    "true_context": context_to_id(row["true_context"]),
                     "pair_id":      int(row["pair_id"]),
                 })
 

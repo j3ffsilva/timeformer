@@ -367,69 +367,78 @@ only place where Timeformer uses history: the verb and object embeddings are
 unchanged, but the subject enters the encoder already informed by its available
 causal prototype history.
 
-\section{Evaluation Protocol}
+\section{Evaluation Protocol and Diagnostics}
 % Target length: 1.25--1.5 pages.
 All variants are trained with masked language modeling over the synthetic SVO
-corpus. The planted \texttt{true\_context} label is never used during training;
-it is used only after training to evaluate whether the learned representation
-contains temporal semantic information. This separation reflects the intended
-use case of representation learning from corpora without semantic-change labels.
-The primary evaluation target is \(h_s\), the final hidden state at the subject
-position, since subjects are the lexical items with planted temporal
-trajectories.
+corpus. The planted \texttt{true\_context} label is never used during training.
+It is used only after training, to test whether the subject representation
+reflects the planted temporal trajectory. The primary evaluation target is
+\(h_s\), the final hidden state at the subject position, because subjects are
+the lexical items whose meanings are designed to change, remain stable, or
+bifurcate over time.
 
-We use four complementary diagnostics. First, a linear probe is trained on
-\(h_s\) from the standard test split to predict \texttt{true\_context} and is
-then evaluated on each split. This measures whether context information is
-linearly recoverable from the representation, but it does not by itself
-establish traceability. Second, we compute a context drift score over nearest
-neighbors. For each period and subject class, we retrieve the \(k\) nearest
-neighbors of each subject representation% TODO: state k value explicitly
-\ and measure the proportion assigned to $N_1$, with \(k\) fixed at the
-same value across all models and splits. A traceable representation should show
-a strong movement from $N_1$-like to $N_2$-like neighborhoods for drifting subjects,
-weaker movement for bifurcating subjects, and comparatively limited movement
-for stable subjects. Third, we use contrastive temporal examples in which the
-same subject token is presented with two different period labels. We define the
-contrastive sign-flip rate as the proportion of such pairs for which swapping
-the period label reverses the nearest-neighbor assignment (from
-$N_1$-dominant to $N_2$-dominant or vice versa). A model without temporal capacity is
-expected to produce a sign-flip rate of zero, since the same token yields the
-same representation regardless of the period label provided. Fourth, we evaluate
-continuation examples from held-out later periods% TODO: specify which periods are held out (e.g. t8--t9)
-\ to test whether temporal behavior extends beyond the training distribution.
+We use four diagnostics, each answering a different question. The linear probe
+asks whether the planted context label can be recovered from \(h_s\). We train a
+linear classifier on \(h_s\) from the standard test split to predict
+\texttt{true\_context}, and then evaluate it on each split. This measures
+linear recoverability, but it does not show whether the representation follows
+the temporal trajectory.
 
-Comparisons follow the design chain. Additive vs.\ Standard isolates the effect
-of global time conditioning. Joint vs.\ Additive isolates explicit token-time
-interaction at the input layer. Timeformer vs.\ Joint isolates the memory
-contribution, evaluated on continuation and contrastive diagnostics.
+The context drift score asks whether the neighborhood of a subject moves in the
+expected direction over time. For each period and subject class, we retrieve
+the \(k=10\) nearest neighbors of each subject representation by cosine
+similarity, excluding the query instance itself, and measure the proportion
+assigned to $N_1$. A traceable representation should show strong movement from
+$N_1$-like to $N_2$-like neighborhoods for drifting subjects, weaker movement
+for bifurcating subjects, and comparatively limited movement for stable
+subjects.
 
-For the memory-augmented model, we include a shuffled-memory control (a
-subject receives prototypes from a different subject), a no-history control
-(the memory path is present but empty), and an oracle-memory diagnostic (the
-model receives perfect historical prototypes). Memory is considered useful only
-when it improves over the Token-Time Transformer and over both inappropriate
-and empty histories.
+The contrastive diagnostic asks whether the same sentence changes when only the
+period label changes. We present the same subject token with two different
+period labels and compute the sign-flip rate: the proportion of pairs for which
+swapping the period reverses the nearest-neighbor assignment, from
+$N_1$-dominant to $N_2$-dominant or vice versa. A model with no access to the
+period input should have sign-flip rate zero. Finally, the continuation
+diagnostic evaluates examples from held-out later periods \(t8\)--\(t9\), testing
+whether the learned time-dependent mapping extends beyond the periods used to
+train the MLM encoder.
+
+We interpret differences between adjacent models in the comparison chain.
+Additive vs.\ Standard tests the effect of global time conditioning. Joint
+vs.\ Additive tests whether the period signal must interact explicitly with
+token identity. Timeformer vs.\ Joint tests the contribution of causal memory,
+especially on continuation and contrastive diagnostics.
+
+For the memory-augmented model, we include three controls. In the
+shuffled-memory control, a subject receives prototypes from a different subject.
+In the no-history control, the memory path is present but empty. In the
+oracle-memory diagnostic, learned prototypes are replaced by fixed vectors
+encoding the true historical \(P(N_1 \mid s,t)\) trajectory available before
+the current period. We consider learned memory useful only if it improves over
+the Token-Time Transformer and also beats the shuffled-memory and no-history
+controls.
 
 \section{Results}
 % Target length: 2.5--3.0 pages.
 We report results over three training runs. Unless otherwise noted, values are
 means over seeds, with the standard deviation shown in parentheses when space
-allows. The main finding is that token-time interaction produces a much
-clearer temporal movement in representation space than the Standard Transformer.
+allows. The main finding is that temporal conditioning produces a much
+clearer temporal movement in representation space than the Standard Transformer,
+with token-time interaction giving the strongest drifting-subject transition.
 The memory-augmented variant is informative as a diagnostic extension, but it
 does not provide a robust improvement over the Token-Time Transformer.
 
 \subsection{Temporal Neighborhood Movement}
-% Main claim: Joint produces a stronger temporal neighborhood transition than Standard.
+% Main claim: temporal conditioning produces stronger neighborhood transitions than Standard.
 % Use class-specific curves to avoid claiming stable subjects are perfectly flat.
 Figure~\ref{fig:context-drift} and Table~\ref{tab:context-drift} show the
 context drift score across periods. For drifting subjects, the Standard
-Transformer drops from \(0.618\) to \(0.387\) (\(\Delta=-0.231\)), while the
-Token-Time Transformer shows a much stronger transition from \(0.847\) to
-\(0.233\) (\(\Delta=-0.614\)). This is the clearest evidence for temporal
-traceability: the same subject token occupies substantially different
-neighborhoods when queried at different periods.
+Transformer drops from \(0.618\) to \(0.387\) (\(\Delta=-0.231\)). The Additive
+baseline shows a stronger transition (\(\Delta=-0.570\)), and the Token-Time
+Transformer strengthens it further, from \(0.847\) to \(0.233\)
+(\(\Delta=-0.614\)). This is the clearest evidence for temporal traceability:
+the same subject token occupies substantially different neighborhoods when
+queried at different periods.
 
 The class-specific curves serve as controls (Table~\ref{tab:context-drift}).
 Stable subjects show much smaller movement and no coherent A-to-B trend.
@@ -441,10 +450,10 @@ aggregate score.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{outputs/figures/figure3_context_drift.png}
-\caption{Context drift score across periods. The Token-Time Transformer shows
-stronger movement from $N_1$ toward $N_2$ for drifting subjects than
-the Standard Transformer, while stable and bifurcating subjects provide
-class-specific controls.}
+\caption{Context drift score across periods. Temporal baselines move drifting
+subjects from $N_1$ toward $N_2$ more strongly than the Standard Transformer,
+with the Token-Time Transformer showing the largest transition. Stable and
+bifurcating subjects provide class-specific controls.}
 \label{fig:context-drift}
 \end{figure}
 
@@ -461,14 +470,17 @@ $N_1$ proportions among nearest neighbors; \(\Delta=t9-t0\).}
 \textbf{Class} & \textbf{Model} & \textbf{t0} & \textbf{t9} & \(\boldsymbol{\Delta}\) \\
 \midrule
 Stable & Standard     & 0.736 & 0.756 & +0.020 \\
+       & Additive   & 0.790 & 0.658 & -0.132 \\
        & Joint      & 0.843 & 0.641 & -0.203 \\
        & Timeformer & 0.810 & 0.658 & -0.153 \\
 \midrule
 Drift  & Standard     & 0.618 & 0.387 & -0.231 \\
+       & Additive   & 0.847 & 0.278 & -0.570 \\
        & Joint      & 0.847 & 0.233 & -0.614 \\
        & Timeformer & 0.836 & 0.263 & -0.573 \\
 \midrule
 Bifurcation & Standard     & 0.794 & 0.682 & -0.112 \\
+            & Additive   & 0.913 & 0.531 & -0.382 \\
             & Joint      & 0.895 & 0.521 & -0.374 \\
             & Timeformer & 0.905 & 0.517 & -0.388 \\
 \bottomrule
@@ -492,18 +504,17 @@ variant averages \(0.690\) while the Token-Time Transformer averages \(0.517\),
 an ordering that may appear counterintuitive. The decoupling arises because
 sign-flip counts threshold crossings in individual contrastive pairs, whereas
 drift score measures the full trajectory magnitude. A global additive offset
-displaces all tokens uniformly, generating many crossings without coherent
-subject-level movement. Token-time interaction produces more structured,
-subject-specific movement (evidenced by the stronger drift) but does not
-necessarily cross the threshold in more pairs. We therefore treat sign flip as
-evidence that time conditioning changes behavior at all, and the neighborhood
+can move representations substantially and generate many threshold crossings,
+but it applies the same period signal to every token. Token-time interaction
+produces a slightly stronger drifting-subject trajectory while making the
+period signal token-dependent; it does not necessarily cross the threshold in
+more individual contrastive pairs. We therefore treat sign flip as evidence
+that time conditioning changes behavior at all, and the neighborhood
 trajectories as the more diagnostic measure of traceability.
 
 \begin{table}[t]
 \caption{Main traceability diagnostics. Accuracy columns report linear-probe
-accuracy on \(h_s\); flip is contrastive sign-flip rate. A dash indicates the
-metric was not computed for this variant.% TODO: explain why Drift was not computed for Additive
-}
+accuracy on \(h_s\); flip is contrastive sign-flip rate.}
 \label{tab:main-results}
 \centering
 \footnotesize
@@ -514,7 +525,7 @@ metric was not computed for this variant.% TODO: explain why Drift was not compu
 \textbf{Model} & \textbf{Drift} & \textbf{Flip} & \textbf{Ambig.} & \textbf{Cont.} \\
 \midrule
 Standard   & -0.231 & 0.000 & 0.577 & 0.719 \\
-Additive   & --     & 0.690 & 0.573 & 0.754 \\
+Additive   & -0.570 & 0.690 & 0.573 & 0.754 \\
 Joint      & -0.614 & 0.517 & 0.599 & 0.766 \\
 Timeformer & -0.573 & 0.506 & 0.599 & 0.766 \\
 \bottomrule
@@ -527,8 +538,7 @@ Timeformer & -0.573 & 0.506 & 0.599 & 0.766 \\
 The Memory-Augmented Timeformer does not produce a robust gain over the
 Token-Time Transformer. On continuation, both models average \(0.766\), and
 the per-seed memory deltas are \(+0.013\), \(+0.005\), and \(-0.018\). The
-oracle diagnostic% TODO: specify what was corrected in the oracle run
-\ clarifies the failure mode: oracle memory improves contrastive sign flip
+corrected oracle diagnostic clarifies the failure mode: oracle memory improves contrastive sign flip
 (\(0.586\) vs. \(0.448\) for the Token-Time reference) but not continuation
 (\(0.754\) vs. \(0.762\)). Perfect historical prototypes can affect contrastive
 temporal behavior, but do not solve the continuation objective under the current

@@ -1,5 +1,5 @@
 """
-Public-facing names for the Timeformer ablation chain.
+Public-facing names for the Timeformer design comparison.
 
 The short model IDs are kept as stable experimental identifiers because they
 appear in checkpoints, run directories, and historical result files. These
@@ -7,7 +7,7 @@ labels are for tables, plots, and paper text.
 """
 
 MODEL_LABELS = {
-    "Static": "Static Transformer",
+    "Static": "Standard Transformer",
     "Additive": "Additive Time-Conditioned Transformer",
     "Joint": "Token-Time Transformer",
     "Timeformer": "Memory-Augmented Timeformer",
@@ -27,7 +27,7 @@ ABLATION_LABELS = {
 
 ABLATION_DISPLAY = {
     "delta_time_conditioning": (
-        "Additive Time-Conditioned Transformer - Static Transformer"
+        "Additive Time-Conditioned Transformer - Standard Transformer"
     ),
     "delta_token_time_interaction": (
         "Token-Time Transformer - Additive Time-Conditioned Transformer"

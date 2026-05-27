@@ -23,7 +23,7 @@ from src.timeformer.nomenclature import model_label
 
 
 DEFAULT_RUNS = ("20260523_006", "20260523_007", "20260523_008")
-DEFAULT_MODELS = ("Static", "Joint", "Timeformer")
+DEFAULT_MODELS = ("Static", "Additive", "Joint", "Timeformer")
 CLASS_LABELS = {
     "stable": "Stable",
     "drift": "Drift",

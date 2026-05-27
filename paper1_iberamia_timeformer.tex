@@ -224,21 +224,23 @@ the period in which the subject is queried. The full model adds two mechanisms
 to a standard Transformer encoder. First, it binds token identity and period at
 the input layer. Second, it lets the current subject consult causal historical
 prototypes before the encoder. We introduce these mechanisms through a
-controlled design comparison: two baselines, one direct ablation, and the full
-Timeformer.
+controlled design comparison: two baselines (Standard and Additive), one direct
+ablation (Token-Time Transformer, labelled Joint in
+Figure~\ref{fig:architecture}), and the full Timeformer.
 
 All models follow the same outer pipeline. A sentence is tokenized as
 \texttt{[CLS] S V O [SEP]}. Each token \(w_i\) is mapped to an input embedding
-\(x_i \in \mathbb{R}^d\). The sequence \((x_1,\ldots,x_n)\) is processed by a
+\(z_i \in \mathbb{R}^d\). The sequence \((z_1,\ldots,z_n)\) is processed by a
 Transformer encoder, and the final hidden state at the subject position,
 \[
-  h_s = \mathrm{Enc}(x_1,\ldots,x_n)[s],
+  (h_1,\ldots,h_n) = \mathrm{Encoder}(z_1,\ldots,z_n),
+  \qquad h_s = h_{\mathrm{subj}},
 \]
 is the \texttt{token@time} representation inspected by the diagnostics. All
 models are trained with masked language modeling (MLM): some tokens are masked,
 and the model must reconstruct them from the remaining tokens and, when
 available, the period input. What changes across the design comparison is how
-the subject's input embedding \(x_s\) is built before the encoder sees the
+the subject's input embedding \(z_s\) is built before the encoder sees the
 sentence.
 
 The temporally informed models use a shared period vector
@@ -264,26 +266,26 @@ components.}
 \label{fig:architecture}
 \end{figure}
 
-\subsection{Baseline 1: Standard Transformer}
+\subsection{Baseline: Standard Transformer}
 The Standard baseline asks whether temporal traceability appears without any
 period input. Its input embedding is the usual sum of a token embedding and a
 position encoding:
 \[
-  x_i = e(w_i) + p_i .
+  z_i = e(w_i) + p_i .
 \]
 For the subject in \texttt{S5 V2 O3}, this gives
-\(x_s=e(\texttt{S5})+p_1\). Because no period signal enters the model, the
+\(z_s=e(\texttt{S5})+p_1\). Because no period signal enters the model, the
 same sentence at \(t0\) and \(t9\) has the same input sequence and therefore
 the same \(h_s\). Standard is the null hypothesis: any temporal behavior must
 come only from changes in the observed words, not from an explicit
 \texttt{token@time} representation.
 
-\subsection{Baseline 2: Additive Time-Conditioned Transformer}
+\subsection{Baseline: Additive Time-Conditioned Transformer}
 The Additive baseline asks whether knowing the current period is enough. It
 adds the same period vector \(\tau(t)\) to every token:
 
 \[
-  x_i = e(w_i) + p_i + \tau(t).
+  z_i = e(w_i) + p_i + \tau(t).
 \]
 
 Now \texttt{S5 V2 O3} at \(t0\) and \(t9\) are distinguishable. The subject
@@ -297,7 +299,7 @@ identity. If Additive succeeds, global period information is sufficient. If it
 does not, the next question is whether the period must interact with each token
 before contextualization.
 
-\subsection{Direct Ablation: Token-Time Transformer}
+\subsection{Ablation: Token-Time Transformer}
 The Token-Time Transformer, labelled Joint in Figure~\ref{fig:architecture}, is
 the full Timeformer without the memory component. It asks whether explicit
 token-time interaction is enough. Instead of adding the same period vector to
@@ -305,7 +307,7 @@ all tokens, Joint concatenates each token embedding with \(\tau(t)\) and
 projects the pair:
 
 \[
-  x_i = W [e(w_i);\, \tau(t)] + p_i ,
+  z_i = W [e(w_i);\, \tau(t)] + p_i ,
 \]
 
 where \(e(w_i), \tau(t) \in \mathbb{R}^d\) and \(W \in \mathbb{R}^{d \times
@@ -321,7 +323,7 @@ subject starts from an epoch-specific input before self-attention, making
 \(h_s(\texttt{S5},t0)\) and \(h_s(\texttt{S5},t9)\) free to move in different
 semantic directions.
 
-\subsection{Timeformer: Full Architecture}
+\subsection{Full Model: Timeformer}
 The full Timeformer asks whether causal history helps beyond token-time
 interaction. It starts exactly like Joint: for a current sentence containing
 \texttt{S5} at \(t7\), the model first builds token-time input embeddings for
@@ -336,33 +338,34 @@ average representation of subject \(s\) across training sentences from period
 \(t7\) or later.
 
 Temporal attention turns this list of past prototypes into a history summary
-for the current subject. Let \(x_s\) be the current Joint subject embedding and
+for the current subject. Let \(z_s\) be the current Joint subject embedding and
 let \(M_s\) be the matrix of available causal prototypes, one row per past
-period. The attention operation uses \(x_s\) as the query and \(M_s\) as keys
+period. The attention operation uses \(z_s\) as the query and \(M_s\) as keys
 and values:
 
 \[
-  r_s = \mathrm{Attn}(x_s, M_s, M_s).
+  r_s = \mathrm{Attn}(z_s, M_s, M_s).
 \]
 
 The vector \(r_s\) summarizes the parts of the subject's history that are most
-relevant to the current period. A learned gate then decides how much this
-history summary should change the current subject embedding:
+relevant to the current period. A learned scalar gate \(g\) then decides how
+much this history summary should change the current subject embedding:
 
 \[
-  \tilde{x}_s =
-  x_s + g \cdot
-  \left(\mathrm{LN}(x_s + r_s) - x_s\right).
+  \tilde{z}_s =
+  z_s + g \cdot
+  \left(\mathrm{LN}(z_s + r_s) - z_s\right).
 \]
 
-The gate \(g\) is initialized at zero. At initialization,
-\(\tilde{x}_s=x_s\), so the full Timeformer behaves like Joint. During
-training, the model can learn to let memory affect the subject representation
-if doing so helps the MLM objective. Finally, \(\tilde{x}_s\) replaces \(x_s\)
-in the input sequence, and the Transformer encoder produces the final
-representation \(h_s\). This is the only place where Timeformer uses history:
-the verb and object embeddings are unchanged, but the subject enters the
-encoder already informed by its available causal prototype history.
+Here, \(\mathrm{LN}\) denotes layer normalization. The gate \(g\) is
+initialized at zero. At initialization, \(\tilde{z}_s=z_s\), so the full
+Timeformer behaves like Joint. During training, the model can learn to let
+memory affect the subject representation if doing so helps the MLM objective.
+Finally, \(\tilde{z}_s\) replaces \(z_s\) in the input sequence, and the
+Transformer encoder produces the final representation \(h_s\). This is the
+only place where Timeformer uses history: the verb and object embeddings are
+unchanged, but the subject enters the encoder already informed by its available
+causal prototype history.
 
 \section{Evaluation Protocol}
 % Target length: 1.25--1.5 pages.

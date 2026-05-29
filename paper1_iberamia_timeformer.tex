@@ -107,7 +107,9 @@ that semantic change is geometric, but not the architecture: LSCD yields a
 scalar comparison between spaces rather than a jointly parameterized
 \texttt{token@time} representation. Standard benchmarks formalize this
 task~\cite{schlechtweg2020semeval,tahmasebi2021survey}, while also inheriting
-natural-corpus confounds such as frequency and genre drift. Our controlled
+natural-corpus confounds such as frequency and genre drift; shared tasks for
+Spanish show that manual annotation is required even for modern
+corpora~\cite{zamora2022lscdiscovery}. Our controlled
 benchmark plants trajectories so that traceability can be attributed to model
 design rather than corpus composition.
 
@@ -209,7 +211,8 @@ no period input, Additive injects a global period vector, Token-Time exposes tok
 identity and period jointly before self-attention, and the Memory-Augmented
 extension adds causal historical prototypes before the encoder.
 
-All models follow the same outer pipeline. A sentence is tokenized as
+All models follow the same outer pipeline based on the Transformer
+encoder~\cite{vaswani2017attention}. A sentence is tokenized as
 \texttt{[CLS] S V O [SEP]}. Each token \(w_i\) is mapped to an input embedding
 \(z_i \in \mathbb{R}^d\). The sequence \((z_1,\ldots,z_n)\) is processed by a
 Transformer encoder, and the final hidden state at the subject position,
@@ -218,9 +221,9 @@ Transformer encoder, and the final hidden state at the subject position,
   \qquad h_s = h_{\mathrm{subj}},
 \]
 is the \texttt{token@time} representation inspected by the diagnostics. All
-models are trained with masked language modeling (MLM): some tokens are masked,
-and the model must reconstruct them from the remaining tokens and, when
-available, the period input. What changes across the design comparison is how
+models are trained with masked language modeling
+(MLM,~\cite{devlin2019bert}): some tokens are masked, and the model must
+reconstruct them from the remaining tokens and, when available, the period input. What changes across the design comparison is how
 the subject's input embedding \(z_s\) is built before the encoder sees the
 sentence.
 
@@ -342,12 +345,12 @@ are designed to drift, remain stable, or bifurcate over time.
 We use four diagnostics, each targeting a distinct aspect of temporal
 representation.
 
-\textbf{D1 -- Linear probe.} Asks whether \(h_s\) encodes the planted context
-label at all. We train a linear classifier on \(h_s\) from the standard test
-split to predict \texttt{true\_context} and evaluate it on each temporal split.
-High accuracy indicates that period-appropriate context is linearly separable in
-the representation, but does not reveal whether that separation shifts
-systematically over time.
+\textbf{D1 -- Linear probe~\cite{conneau2018probing}.} Asks whether \(h_s\)
+encodes the planted context label at all. We train a linear classifier on
+\(h_s\) from the standard test split to predict \texttt{true\_context} and
+evaluate it on each temporal split. High accuracy indicates that
+period-appropriate context is linearly separable in the representation, but
+does not reveal whether that separation shifts systematically over time.
 
 \textbf{D2 -- Context drift score.} Asks whether the neighborhood of a subject
 shifts in the expected direction across periods. For each period and subject

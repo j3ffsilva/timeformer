@@ -501,13 +501,16 @@ Mem-Aug. & $-$0.559 [$\pm$0.022] & 0.587 [$\pm$0.051] & 0.598 [$\pm$0.008] & 0.7
 \subsection{Memory Diagnostics}
 % Report Timeformer honestly: not a stable improvement over Token-Time, but diagnostically
 % useful. Oracle memory may affect sign flip without solving continuation.
-The Memory-Augmented Timeformer does not produce a robust gain over the
-Token-Time Transformer. On continuation, Token-Time averages \(0.763\)
-\([0.759, 0.766]\) and Memory-Augmented \(0.755\) \([0.750, 0.760]\) across
-31 seeds; the delta is small and in the negative direction. The
-oracle diagnostic clarifies the failure mode: oracle memory improves contrastive
-sign flip (\(0.586\) vs. \(0.448\) for the Token-Time Transformer) but not
-continuation (\(0.754\) vs. \(0.762\)). The dissociation has a direct
+The Memory-Augmented extension does not produce a robust gain over the
+Token-Time Transformer. Across 31 seeds, learned prototypes reach a continuation
+accuracy of \(0.755\) \([0.750, 0.760]\), marginally below Token-Time at
+\(0.763\) \([0.759, 0.766]\) (\(\Delta=-0.008\)). The oracle diagnostic
+shows the limits of this architecture: replacing learned prototypes with fixed
+vectors encoding the true \(P(N_1 \mid s, t)\) trajectory yields a
+continuation of \(0.769\) \([0.761, 0.777]\) and a sign-flip rate of \(0.694\)
+\([0.576, 0.812]\), versus \(0.624\) for Token-Time. The sign-flip improvement
+(\(\Delta=+0.070\)) is larger than the continuation improvement
+(\(\Delta=+0.007\)), but both CIs are wide. The dissociation has a direct
 explanation: the MLM objective optimizes token prediction, not trajectory
 geometry; perfect historical prototypes can therefore improve contrastive
 behavior --- which depends on local period sensitivity --- but cannot substitute
@@ -515,20 +518,21 @@ for a training signal that directly rewards geometric continuity across unseen
 periods.
 
 \begin{table}[t]
-\caption{Memory diagnostics. Continuation (D4) is linear-probe accuracy on
-held-out periods \(t8\)--\(t9\); flip is the contrastive sign-flip rate (D3).}
+\caption{Memory diagnostics (means, 31 seeds). Continuation (D4): linear-probe
+accuracy on held-out periods \(t8\)--\(t9\); Flip: contrastive sign-flip rate
+(D3); 95\% CI half-widths in brackets.}
 \label{tab:memory-diagnostics}
 \centering
 \footnotesize
 \renewcommand{\arraystretch}{0.88}
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{lccp{2.8cm}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccc}
 \toprule
-\textbf{Model} & \textbf{Cont.} & \textbf{Flip} & \textbf{$\Delta$ vs.\ Token-Time} \\
+\textbf{Model} & \textbf{Cont.} & \textbf{Flip} & \textbf{$\Delta$ cont.\ vs.\ Token-Time} \\
 \midrule
-Token-Time (reference) & 0.762 & 0.448 & -- \\
-Mem-Aug. learned  & 0.775 & 0.448 & +0.013 cont.; +0.000 flip \\
-Mem-Aug. oracle   & 0.754 & 0.586 & $-$0.008 cont.; +0.138 flip \\
+Token-Time (ref.)  & 0.763 [$\pm$0.004] & 0.624 [$\pm$0.048] & -- \\
+Mem-Aug.\ learned  & 0.755 [$\pm$0.005] & 0.587 [$\pm$0.051] & $-$0.008 \\
+Mem-Aug.\ oracle   & 0.769 [$\pm$0.004] & 0.694 [$\pm$0.059] & $+$0.007 [$\pm$0.007] \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -555,11 +559,12 @@ produce the observed neighborhood movement.
 The negative result for the Memory-Augmented extension is specific to
 mean-pooled prototypes in this controlled setting and should not be read as a
 general verdict on causal memory. The oracle diagnostic confirms this: perfect
-historical prototypes improve the contrastive sign-flip rate by \(+0.138\) over
-the Token-Time Transformer, showing the memory pathway is useful in principle.
-The failure of learned prototypes is a failure of aggregation: for bifurcating
-subjects, which develop two coexisting senses in later periods, the mean
-prototype is a centroid between two clusters, representing neither well.
+historical prototypes improve the sign-flip rate by \(+0.070\) over Token-Time
+(\(0.694\) vs. \(0.624\)), showing the memory pathway is useful in principle
+even if the effect is variable across seeds. The failure of learned prototypes
+is a failure of aggregation: for bifurcating subjects, which develop two
+coexisting senses in later periods, the mean prototype is a centroid between
+two clusters, representing neither well.
 
 Several limitations bound these conclusions. The probe-level advantage of Token-Time
 over Additive is small and may not generalize beyond controlled positions, small

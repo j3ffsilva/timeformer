@@ -1,0 +1,3491 @@
+{
+  "raw_path": "outputs/multiseed/multiseed_raw.json",
+  "corpus": "data/corpus.tsv",
+  "split": "test",
+  "n_examples": 763,
+  "n_runs": 31,
+  "rows": [
+    {
+      "run_id": "20260528_002",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7481814469111046,
+      "procrustes": 0.3806970862409642
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.6960780547820539,
+      "procrustes": 0.34340480008348295
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8018503278883814,
+      "procrustes": 0.23233726483246872
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.5005734235368745,
+      "procrustes": 0.45939140554686664
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.09298294472119684,
+      "procrustes": 0.8688020154380929
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.13473235740807873,
+      "procrustes": 0.8479752194279986
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.3853623471818751,
+      "procrustes": 0.6980845359492207
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.11587968634479262,
+      "procrustes": 0.8842326208939639
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.15717766744321696,
+      "procrustes": 0.8457621507562554
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.6740841657468309,
+      "procrustes": 0.44658705227592344
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.4242002193093223,
+      "procrustes": 0.5864423150837179
+    },
+    {
+      "run_id": "20260528_002",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.6057699888172074,
+      "procrustes": 0.42406759667473004
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.6036084872532157,
+      "procrustes": 0.4895576460125813
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.7071876216675873,
+      "procrustes": 0.3455917126254009
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8047367193436238,
+      "procrustes": 0.23946344238407039
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.49245685210479523,
+      "procrustes": 0.4230179361030062
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.15590788632512995,
+      "procrustes": 0.8118930180987818
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.215803674280877,
+      "procrustes": 0.7799970724477683
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.39664529381851243,
+      "procrustes": 0.6892812769940198
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.12387385468018462,
+      "procrustes": 0.8709187768776864
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.20455078604398258,
+      "procrustes": 0.8012163767033803
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.6645059094886812,
+      "procrustes": 0.4271603746377863
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.8438035268739682,
+      "procrustes": 0.2504253423668469
+    },
+    {
+      "run_id": "20260528_003",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9167465911387167,
+      "procrustes": 0.13929884014715657
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7622362073433707,
+      "procrustes": 0.40386098689741
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.42221502215862844,
+      "procrustes": 0.5460556489007171
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.4953757731740728,
+      "procrustes": 0.4908328504610275
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.3895123817597905,
+      "procrustes": 0.4909841323169718
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.10874555372769694,
+      "procrustes": 0.8644989489057071
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.10039178827980443,
+      "procrustes": 0.8743314604118085
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.43440669279431904,
+      "procrustes": 0.6128193035498533
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.1264506949656341,
+      "procrustes": 0.8517416318312488
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.12133654496431442,
+      "procrustes": 0.8558845279065561
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.6878989075182593,
+      "procrustes": 0.4403726284556565
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.45911349616106545,
+      "procrustes": 0.5355005866903861
+    },
+    {
+      "run_id": "20260528_004",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.5163461060927211,
+      "procrustes": 0.48905381825888433
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.5222565639124003,
+      "procrustes": 0.5812995005075371
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.7960991084739247,
+      "procrustes": 0.2477369512514885
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8856634617064545,
+      "procrustes": 0.15109837890248642
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.46259407047379936,
+      "procrustes": 0.4302373098960028
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.12364643390463627,
+      "procrustes": 0.8607810329767621
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.17614397506346033,
+      "procrustes": 0.8143153591591649
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.3705059102356601,
+      "procrustes": 0.7639009782881986
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.1749068746035432,
+      "procrustes": 0.8321872687937741
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.21570450943927344,
+      "procrustes": 0.7875908020568808
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.4671116277800318,
+      "procrustes": 0.5652293529737404
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.8016492664080056,
+      "procrustes": 0.26455881759879685
+    },
+    {
+      "run_id": "20260528_005",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8889782518024484,
+      "procrustes": 0.17046899101590673
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.8461621570179979,
+      "procrustes": 0.3192061097059075
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8956520356704102,
+      "procrustes": 0.1681897408969325
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9537661977619398,
+      "procrustes": 0.08713983880667847
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.46616846516901367,
+      "procrustes": 0.45289454898417514
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.2789960115979686,
+      "procrustes": 0.7067255215231916
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.4064305632778165,
+      "procrustes": 0.6050230701228694
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.43589211751379153,
+      "procrustes": 0.6890101756210343
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.283916487749085,
+      "procrustes": 0.7203080472657173
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.41720894028237493,
+      "procrustes": 0.6073730876067487
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.658720370901593,
+      "procrustes": 0.4347540104508329
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.7490020736698652,
+      "procrustes": 0.36952548087944864
+    },
+    {
+      "run_id": "20260528_006",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8812744378869053,
+      "procrustes": 0.2175224297036491
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.6454769396442976,
+      "procrustes": 0.5223951097874356
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.9279841170029136,
+      "procrustes": 0.14210910098994192
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.960991314713532,
+      "procrustes": 0.07647954651277894
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.36766393737360803,
+      "procrustes": 0.5348186025837284
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.02375020338287129,
+      "procrustes": 0.9512758145717619
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.017465206795543198,
+      "procrustes": 0.9674173424105742
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.2793821303772064,
+      "procrustes": 0.7862004499869224
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.02186561669120717,
+      "procrustes": 0.9570010982816279
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.01720034882634605,
+      "procrustes": 0.9690955926594746
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.5875137593249883,
+      "procrustes": 0.6070964996901834
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.8666818014180827,
+      "procrustes": 0.21630039628131187
+    },
+    {
+      "run_id": "20260528_007",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9327320259171495,
+      "procrustes": 0.11764656931154138
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.6738529154904058,
+      "procrustes": 0.5025200548993106
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8642091591430087,
+      "procrustes": 0.23125561011170176
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9290250438684593,
+      "procrustes": 0.13391435953513936
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.49581963098481463,
+      "procrustes": 0.4296251912610945
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.1268775619443375,
+      "procrustes": 0.8288878537721881
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.20554561479619257,
+      "procrustes": 0.7727228145211322
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.34504354858213876,
+      "procrustes": 0.7337087328278904
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.1058292726527876,
+      "procrustes": 0.8788069186029717
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.1677416116500279,
+      "procrustes": 0.8360888861868536
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.6914624263087742,
+      "procrustes": 0.45820119218250066
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.7869435812663432,
+      "procrustes": 0.25955548898207303
+    },
+    {
+      "run_id": "20260528_008",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8983728337957215,
+      "procrustes": 0.14844672599864162
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.66209593176763,
+      "procrustes": 0.42498647638973314
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8235619004909753,
+      "procrustes": 0.24986457724514177
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.894538428888233,
+      "procrustes": 0.1690301138141381
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.3844816333946905,
+      "procrustes": 0.5621527895620907
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.1687331286569735,
+      "procrustes": 0.7967100472112112
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.3107754954145445,
+      "procrustes": 0.6989981344625564
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4791178089103921,
+      "procrustes": 0.6074269883365537
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.20095578363943126,
+      "procrustes": 0.7735246451577376
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.3064935389159016,
+      "procrustes": 0.689311454827011
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7238561026641307,
+      "procrustes": 0.41165068078883
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.7130811100514601,
+      "procrustes": 0.33273385165732233
+    },
+    {
+      "run_id": "20260528_009",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8410042519992761,
+      "procrustes": 0.20741321502477644
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.6470966311800033,
+      "procrustes": 0.4368228780763514
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8128640327343652,
+      "procrustes": 0.2795134173553518
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8991531256227856,
+      "procrustes": 0.17235672185928216
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.4067577321387069,
+      "procrustes": 0.4781085743647764
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.03128785306835084,
+      "procrustes": 0.9383692667452227
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.01289558009127458,
+      "procrustes": 0.9684380721559289
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.5398941106029302,
+      "procrustes": 0.6151272343178702
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.04150135563370121,
+      "procrustes": 0.933052199386044
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.013987656108934023,
+      "procrustes": 0.9700026643253211
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.5665224257493944,
+      "procrustes": 0.4506528379764413
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.563564626762479,
+      "procrustes": 0.472716505024142
+    },
+    {
+      "run_id": "20260528_010",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.7082343561249602,
+      "procrustes": 0.3264601300434443
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.5721564246888462,
+      "procrustes": 0.5698211415166246
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.9079192388031226,
+      "procrustes": 0.201734344875396
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9560984275268847,
+      "procrustes": 0.1147064876700899
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.39952223435357126,
+      "procrustes": 0.5110739790563534
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.2545924597421283,
+      "procrustes": 0.7258498912618958
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.2708970771263216,
+      "procrustes": 0.7228219683617764
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.2886626634854923,
+      "procrustes": 0.7605403706385805
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.24616147781795547,
+      "procrustes": 0.7739828098768508
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.2562189267619218,
+      "procrustes": 0.7572975557752326
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.677401025919713,
+      "procrustes": 0.43722225129628856
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.8083420819364091,
+      "procrustes": 0.27678741206216784
+    },
+    {
+      "run_id": "20260528_011",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9084221671940246,
+      "procrustes": 0.14772385027482024
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.6994309691137252,
+      "procrustes": 0.41322984014331227
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8863626299070387,
+      "procrustes": 0.19707779663885533
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9488250264354482,
+      "procrustes": 0.10508648800073964
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.38689403485188867,
+      "procrustes": 0.5141875131074961
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.030833494573259006,
+      "procrustes": 0.9465561478093774
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.053784277281803156,
+      "procrustes": 0.9306505491655817
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.41758196649095763,
+      "procrustes": 0.6767736270388598
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.030814859752522617,
+      "procrustes": 0.9429145094844177
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.049266146627537345,
+      "procrustes": 0.9328915189328094
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7545057059129436,
+      "procrustes": 0.33350072499087463
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.75633812865824,
+      "procrustes": 0.28104163596275894
+    },
+    {
+      "run_id": "20260528_012",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.850053968206512,
+      "procrustes": 0.18236220453803964
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.73342796194833,
+      "procrustes": 0.39938147754089126
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8200602750811042,
+      "procrustes": 0.259498614269431
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9129731227214475,
+      "procrustes": 0.15132196174400536
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.5704067104012428,
+      "procrustes": 0.39140258758246627
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.19689320885428924,
+      "procrustes": 0.7549561200453468
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.3629948913348605,
+      "procrustes": 0.6568999061774925
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.44929204685128205,
+      "procrustes": 0.6748577525403985
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.19504615276249124,
+      "procrustes": 0.7964562829243114
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.36947395410041145,
+      "procrustes": 0.6681874919970082
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.4672379789364202,
+      "procrustes": 0.6148621255727982
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.27229663884164845,
+      "procrustes": 0.7061199193662677
+    },
+    {
+      "run_id": "20260528_013",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.3793132807470527,
+      "procrustes": 0.6172556365644656
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.8520529348133754,
+      "procrustes": 0.37851536156646515
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8911486717593629,
+      "procrustes": 0.20817108512403987
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9568345809337524,
+      "procrustes": 0.10067915808301181
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.41830095288856045,
+      "procrustes": 0.46835726260138577
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.07030143074519844,
+      "procrustes": 0.8964737840392528
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.04719286578288734,
+      "procrustes": 0.9340443013425432
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.38225932747730806,
+      "procrustes": 0.7248945358734245
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.05801735713646652,
+      "procrustes": 0.9221257332684567
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.04682901412554242,
+      "procrustes": 0.9410624215827965
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.808076724481157,
+      "procrustes": 0.32676915102001186
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.9374709645936625,
+      "procrustes": 0.14267790839208794
+    },
+    {
+      "run_id": "20260528_014",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9683506578057596,
+      "procrustes": 0.07567691487971762
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7361051329849924,
+      "procrustes": 0.39265524528824464
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.6280675991217128,
+      "procrustes": 0.3837498916794076
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8475982699595497,
+      "procrustes": 0.18610697112297808
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.4613650201875859,
+      "procrustes": 0.46254672656933143
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.4335289468000071,
+      "procrustes": 0.5834787117325779
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.587124221098483,
+      "procrustes": 0.4504376621511923
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4905217824881027,
+      "procrustes": 0.6101880625057676
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.37802551911462057,
+      "procrustes": 0.6631888886108805
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.5788763462458899,
+      "procrustes": 0.48329396371948463
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7437977986587871,
+      "procrustes": 0.33565282789525075
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.4730938381823542,
+      "procrustes": 0.5259283682935285
+    },
+    {
+      "run_id": "20260528_015",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.5452299376855634,
+      "procrustes": 0.44989354768878825
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.8145919504319133,
+      "procrustes": 0.3667630737045658
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.938506405579301,
+      "procrustes": 0.13528446863903715
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9701080729874979,
+      "procrustes": 0.07098895285033371
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.5967034253820742,
+      "procrustes": 0.368406902343493
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.07518663003964614,
+      "procrustes": 0.8746562590701582
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.03637268723919809,
+      "procrustes": 0.9292549283475405
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4167404188084498,
+      "procrustes": 0.6810684698872388
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.06392433655326696,
+      "procrustes": 0.9122053602488295
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.02933978302513877,
+      "procrustes": 0.9508293801339667
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.8106015094765159,
+      "procrustes": 0.291724792887642
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.8231506654463171,
+      "procrustes": 0.20998461891959339
+    },
+    {
+      "run_id": "20260528_016",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8909924215417824,
+      "procrustes": 0.1298783868699092
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.781430475119575,
+      "procrustes": 0.36750606262539703
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.7793694228297319,
+      "procrustes": 0.2615740851760794
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8544507251156641,
+      "procrustes": 0.17210134268961116
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.5271339749773146,
+      "procrustes": 0.4170159112459648
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.08887647090822008,
+      "procrustes": 0.8802462195978096
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.0647846924956037,
+      "procrustes": 0.9030383909570069
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4777631782381152,
+      "procrustes": 0.6167722527197318
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.10959776436386785,
+      "procrustes": 0.8656308765991352
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.09261335799810652,
+      "procrustes": 0.8832042421660045
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7459175968269772,
+      "procrustes": 0.3487457457732568
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.7785124898881162,
+      "procrustes": 0.277731494544802
+    },
+    {
+      "run_id": "20260528_017",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8519941383621669,
+      "procrustes": 0.18613918569193028
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7662637617716672,
+      "procrustes": 0.36783347556788565
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8454957433320881,
+      "procrustes": 0.28072281868121135
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.94785393101577,
+      "procrustes": 0.1309946122399013
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.4935095331878927,
+      "procrustes": 0.46405702156131684
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.7035656731593634,
+      "procrustes": 0.4181859213431317
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.8390425232528941,
+      "procrustes": 0.24546128138898
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4586770841153422,
+      "procrustes": 0.6149410594522267
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.5805691859051177,
+      "procrustes": 0.5409574052116582
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.7974238992728961,
+      "procrustes": 0.30293196933428557
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7127062781529427,
+      "procrustes": 0.41163816796302044
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.7707352294076009,
+      "procrustes": 0.3369121509467781
+    },
+    {
+      "run_id": "20260528_018",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9218597844154967,
+      "procrustes": 0.1539100362293842
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.686940200470432,
+      "procrustes": 0.4523514861575134
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.70581000948174,
+      "procrustes": 0.3429567701634071
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8387624624591303,
+      "procrustes": 0.2048768665054391
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.567186014065171,
+      "procrustes": 0.42798205686540414
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.05115806825251902,
+      "procrustes": 0.9070941239305005
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.0471137274437369,
+      "procrustes": 0.9249850210577556
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.3557638744239469,
+      "procrustes": 0.7325241387759576
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.03611482159920812,
+      "procrustes": 0.9419657426713963
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.03295392918016926,
+      "procrustes": 0.9473071228263927
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.507946726885755,
+      "procrustes": 0.5635832329956038
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.4808504042012627,
+      "procrustes": 0.5344958869539539
+    },
+    {
+      "run_id": "20260528_019",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.5980584183603602,
+      "procrustes": 0.41640523254924977
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.8184008326145207,
+      "procrustes": 0.3223931123572274
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8691198730182811,
+      "procrustes": 0.1908011444660607
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9448357376175094,
+      "procrustes": 0.0982293502068011
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.536386210640157,
+      "procrustes": 0.4235917396133427
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.049232774233179476,
+      "procrustes": 0.9227124652265422
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.021223339484306967,
+      "procrustes": 0.9608966749438999
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.49835869937992555,
+      "procrustes": 0.6181699215792854
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.05730762389095893,
+      "procrustes": 0.924524904969424
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.026706983159751344,
+      "procrustes": 0.9597094674862144
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.6067177454880079,
+      "procrustes": 0.46156849472842254
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.4580613017663363,
+      "procrustes": 0.535514067113276
+    },
+    {
+      "run_id": "20260528_020",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.6129252464729089,
+      "procrustes": 0.3998319356427001
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.6608873606529493,
+      "procrustes": 0.44991766777677283
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8550501060603708,
+      "procrustes": 0.2204717935170243
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9390906659308405,
+      "procrustes": 0.10745880159829156
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.3818497194923267,
+      "procrustes": 0.5095281189935209
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.33216426463828524,
+      "procrustes": 0.6620485139736937
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.543192731847528,
+      "procrustes": 0.48174869735769066
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4296096404955947,
+      "procrustes": 0.6591333371957003
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.35437393946999146,
+      "procrustes": 0.6729529900863525
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.5681893933066516,
+      "procrustes": 0.47921725291123823
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.6129328381796985,
+      "procrustes": 0.5170111178644268
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.8199346626535762,
+      "procrustes": 0.28844765883689283
+    },
+    {
+      "run_id": "20260528_021",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9019354977984985,
+      "procrustes": 0.15986312749717452
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7967182880300301,
+      "procrustes": 0.3631980704327241
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.830528648828471,
+      "procrustes": 0.2203857166500664
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8902630724597461,
+      "procrustes": 0.14536337201074068
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.4456371815672409,
+      "procrustes": 0.46343689712853053
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.16452127922881832,
+      "procrustes": 0.7954166269182139
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.2062843785820196,
+      "procrustes": 0.7658841394125664
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.3965354615735181,
+      "procrustes": 0.6949317696200842
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.12602038425618006,
+      "procrustes": 0.8352206775645029
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.16044446663009762,
+      "procrustes": 0.8134962554605064
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7237083294053236,
+      "procrustes": 0.37700599369800475
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.84376092040034,
+      "procrustes": 0.22978270893509306
+    },
+    {
+      "run_id": "20260528_022",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9076227156112315,
+      "procrustes": 0.13912339558707315
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7167192704451224,
+      "procrustes": 0.40815398738969116
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8321672661449414,
+      "procrustes": 0.23633391343842736
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8820471436696501,
+      "procrustes": 0.1562139032043548
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.29523808153356196,
+      "procrustes": 0.579997128460107
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.12546548419759762,
+      "procrustes": 0.8606135189538455
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.11366980538767885,
+      "procrustes": 0.8759546582631466
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.46973621560136264,
+      "procrustes": 0.6798462425179335
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.18510849564291604,
+      "procrustes": 0.8188306152813758
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.17541836361391386,
+      "procrustes": 0.8221861308551089
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.8080653167611013,
+      "procrustes": 0.345104528189913
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.7981082078363984,
+      "procrustes": 0.29016623381900125
+    },
+    {
+      "run_id": "20260528_023",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.869166135664585,
+      "procrustes": 0.18254310239994584
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.8171426564527935,
+      "procrustes": 0.3406989606728124
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.754171804730583,
+      "procrustes": 0.31613865453667983
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8461993405073721,
+      "procrustes": 0.20110604132964233
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.545335827676708,
+      "procrustes": 0.4062099806272702
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.48340324355852715,
+      "procrustes": 0.5610983773319727
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.36304641820234956,
+      "procrustes": 0.6562102819717706
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4827416001468436,
+      "procrustes": 0.6546637776889003
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.3124376781177987,
+      "procrustes": 0.6860171540254831
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.24253353066761416,
+      "procrustes": 0.7548468246920877
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.6254615595146322,
+      "procrustes": 0.5318783526420221
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.7542121318587002,
+      "procrustes": 0.3088691709810103
+    },
+    {
+      "run_id": "20260528_024",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.866246188079751,
+      "procrustes": 0.17950835203646529
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.742519648430865,
+      "procrustes": 0.4167334053821711
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8284672246260395,
+      "procrustes": 0.2521971127218102
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9038139436541356,
+      "procrustes": 0.15171128924442379
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.49435116936482054,
+      "procrustes": 0.4513955874473712
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.3853535123099281,
+      "procrustes": 0.6679098707671126
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.43495672588154993,
+      "procrustes": 0.6067759588739936
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.5144943649536129,
+      "procrustes": 0.6242897912515475
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.44835947042686985,
+      "procrustes": 0.6535808286740076
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.4619819259397695,
+      "procrustes": 0.6017753123696336
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7228076855762321,
+      "procrustes": 0.40077170571503073
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.4871913561039786,
+      "procrustes": 0.5157130131219366
+    },
+    {
+      "run_id": "20260528_025",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.5824202640347462,
+      "procrustes": 0.4264863456299884
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.6362423224724487,
+      "procrustes": 0.45642325018225155
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.7025194405676701,
+      "procrustes": 0.32429775311666253
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.7959542079589617,
+      "procrustes": 0.2268600585402376
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.4203375768960568,
+      "procrustes": 0.4953642873820584
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.15957413336159718,
+      "procrustes": 0.8120158645521194
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.13046572457125158,
+      "procrustes": 0.8383291368058114
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4617001909198534,
+      "procrustes": 0.6758298483627004
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.08179598499245337,
+      "procrustes": 0.8837970356331205
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.09104970749686894,
+      "procrustes": 0.8789783355621803
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7320863921171287,
+      "procrustes": 0.3703136873621675
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.6218384874863556,
+      "procrustes": 0.40337447396063264
+    },
+    {
+      "run_id": "20260528_026",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.7066557500894276,
+      "procrustes": 0.3230969889157344
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7010644212017477,
+      "procrustes": 0.4923301345772333
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8249298003579203,
+      "procrustes": 0.22319567287595654
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9108361293292747,
+      "procrustes": 0.13585159371376482
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.2538943133837751,
+      "procrustes": 0.6098726489889349
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.12058835215664343,
+      "procrustes": 0.8506468959147828
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.15322575293077034,
+      "procrustes": 0.8251062741363764
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.1960747861370272,
+      "procrustes": 0.8152613249499246
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.11324997596422542,
+      "procrustes": 0.8763665408701746
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.14623402213206307,
+      "procrustes": 0.837489660174455
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.6657568375655489,
+      "procrustes": 0.449729686912492
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.725540599005924,
+      "procrustes": 0.3228465105233083
+    },
+    {
+      "run_id": "20260528_027",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8573018447744926,
+      "procrustes": 0.19809704553073854
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7686041731018746,
+      "procrustes": 0.4320098482295013
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8688317173656095,
+      "procrustes": 0.15729143117472627
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9203953145067617,
+      "procrustes": 0.09799868142341235
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.3286728255738726,
+      "procrustes": 0.5382400025780432
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.13645867749683477,
+      "procrustes": 0.8563876510461232
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.11210285504646982,
+      "procrustes": 0.8741151198084078
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.34180106761931667,
+      "procrustes": 0.7072593380451818
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.13460309318350291,
+      "procrustes": 0.858761695438934
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.1145585399424184,
+      "procrustes": 0.871248162721359
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.5474746540615046,
+      "procrustes": 0.48636624222630465
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.8365694480291489,
+      "procrustes": 0.2668585190156975
+    },
+    {
+      "run_id": "20260528_028",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9207207638448844,
+      "procrustes": 0.1440492459997456
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7366638235292078,
+      "procrustes": 0.38027101331088
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.7755623100662973,
+      "procrustes": 0.30090403935473453
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.8878603665603522,
+      "procrustes": 0.167140564558458
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.49521557475760697,
+      "procrustes": 0.4302015852253539
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.1644390690169924,
+      "procrustes": 0.802486560098978
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.17951055713682182,
+      "procrustes": 0.8027117408716928
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.5627292226338578,
+      "procrustes": 0.5813229399801065
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.11311880490273925,
+      "procrustes": 0.857031428197244
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.12050160666126904,
+      "procrustes": 0.8560105334202863
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7378522196040275,
+      "procrustes": 0.33576091393996477
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.648273907290441,
+      "procrustes": 0.3796926498081459
+    },
+    {
+      "run_id": "20260528_029",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.7962297518017608,
+      "procrustes": 0.23218829410042302
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.8162103577351051,
+      "procrustes": 0.37389253396843075
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.9436268659981387,
+      "procrustes": 0.11875532027170153
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9728090069447655,
+      "procrustes": 0.061932435148144865
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.465718521961187,
+      "procrustes": 0.4767236883056385
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.16282026398905144,
+      "procrustes": 0.8234021176850619
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.16009881153472919,
+      "procrustes": 0.8183956419465379
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.442898611506661,
+      "procrustes": 0.7125631807382062
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.14904852944833666,
+      "procrustes": 0.856436666082434
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.15276402729001537,
+      "procrustes": 0.8433533581612435
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.7000581020545125,
+      "procrustes": 0.42392432271470737
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.7556388583571559,
+      "procrustes": 0.3089044604458227
+    },
+    {
+      "run_id": "20260528_030",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8642128164202634,
+      "procrustes": 0.1794525988923742
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.7426701161349365,
+      "procrustes": 0.39806112881626327
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.8925402052251988,
+      "procrustes": 0.15973819941955975
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.9232441904167659,
+      "procrustes": 0.10581035263849915
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.44158583599040474,
+      "procrustes": 0.4863829390809528
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.2119970887750784,
+      "procrustes": 0.7698077616870695
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.29114861963653216,
+      "procrustes": 0.7025076529483274
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.4440502104390184,
+      "procrustes": 0.6634583363744551
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.19318958283211868,
+      "procrustes": 0.7987162541117316
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.25605915706995297,
+      "procrustes": 0.7351072153266135
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.8002592001690899,
+      "procrustes": 0.38951419500331314
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.8729329352762691,
+      "procrustes": 0.17126572283187722
+    },
+    {
+      "run_id": "20260528_031",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.9144335761037018,
+      "procrustes": 0.11241442911548775
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.807958314903236,
+      "procrustes": 0.3342841917305748
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.7091143278661991,
+      "procrustes": 0.3877520710716484
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Additive vs Token-Time",
+      "left": "Additive",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.82268711097942,
+      "procrustes": 0.24314468847376203
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "z",
+      "cka": 0.3444473368113477,
+      "procrustes": 0.5483023991175124
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h1",
+      "cka": 0.2484369524415233,
+      "procrustes": 0.755237776850633
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Standard vs Additive",
+      "left": "Static",
+      "right": "Additive",
+      "point": "h2",
+      "cka": 0.2822797694601684,
+      "procrustes": 0.724910097191557
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "z",
+      "cka": 0.45116537930831546,
+      "procrustes": 0.6337869127680047
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h1",
+      "cka": 0.34166094535289554,
+      "procrustes": 0.6852837696784011
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Standard vs Token-Time",
+      "left": "Static",
+      "right": "Joint",
+      "point": "h2",
+      "cka": 0.3681924521938546,
+      "procrustes": 0.6554036338313467
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "z",
+      "cka": 0.8100734123256981,
+      "procrustes": 0.27854560723295413
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h1",
+      "cka": 0.712008060476281,
+      "procrustes": 0.34010198134662295
+    },
+    {
+      "run_id": "20260528_032",
+      "pair": "Token-Time vs Memory-Augmented",
+      "left": "Joint",
+      "right": "Timeformer",
+      "point": "h2",
+      "cka": 0.8349820572306952,
+      "procrustes": 0.21836098748211907
+    }
+  ],
+  "summary": [
+    {
+      "pair": "Additive vs Token-Time",
+      "point": "h1",
+      "n": 31,
+      "cka_mean": 0.8075877625443482,
+      "cka_ci95_low": 0.7698774791254144,
+      "cka_ci95_high": 0.845298045963282,
+      "procrustes_mean": 0.255895298623293,
+      "procrustes_ci95_low": 0.22419177907230034,
+      "procrustes_ci95_high": 0.2875988181742857
+    },
+    {
+      "pair": "Additive vs Token-Time",
+      "point": "h2",
+      "n": 31,
+      "cka_mean": 0.8870529433115545,
+      "cka_ci95_low": 0.8555787630464663,
+      "cka_ci95_high": 0.9185271235766427,
+      "procrustes_mean": 0.15768827387434559,
+      "procrustes_ci95_low": 0.12957342823389512,
+      "procrustes_ci95_high": 0.18580311951479606
+    },
+    {
+      "pair": "Additive vs Token-Time",
+      "point": "z",
+      "n": 31,
+      "cka_mean": 0.7262957637925199,
+      "cka_ci95_low": 0.6976307755473051,
+      "cka_ci95_high": 0.7549607520377347,
+      "procrustes_mean": 0.41734742959531174,
+      "procrustes_ci95_low": 0.39388441226106086,
+      "procrustes_ci95_high": 0.4408104469295626
+    },
+    {
+      "pair": "Standard vs Additive",
+      "point": "h1",
+      "n": 31,
+      "cka_mean": 0.1858167437357371,
+      "cka_ci95_low": 0.13286299465959028,
+      "cka_ci95_high": 0.2387704928118839,
+      "procrustes_mean": 0.7985556354541651,
+      "procrustes_ci95_low": 0.7559055199219596,
+      "procrustes_ci95_high": 0.8412057509863705
+    },
+    {
+      "pair": "Standard vs Additive",
+      "point": "h2",
+      "n": 31,
+      "cka_mean": 0.22195795832792117,
+      "cka_ci95_low": 0.15463731844252124,
+      "cka_ci95_high": 0.28927859821332114,
+      "procrustes_mean": 0.7729147944710144,
+      "procrustes_ci95_low": 0.7139964688550223,
+      "procrustes_ci95_high": 0.8318331200870065
+    },
+    {
+      "pair": "Standard vs Additive",
+      "point": "z",
+      "n": 31,
+      "cka_mean": 0.4463135549316277,
+      "cka_ci95_low": 0.41735503670989976,
+      "cka_ci95_high": 0.4752720731533557,
+      "procrustes_mean": 0.47437120820969547,
+      "procrustes_ci95_low": 0.45441585270676677,
+      "procrustes_ci95_high": 0.4943265637126242
+    },
+    {
+      "pair": "Standard vs Token-Time",
+      "point": "h1",
+      "n": 31,
+      "cka_mean": 0.1775395358208668,
+      "cka_ci95_low": 0.13042876008124354,
+      "cka_ci95_high": 0.22465031156049003,
+      "procrustes_mean": 0.8215716573096741,
+      "procrustes_ci95_low": 0.7852425618360948,
+      "procrustes_ci95_high": 0.8579007527832534
+    },
+    {
+      "pair": "Standard vs Token-Time",
+      "point": "h2",
+      "n": 31,
+      "cka_mean": 0.21803326248762017,
+      "cka_ci95_low": 0.1514539314883644,
+      "cka_ci95_high": 0.28461259348687595,
+      "procrustes_mean": 0.7851017210473787,
+      "procrustes_ci95_low": 0.7285059260621507,
+      "procrustes_ci95_high": 0.8416975160326068
+    },
+    {
+      "pair": "Standard vs Token-Time",
+      "point": "z",
+      "n": 31,
+      "cka_mean": 0.4224325081648623,
+      "cka_ci95_low": 0.39487999150468495,
+      "cka_ci95_high": 0.4499850248250396,
+      "procrustes_mean": 0.677697956979864,
+      "procrustes_ci95_low": 0.6573316596242995,
+      "procrustes_ci95_high": 0.6980642543354285
+    },
+    {
+      "pair": "Token-Time vs Memory-Augmented",
+      "point": "h1",
+      "n": 31,
+      "cka_mean": 0.6981580974070034,
+      "cka_ci95_low": 0.6401616189130631,
+      "cka_ci95_high": 0.7561545759009437,
+      "procrustes_mean": 0.3529346887337194,
+      "procrustes_ci95_low": 0.30529317608602324,
+      "procrustes_ci95_high": 0.4005762013814156
+    },
+    {
+      "pair": "Token-Time vs Memory-Augmented",
+      "point": "h2",
+      "n": 31,
+      "cka_mean": 0.7980189105103475,
+      "cka_ci95_low": 0.7445068745646224,
+      "cka_ci95_high": 0.8515309464560725,
+      "procrustes_mean": 0.24176255355790338,
+      "procrustes_ci95_low": 0.1943508336744501,
+      "procrustes_ci95_high": 0.28917427344135666
+    },
+    {
+      "pair": "Token-Time vs Memory-Augmented",
+      "point": "z",
+      "n": 31,
+      "cka_mean": 0.6788103655985935,
+      "cka_ci95_low": 0.6447090482201181,
+      "cka_ci95_high": 0.712911682977069,
+      "procrustes_mean": 0.4281580160663344,
+      "procrustes_ci95_low": 0.3974046592126632,
+      "procrustes_ci95_high": 0.4589113729200056
+    }
+  ]
+}

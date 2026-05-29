@@ -386,9 +386,9 @@ learned mean prototypes remain the weak point.
 We report means and 95\% confidence intervals over 31 training seeds. Temporal
 conditioning moves drifting subjects much more than the Standard baseline:
 Additive, Token-Time, and Memory-Augmented all reach \(\Delta \approx -0.56\),
-compared with \(-0.221\) for Standard. Additive and Token-Time are not
-distinguishable on drift score, and Memory-Augmented does not improve over
-Token-Time.
+compared with \(-0.221\) for Standard. Additive and Token-Time are statistically
+equivalent on drift score (paired TOST, \(\delta=0.05\)), and Memory-Augmented
+does not improve over Token-Time.
 
 \paragraph{Implementation details.}
 All models share the same Transformer encoder: \(d=64\), 4 attention heads, 2
@@ -422,6 +422,12 @@ intermediate drift: conditioned models reach \(t9\) values near \(0.53\),
 matching the planted endpoint \(P(N_1 \mid s, t9) \approx 0.5\) for the
 mixed state. The geometric diagnostic distinguishes all
 three trajectory classes without relying on probe accuracy alone.
+
+Paired equivalence testing (TOST, \(\delta=0.05\)) formalizes this: diff
+\(=-0.003\), 90\% CI \([-0.026,\,+0.019]\), \(p_\mathrm{TOST}<0.001\);
+equivalence holds also at \(\delta=0.034\) (\(p_\mathrm{TOST}=0.014\)).
+D2 therefore functions as a sanity check that conditioning works, not as an
+arbiter between conditioning strategies.
 
 \begin{figure}[t]
 \centering
@@ -556,16 +562,17 @@ accuracy only to \(0.769\). This pattern points to the MLM objective, which
 rewards token prediction rather than geometric consistency across periods.
 Traceability appears only as a by-product of that objective.
 
-The form of conditioning matters less than its presence. Additive and Token-Time
-are statistically indistinguishable on drift score across 31 seeds; Token-Time
-shows a reproducible advantage only on the ambiguous probe (\(0.595\) vs.\
-\(0.579\), non-overlapping CIs), where local markers are uninformative and only
-subject identity and period remain. This suggests that joint token-time
-conditioning encodes temporal information more precisely in the subject
-representation, even when the aggregate neighborhood trajectory is similar. The
-convergence of two architecturally distinct designs toward the same drift
-performance points to the training objective as the limiting factor, not the
-conditioning mechanism.
+The form of conditioning matters less than its presence. Paired equivalence
+testing (TOST, \(\delta=0.05\)) confirms that Additive and Token-Time are
+equivalent on drift score; Token-Time shows a reproducible advantage only on
+the ambiguous probe (\(0.595\) vs.\ \(0.579\), non-overlapping CIs), where
+local markers are uninformative. Layer-wise CKA provides a representational
+account: Additive vs.\ Token-Time similarity increases from 0.726 at the
+embedding layer to 0.887 (95\% CI [0.856, 0.919]) at the final encoder layer,
+while Standard stays near 0.22, suggesting self-attention partially absorbs
+the input-level difference before it reaches the subject's final hidden state.
+The convergence of two architecturally distinct designs toward the same drift
+performance points to the training objective as the limiting factor.
 
 The Memory-Augmented extension points to a second failure mode. For
 bifurcating subjects, which develop two coexisting senses in later periods, a
@@ -574,7 +581,10 @@ diagnostic shows that the memory pathway can use better historical signals:
 fixed vectors encoding the true \(P(N_1 \mid s, t)\) trajectory increase the
 sign-flip rate by \(+0.070\) over Token-Time (\(0.694\) vs.\ \(0.624\)). The
 learned mean prototypes, however, cannot preserve the internal structure of a
-word's sense distribution.
+word's sense distribution. Geometry-based mode-separation metrics (silhouette, centroid distance, AUROC)
+confirm this: no architecture separates the two sense clusters better than
+Additive for bifurcating subjects, and Memory-Augmented does not improve over
+Token-Time.
 
 These conclusions come from controlled diagnostics, not open-domain
 diachronic language. The probe-level advantage of Token-Time over Additive is
@@ -584,14 +594,18 @@ setting of fixed subject positions and small vocabulary. The diagnostic suite
 was co-designed with the architecture family, limiting its role as an independent
 evaluation for models outside this design space.
 
-Two next steps follow. First, memory mechanisms should preserve the internal
-structure of historical representations instead of collapsing each subject and
-period to one prototype. Second, the convergence of Additive and Token-Time on
-drift performance needs attention-level analysis: heads may suppress the
-temporal signal during self-attention, neutralizing differences in input
-conditioning. Period-stratified attention analysis would test this hypothesis
-and clarify whether traceability needs changes to the objective, the
-architecture, or both.
+Two directions remain open. First, attention-level analysis is consistent with
+the layer-wise representational convergence noted above: Token-Time layer-0
+heads show greater temporal variance in subject-directed attention mass
+(L0H3: 0.0075 vs.\ Additive 0.0033), yet ablating individual heads only
+partially reduces representational alignment (L0H0: \(\Delta=-0.026\);
+L0H1: \(\Delta=-0.021\)), suggesting the effect is distributed rather than
+localized. A pilot noise sweep (3 seeds per fidelity level) is consistent with
+Token-Time retaining a drift advantage under degraded markers (slope\(=+1.07\),
+\(p=0.002\)), but replication with more seeds is needed before drawing
+conclusions. Second, memory mechanisms need to preserve the internal structure
+of historical representations rather than collapsing each period to one
+prototype, which remains the primary open problem for bifurcating subjects.
 
 % Bibliography
 \bibliographystyle{splncs04}

@@ -1,0 +1,85 @@
+{
+  "raw_path": "outputs/multiseed/multiseed_raw.json",
+  "class": "drift",
+  "n": 31,
+  "paired": true,
+  "comparison": "Additive - Joint(Token-Time)",
+  "mean_difference": -0.0034574028122414946,
+  "summary": {
+    "Static": {
+      "mean": -0.2214557485525227,
+      "ci95_low": -0.2398892100956045,
+      "ci95_high": -0.20302228700944092,
+      "sd": 0.052363862379167625
+    },
+    "Additive": {
+      "mean": -0.566856906534326,
+      "ci95_low": -0.5863076190333315,
+      "ci95_high": -0.5474061940353204,
+      "sd": 0.055253563205926205
+    },
+    "Joint": {
+      "mean": -0.5633995037220845,
+      "ci95_low": -0.5829009318653895,
+      "ci95_high": -0.5438980755787794,
+      "sd": 0.0553976309390734
+    },
+    "Timeformer": {
+      "mean": -0.5588420181968567,
+      "ci95_low": -0.580947282634486,
+      "ci95_high": -0.5367367537592275,
+      "sd": 0.06279433855447254
+    }
+  },
+  "tost": {
+    "delta_0.05": {
+      "delta": 0.05,
+      "paired": true,
+      "n": 31,
+      "diff_mean": -0.003457402812241502,
+      "se": 0.0132264857945255,
+      "df": 30.0,
+      "ci90_low": -0.025906199818380233,
+      "ci90_high": 0.01899139419389723,
+      "p_lower": 0.000702248397601245,
+      "p_upper": 0.00017023130943308808,
+      "p_tost": 0.000702248397601245,
+      "equivalent": true
+    },
+    "delta_0.034": {
+      "delta": 0.034,
+      "paired": true,
+      "n": 31,
+      "diff_mean": -0.003457402812241502,
+      "se": 0.0132264857945255,
+      "df": 30.0,
+      "ci90_low": -0.025906199818380233,
+      "ci90_high": 0.01899139419389723,
+      "p_lower": 0.013999748606112703,
+      "p_upper": 0.004092592785298153,
+      "p_tost": 0.013999748606112703,
+      "equivalent": true
+    }
+  },
+  "mde": {
+    "paired": {
+      "paired": true,
+      "n": 31,
+      "alpha": 0.05,
+      "power": 0.8,
+      "cohen_d": 0.5200217019747442,
+      "raw_units": 0.03829541542703773,
+      "sd_scale": 0.0736419562522366
+    },
+    "independent": {
+      "paired": false,
+      "n": 31,
+      "alpha": 0.05,
+      "power": 0.8,
+      "cohen_d": 0.7232481088281688,
+      "raw_units": 0.04001416736846265,
+      "sd_scale": 0.055325643966487474
+    }
+  },
+  "interpretation": "Com pareamento por seed, o drift agregado de Additive e Token-Time é equivalente dentro de δ=0.05. Isto sustenta a leitura de que a forma de condicionamento não muda materialmente o D2 agregado, mesmo que os mecanismos de entrada sejam distintos."
+}

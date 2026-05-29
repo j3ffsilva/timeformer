@@ -1,0 +1,66 @@
+{
+  "ablation_deltas": {
+    "delta_spurious_memory": {
+      "split": "continuation",
+      "label": "Delta spurious memory",
+      "display": "Shuffled-memory Timeformer - Token-Time Transformer",
+      "legacy_label": "\u0394A_spurious",
+      "base_model": "Joint",
+      "base_model_label": "Token-Time Transformer",
+      "new_model": "Timeformer-shuffled",
+      "new_model_label": "Shuffled-memory Timeformer",
+      "Timeformer_shuffled_accuracy": 0.7632241813602015
+    },
+    "delta_time_conditioning": {
+      "split": "ambiguous_test",
+      "label": "Delta time-conditioning",
+      "display": "Additive Time-Conditioned Transformer - Standard Transformer",
+      "legacy_label": "\u0394T_global",
+      "base_model": "Static",
+      "base_model_label": "Standard Transformer",
+      "new_model": "Additive",
+      "new_model_label": "Additive Time-Conditioned Transformer",
+      "Static_accuracy": 0.5596,
+      "Additive_accuracy": 0.581,
+      "delta": 0.0214
+    },
+    "delta_token_time_interaction": {
+      "split": "ambiguous_test",
+      "label": "Delta token-time interaction",
+      "display": "Token-Time Transformer - Additive Time-Conditioned Transformer",
+      "legacy_label": "\u0394T_inter",
+      "base_model": "Additive",
+      "base_model_label": "Additive Time-Conditioned Transformer",
+      "new_model": "Joint",
+      "new_model_label": "Token-Time Transformer",
+      "Additive_accuracy": 0.581,
+      "Joint_accuracy": 0.6002,
+      "delta": 0.0192
+    },
+    "delta_memory": {
+      "split": "continuation",
+      "label": "Delta memory",
+      "display": "Memory-Augmented Timeformer - Token-Time Transformer",
+      "legacy_label": "\u0394A",
+      "base_model": "Joint",
+      "base_model_label": "Token-Time Transformer",
+      "new_model": "Timeformer",
+      "new_model_label": "Memory-Augmented Timeformer",
+      "Joint_accuracy": 0.7644836272040302,
+      "Timeformer_accuracy": 0.7644836272040302,
+      "delta": 0.0
+    }
+  },
+  "models": [
+    "Static",
+    "Additive",
+    "Joint",
+    "Timeformer"
+  ],
+  "model_labels": {
+    "Static": "Standard Transformer",
+    "Additive": "Additive Time-Conditioned Transformer",
+    "Joint": "Token-Time Transformer",
+    "Timeformer": "Memory-Augmented Timeformer"
+  }
+}

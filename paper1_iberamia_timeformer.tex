@@ -27,23 +27,22 @@
 \begin{abstract}
 Words do not preserve fixed meanings across time. \texttt{gay@1920} and
 \texttt{gay@1980} are different semantic objects, yet transformers treat them
-as the same token in the same geometric space. We argue this is structural:
-masked language modeling rewards correct token prediction, not geometric
-consistency across time, so temporal traceability cannot emerge as a direct
-training outcome.
+as the same token in the same geometric space. Masked language modeling rewards
+correct token prediction rather than geometric consistency across time, so
+temporal traceability is not directly optimized.
 
-We introduce a minimal benchmark with known ground-truth semantic trajectories
-to demonstrate this limitation under controlled conditions, and formalize
-Timeformer, a family of token-time conditioning designs of increasing complexity.
-Temporal conditioning substantially improves neighborhood drift, yet no
-architecture reaches full traceability. The failure of our most complex extension
-further localizes the problem: when a word develops coexisting senses, mean
-pooling collapses both into a centroid that represents neither.
+We introduce a controlled benchmark with known ground-truth semantic trajectories
+to demonstrate this limitation without corpus confounds, and formalize
+Timeformer, a family of token-time conditioning designs. Temporal conditioning
+more than doubles neighborhood drift for drifting subjects, yet no architecture
+matches the planted trajectories across all diagnostics. The memory-augmented
+extension points to a second problem: when a word develops coexisting senses,
+mean pooling collapses both into a centroid that represents neither.
 
-The results bear directly on any application that requires word meaning at a
-specific period --- from historical semantic analysis to knowledge-intensive
-tasks over time-sensitive corpora --- and suggest that progress on temporal
-traceability requires training objectives aligned with trajectory geometry.
+The results matter for applications that require word meaning at a specific
+period, including historical semantic analysis and knowledge-intensive tasks
+over time-sensitive corpora. They suggest that temporal traceability requires
+training objectives aligned with trajectory geometry.
 
 \keywords{Temporal semantics \and Semantic change \and Transformer models \and Traceability \and Diagnostic evaluation}
 \end{abstract}
@@ -58,47 +57,43 @@ from stigmatized terms~\cite{hamilton2016diachronic} is an empirical question
 that requires \texttt{gay@1920} and \texttt{gay@1980} as directly comparable
 objects in a shared geometric space.
 
-Contextualized embeddings disambiguate senses --- but via local sentential
-context, not period. A model correctly represents \emph{virus} differently in
+Contextualized embeddings disambiguate senses through local sentential context,
+not period. A model correctly represents \emph{virus} differently in
 a sentence with \emph{malware} and \emph{code} versus one with \emph{infection}
 and \emph{bacteria}, using the neighboring tokens as evidence. The period is
-irrelevant for this disambiguation. The limitation appears when you want to query
+irrelevant for this disambiguation. The limitation appears when one wants to query
 \texttt{token@time} without a supporting sentence: \texttt{gay@1920} as a
 directly inspectable object, not as an embedding that only separates from
-\texttt{gay@1980} when forced by local context. For diachronic analysis --- in
-which direction did the meaning move, how close was it to stigmatized terms ---
-you need the latter.
+\texttt{gay@1980} when forced by local context. Diachronic analysis asks where
+a meaning moved and how close it became to other terms; it therefore needs the
+\texttt{token@time} object.
 
-This is structural. Masked language modeling masks a token and asks the model
-to reconstruct it from its neighbors. To do this well, the model learns local
-context. It never needs to consider where the token lives geometrically relative
-to other periods. Temporal traceability --- \texttt{virus@1900} and
-\texttt{virus@2020} occupying different regions of the representation space ---
-would require a training objective that directly rewards geometric consistency
-across time. The MLM objective does not provide this. This is not a bug or an
-implementation choice; it is a structural consequence of the objective.
+Masked language modeling masks a token and asks the model to reconstruct it
+from its neighbors. To do this well, the model learns local context; it has no
+direct incentive to place the same token in period-appropriate regions of the
+representation space. Temporal traceability means that \texttt{virus@1900} and
+\texttt{virus@2020} occupy different neighborhoods. It requires a training
+signal aligned with geometric consistency across time, which the MLM objective
+does not provide.
 
-Demonstrating this limitation unambiguously requires a controlled environment
-where the correct answer is known. Natural-language corpora introduce
-confounders --- frequency change, genre shift, subcorpus composition --- that
-make it impossible to attribute a representational failure to architecture rather
-than data. The minimal benchmark we introduce is not a simplification of the
-problem: the smallest environment where the failure is unambiguous is the
-strongest evidence that the failure is structural.
+Testing this limitation requires a controlled environment where the
+correct answer is known. Natural-language corpora entangle semantic change with
+frequency, genre, and subcorpus shifts, making it hard to attribute a
+representational effect to architecture rather than data. The controlled benchmark
+we introduce isolates this effect before moving to open-domain corpora.
 
 Against this benchmark we formalize Timeformer, a family of token-time
-conditioning designs of increasing complexity. The comparison isolates the
+conditioning designs. The comparison isolates the
 contribution of each architectural decision: whether any temporal signal helps,
 whether joint token-time conditioning outperforms global period injection, and
 whether causal prototype memory adds anything beyond conditioning. The controlled
 environment makes each question answerable without corpus confounders.
 
 The paper makes four contributions: it establishes temporal traceability as a
-geometric property distinct from period-label recoverability; demonstrates through
-a minimal controlled benchmark that this property does not emerge from standard
-transformer training; formalizes Timeformer as a diagnostic and architectural
-framework for studying the problem; and identifies mean-prototype aggregation as
-a second structural barrier beyond the training objective itself.
+geometric property distinct from period-label recoverability; shows in a controlled
+controlled benchmark that standard transformer training supports this property
+only as a by-product; compares four token-time conditioning designs; and
+identifies mean-prototype aggregation as a second failure mode.
 
 
 \section{Related Work}
@@ -184,25 +179,22 @@ benchmark contains 10 subjects per class.
 
 Each local marker is drawn from the opposite neighborhood 25\% of the time
 (Figure~\ref{fig:benchmark-design}, left), so the model cannot recover the
-planted neighborhood from co-occurring words alone — it must use subject
+planted neighborhood from co-occurring words alone; it must use subject
 identity together with the period. The \texttt{true\_context} label is withheld
 from training and used only for evaluation.
 
-The minimal benchmark is not a limitation of scope. Natural-language corpora
-introduce confounders --- frequency change, genre shift, and subcorpus
-composition --- that make it impossible to attribute a representational effect
-to model design rather than data artefacts. The smallest environment where
-the failure is unambiguous is the strongest evidence that the failure is
-structural. By planting trajectories with known \(P(N_1 \mid s, t)\), we can
-ask directly whether a model's geometry matches the generating process; the
-scope of the results as mechanistic diagnostics is revisited in the Discussion.
+The synthetic benchmark isolates architectural effects that
+natural corpora confound with frequency, genre, and composition shifts. By
+planting trajectories with known \(P(N_1 \mid s, t)\), we can ask directly
+whether a model's geometry matches the generating process. The scope of these
+controlled diagnostics is revisited in the Discussion.
 
 The benchmark supports several evaluation conditions. The standard split uses
 the same 75\% marker accuracy as training. Two harder splits force the verb, or
 both verb and object, to come from the opposite context. An ambiguous split sets
 fidelity to 50\%, so local markers carry no reliable signal; only subject
 identity and period remain. Two additional conditions test temporal behaviour
-directly and are described in Section~5: the contrastive set presents the same
+and are described in Section~5: the contrastive set presents the same
 sentence under two different period labels to check whether changing only the
 period changes the preferred context; the continuation set uses periods \(t8\)--\(t9\), held out from MLM training
 (which covers \(t0\)--\(t7\)), to test generalisation.
@@ -226,19 +218,16 @@ Transformer encoder, and the final hidden state at the subject position,
 \]
 is the \texttt{token@time} representation inspected by the diagnostics. All
 models are trained with masked language modeling
-(MLM,~\cite{devlin2019bert}): some tokens are masked, and the model must
-reconstruct them from the remaining tokens and, when available, the period input. What changes across the design comparison is how
-the subject's input embedding \(z_s\) is built before the encoder sees the
-sentence.
+(MLM,~\cite{devlin2019bert}): some tokens are masked, and the model reconstructs
+them from the remaining tokens and, when available, the period input. The
+variants differ only in how they build \(z_s\) before the encoder.
 
 The temporally informed models use a shared period vector
-\(\tau(t) \in \mathbb{R}^d\). It is a learned projection of sinusoidal features
-of \(t/T\), where \(T\) is the total number of training periods. In plain terms,
-\(\tau(t)\) is the vector representation of the current period. It is distinct
-from the position encoding \(p_i\), which only tells the Transformer whether a
-token is in subject, verb, or object position. Additive and Token-Time differ in how
-they combine \(\tau(t)\) with token identity; the Memory-Augmented extension
-then adds causal memory on top of Token-Time. Figure~\ref{fig:architecture}
+\(\tau(t) \in \mathbb{R}^d\), a learned projection of sinusoidal features of
+\(t/T\), where \(T\) is the number of training periods. It is distinct from the
+position encoding \(p_i\), which marks subject, verb, or object position.
+Additive and Token-Time differ in how they combine \(\tau(t)\) with token
+identity; Memory-Augmented then adds causal memory. Figure~\ref{fig:architecture}
 summarizes the comparison.
 
 \begin{figure}[t]
@@ -269,16 +258,10 @@ adds the same period vector \(\tau(t)\) to every token:
   z_i = e(w_i) + p_i + \tau(t).
 \]
 
-Now \texttt{S5 V2 O3} at \(t0\) and \(t9\) are distinguishable. The subject
-embedding is \(e(\texttt{S5})+p_1+\tau(0)\) at \(t0\), and
-\(e(\texttt{S5})+p_1+\tau(9)\) at \(t9\). However, the same temporal change is
-also applied to the verb and object: \texttt{V2} receives
-\(e(\texttt{V2})+p_2+\tau(t)\), and \texttt{O3} receives
-\(e(\texttt{O3})+p_3+\tau(t)\). Thus Additive tells the whole sentence which
-period it belongs to, but it does not explicitly bind period to each token's
-identity. If Additive succeeds, global period information is sufficient. If it
-does not, the next question is whether period information must be exposed
-jointly with each token before contextualization.
+Now \texttt{S5 V2 O3} at \(t0\) and \(t9\) are distinguishable: the subject
+receives \(\tau(0)\) or \(\tau(9)\). The same temporal change is also applied
+to the verb and object, so Additive tells the whole sentence which period it
+belongs to but does not explicitly bind period to each token's identity.
 
 \subsection{Token-Time Transformer}
 The Token-Time Transformer in Figure~\ref{fig:architecture}
@@ -291,10 +274,9 @@ concatenates each token embedding with \(\tau(t)\) and projects the pair:
 \]
 
 where \(e(w_i), \tau(t) \in \mathbb{R}^d\) and \(W \in \mathbb{R}^{d \times
-2d}\). A linear \(W\) does not by itself create nonlinear interaction; rather,
-it gives the encoder token-period inputs before self-attention, normalization,
-and later nonlinear transformations. For traceability, \texttt{S5} at \(t0\) and \texttt{S5} at \(t9\) therefore
-enter the encoder as distinct period-conditioned inputs.
+2d}\). Although \(W\) is linear, it exposes token-period inputs before
+self-attention and later nonlinear layers. Thus \texttt{S5} at \(t0\) and
+\texttt{S5} at \(t9\) enter the encoder as distinct period-conditioned inputs.
 
 \subsection{Memory-Augmented Extension}
 The Memory-Augmented extension asks whether causal history helps beyond token-time
@@ -349,7 +331,7 @@ are designed to drift, remain stable, or bifurcate over time.
 We use four diagnostics, each targeting a distinct aspect of temporal
 representation.
 
-\textbf{D1 -- Linear probe~\cite{conneau2018probing}.} Asks whether \(h_s\)
+\textbf{D1: Linear probe~\cite{conneau2018probing}.} Asks whether \(h_s\)
 encodes the planted context label at all. The encoder is frozen; a linear
 classifier is trained on \(h_s\) representations extracted from the held-out
 test sentences of the standard (75\%-fidelity) split and evaluated on the
@@ -357,19 +339,19 @@ ambiguous and continuation splits. High accuracy indicates that
 period-appropriate context is linearly separable in the representation, but
 does not reveal whether that separation shifts systematically over time.
 
-\textbf{D2 -- Context drift score.} Asks whether the neighborhood of a subject
+\textbf{D2: Context drift score.} Asks whether the neighborhood of a subject
 shifts in the expected direction across periods. For each period and subject
 class, we retrieve the \(k=10\) nearest neighbors of \(h_s\) by cosine
 similarity (excluding the query itself) and record the proportion assigned to
 $N_1$. A representation is traceable at period \(t\) if this proportion tracks
-\(P(N_1 \mid s, t)\) --- the same probability that governs corpus generation at
+\(P(N_1 \mid s, t)\), the same probability that governs corpus generation at
 that period. For drifting subjects, the proportion should therefore decrease
 monotonically from $t0$ to $t9$; for stable subjects it should remain near its
 initial value; for bifurcating subjects it should decrease less steeply, as the
 representation splits between neighborhoods rather than migrating from one to
 the other.
 
-\textbf{D3 -- Contrastive diagnostic.} Asks whether the period label alone
+\textbf{D3: Contrastive diagnostic.} Asks whether the period label alone
 drives representational change. We present the same sentence with two different
 period labels and compute the sign-flip rate: the proportion of pairs for which
 swapping the period reverses the nearest-neighbor assignment, from
@@ -377,16 +359,17 @@ $N_1$-dominant to $N_2$-dominant or vice versa. A model that ignores the period
 input produces a sign-flip rate of zero; a model that responds to it produces a
 rate above zero.
 
-\textbf{D4 -- Continuation diagnostic.} Asks whether the learned temporal
+\textbf{D4: Continuation diagnostic.} Asks whether the learned temporal
 mapping generalizes beyond training. We evaluate on held-out periods
-\(t8\)--\(t9\), excluded from MLM training. A model that has internalized the
-direction of change, rather than memorizing period-specific patterns, should
-maintain coherent neighborhood assignments in these unseen periods.
+\(t8\)--\(t9\), excluded from MLM training, and operationalize the diagnostic as
+linear-probe accuracy on representations from these periods. A model that has
+internalized the direction of change, rather than memorizing period-specific
+patterns, should preserve context recoverability in unseen periods.
 
 The four diagnostics are interpreted through a fixed comparison chain. Additive
 vs.\ Standard isolates the effect of adding any temporal signal. Token-Time
 vs.\ Additive tests whether exposing token identity and period jointly before
-self-attention is more effective than applying the period globally as a uniform
+self-attention changes the result relative to applying the period as a uniform
 shift. Memory-Augmented vs.\ Token-Time tests the contribution of causal prototype
 memory, the mechanism most expected to affect D3 and D4.
 
@@ -395,16 +378,17 @@ diagnostic: learned prototypes are replaced by fixed vectors encoding the true
 historical \(P(N_1 \mid s,t)\) trajectory, with the rest of the architecture
 unchanged. This isolates whether the failure of learned prototypes is due to the
 memory pathway itself or to the aggregation mechanism; improvement under oracle
-prototypes indicates that the pathway is functional but the aggregation is the
-bottleneck.
+prototypes indicates that the pathway can use better historical signals, while
+learned mean prototypes remain the weak point.
 
 \section{Results}
 % Target length: 2.5--3.0 pages.
-We report means and 95\% confidence intervals over 31 training seeds. The main
-finding is that any temporal conditioning produces substantially larger
-neighborhood drift than no conditioning; Additive and Token-Time are not robustly
-distinguishable on drift score. The Memory-Augmented extension does not provide
-a robust improvement over the Token-Time Transformer.
+We report means and 95\% confidence intervals over 31 training seeds. Temporal
+conditioning moves drifting subjects much more than the Standard baseline:
+Additive, Token-Time, and Memory-Augmented all reach \(\Delta \approx -0.56\),
+compared with \(-0.221\) for Standard. Additive and Token-Time are not
+distinguishable on drift score, and Memory-Augmented does not improve over
+Token-Time.
 
 \paragraph{Implementation details.}
 All models share the same Transformer encoder: \(d=64\), 4 attention heads, 2
@@ -420,12 +404,11 @@ from the same periods form the held-out evaluation set; 794 sentences from
 % Main claim: temporal conditioning produces stronger neighborhood transitions than Standard.
 % Use class-specific curves to avoid claiming stable subjects are perfectly flat.
 Figure~\ref{fig:context-drift} and Table~\ref{tab:context-drift} show the
-context drift score across periods. Standard is a sanity check: its weak
-movement (\(\Delta=-0.221\), 95\% CI \([-0.240, -0.203]\)) confirms that
-the benchmark alone does not produce the stronger trajectories seen when period
-information is available. All three conditioned models reach
+context drift score across periods. Standard is a sanity check: its movement
+(\(\Delta=-0.221\), 95\% CI \([-0.240, -0.203]\)) is less than half the
+conditioned-model drift. All three conditioned models reach
 \(\Delta \approx -0.56\), with overlapping confidence intervals; the gap
-between any conditioned model and Standard is the primary geometric evidence
+between any conditioned model and Standard is the geometric evidence
 for the effect of temporal conditioning.
 
 The class-specific curves serve as controls (Table~\ref{tab:context-drift}).
@@ -434,20 +417,19 @@ Stable subjects show smaller movement in absolute magnitude (\(\Delta\) between
 for drifting subjects), but the direction is consistently negative. This reflects
 a global displacement of the embedding space induced by the period vector: even
 subjects with flat planted trajectories are pulled along the learned temporal
-direction, at substantially reduced magnitude. Bifurcating subjects show
+direction, at lower magnitude. Bifurcating subjects show
 intermediate drift: conditioned models reach \(t9\) values near \(0.53\),
-consistent with the planted endpoint \(P(N_1 \mid s, t9) \approx 0.5\) for the
-mixed state, confirming that the benchmark's bifurcating trajectory is partially
-recovered but not fully resolved. The geometric diagnostic distinguishes all
+matching the planted endpoint \(P(N_1 \mid s, t9) \approx 0.5\) for the
+mixed state. The geometric diagnostic distinguishes all
 three trajectory classes without relying on probe accuracy alone.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{outputs/figures/figure3_context_drift.png}
 \caption{Context drift score across periods. All conditioned models move drifting
-subjects from $N_1$ toward $N_2$ substantially more than Standard; Additive,
-Token-Time, and Memory-Augmented produce similar trajectories. Stable and bifurcating
-subjects provide class-specific controls.}
+subjects from $N_1$ toward $N_2$ more than Standard; Additive, Token-Time, and
+Memory-Augmented produce similar trajectories. Stable and bifurcating subjects
+provide class-specific controls.}
 \label{fig:context-drift}
 \end{figure}
 
@@ -495,9 +477,9 @@ Token-Time \(0.595\) \([0.589, 0.601]\), and Memory-Augmented \(0.598\)
 overlap, showing a reproducible advantage for joint token-time conditioning when
 only subject identity and period remain as evidence. On the continuation split,
 Additive and Token-Time reach the same accuracy (\(0.763\); Table~\ref{tab:main-results}),
-consistent with the indistinguishability on drift score. Probe accuracy alone is
-insufficient to establish temporal traceability --- it measures recoverability of
-the planted label, not neighborhood geometry --- but the split-dependent pattern
+matching their overlap on drift score. Probe accuracy alone is insufficient to
+establish temporal traceability because it measures recoverability of the planted
+label, not neighborhood geometry. Even so, the split-dependent pattern
 suggests that joint conditioning encodes temporal information more precisely in
 the subject representation, with the advantage visible only when local markers
 are removed.
@@ -505,8 +487,8 @@ are removed.
 The contrastive sign-flip rates are similar across conditioned models: Standard
 \(0.000\), Additive \(0.602\) \([0.549, 0.655]\), Token-Time \(0.624\)
 \([0.576, 0.673]\), Mem-Aug.\ \(0.587\) \([0.536, 0.638]\). Confidence
-intervals overlap, confirming that all conditioned models respond to period
-information at roughly the same rate in contrastive pairs. 
+intervals overlap, so the contrastive diagnostic does not separate the
+conditioned models.
 \begin{table}[t]
 \caption{Main traceability diagnostics (means, 31 seeds). Drift: context drift
 score \(\Delta\) for drifting subjects; Flip: contrastive sign-flip rate (D3);
@@ -531,21 +513,19 @@ Mem-Aug. & $-$0.559 [$\pm$0.022] & 0.587 [$\pm$0.051] & 0.598 [$\pm$0.008] & 0.7
 \subsection{Memory Diagnostics}
 % Report Timeformer honestly: not a stable improvement over Token-Time, but diagnostically
 % useful. Oracle memory may affect sign flip without solving continuation.
-The Memory-Augmented extension does not produce a robust gain over the
-Token-Time Transformer. Across 31 seeds, learned prototypes reach a continuation
+The Memory-Augmented extension does not improve over Token-Time. Across 31
+seeds, learned prototypes reach a continuation
 accuracy of \(0.755\) \([0.750, 0.760]\), marginally below Token-Time at
 \(0.763\) \([0.759, 0.766]\) (\(\Delta=-0.008\)). The oracle diagnostic
 shows the limits of this architecture: replacing learned prototypes with fixed
 vectors encoding the true \(P(N_1 \mid s, t)\) trajectory yields a
 continuation of \(0.769\) \([0.761, 0.777]\) and a sign-flip rate of \(0.694\)
-\([0.576, 0.812]\), versus \(0.624\) for Token-Time. The sign-flip improvement
-(\(\Delta=+0.070\)) is larger than the continuation improvement
-(\(\Delta=+0.007\)), but both CIs are wide. The dissociation has a direct
-explanation: the MLM objective optimizes token prediction, not trajectory
-geometry; perfect historical prototypes can therefore improve contrastive
-behavior --- which depends on local period sensitivity --- but cannot substitute
-for a training signal that directly rewards geometric continuity across unseen
-periods.
+\([0.576, 0.812]\), versus \(0.624\) for Token-Time. The sign-flip difference
+(\(\Delta=+0.070\)) exceeds the continuation improvement
+(\(\Delta=+0.007\)), but both CIs are wide. The MLM objective optimizes token
+prediction, not trajectory geometry. Perfect historical prototypes can improve
+contrastive behavior, which depends on local period sensitivity, but they do not
+replace a training signal for geometric continuity across unseen periods.
 
 \begin{table}[t]
 \caption{Memory diagnostics (means, 31 seeds). Continuation (D4): linear-probe
@@ -569,15 +549,12 @@ Mem-Aug.\ oracle   & 0.769 [$\pm$0.004] & 0.694 [$\pm$0.059] & $+$0.007 [$\pm$0.
 
 \section{Discussion and Conclusion}
 % Target length: 1.25--1.5 pages.
-No architecture in the comparison reaches full temporal traceability. Conditioned
-models improve neighborhood drift substantially --- Standard reaches
-\(\Delta=-0.221\) while all conditioned models cluster near
-\(\Delta\approx-0.563\) --- but even the oracle diagnostic, which provides a
-perfect memory signal, lifts continuation accuracy only to \(0.769\). The ceiling
-is not a failure of architectural design. It is a consequence of the MLM
-objective, which rewards token prediction and has no direct incentive for
-geometric consistency across periods. Traceability emerges as a side effect, and
-its ceiling reflects how much the objective incidentally supports it.
+No architecture matches the planted trajectories across all diagnostics.
+Conditioned models improve neighborhood drift, with \(\Delta\approx-0.563\)
+against \(-0.221\) for Standard, but even oracle memory raises continuation
+accuracy only to \(0.769\). This pattern points to the MLM objective, which
+rewards token prediction rather than geometric consistency across periods.
+Traceability appears only as a by-product of that objective.
 
 The form of conditioning matters less than its presence. Additive and Token-Time
 are statistically indistinguishable on drift score across 31 seeds; Token-Time
@@ -587,50 +564,36 @@ subject identity and period remain. This suggests that joint token-time
 conditioning encodes temporal information more precisely in the subject
 representation, even when the aggregate neighborhood trajectory is similar. The
 convergence of two architecturally distinct designs toward the same drift
-performance points to the training objective as the binding constraint, not the
+performance points to the training objective as the limiting factor, not the
 conditioning mechanism.
 
-The failure of the Memory-Augmented extension is additional evidence for the
-same conclusion. For bifurcating subjects, which develop two coexisting senses
-in later periods, the mean prototype is a centroid between two clusters,
-representing neither well. The oracle diagnostic confirms that the memory pathway
-is useful in principle: replacing learned prototypes with fixed vectors encoding
-the true \(P(N_1 \mid s, t)\) trajectory improves the sign-flip rate by
-\(+0.070\) over Token-Time (\(0.694\) vs.\ \(0.624\)). The failure of learned
-prototypes is a failure of aggregation, not of the memory mechanism itself. A
-second structural barrier --- beyond the training objective --- is that
-mean-pooled representations cannot preserve the internal structure of a word's
-sense distribution.
+The Memory-Augmented extension points to a second failure mode. For
+bifurcating subjects, which develop two coexisting senses in later periods, a
+mean prototype lies between clusters and represents neither well. The oracle
+diagnostic shows that the memory pathway can use better historical signals:
+fixed vectors encoding the true \(P(N_1 \mid s, t)\) trajectory increase the
+sign-flip rate by \(+0.070\) over Token-Time (\(0.694\) vs.\ \(0.624\)). The
+learned mean prototypes, however, cannot preserve the internal structure of a
+word's sense distribution.
 
-These conclusions are mechanistic diagnostics, not claims about open-domain
+These conclusions come from controlled diagnostics, not open-domain
 diachronic language. The probe-level advantage of Token-Time over Additive is
 statistically stable but modest in magnitude (1.6 percentage points) and does
 not appear on the drift score; it may not generalize beyond the controlled
 setting of fixed subject positions and small vocabulary. The diagnostic suite
 was co-designed with the architecture family, limiting its role as an independent
-evaluation for models outside this design space. These are bounds on the scope
-of the results, not flaws in the argument.
+evaluation for models outside this design space.
 
-Two directions follow directly. Memory mechanisms that preserve the internal
-structure of historical representations --- rather than collapsing them to a
-single prototype per subject and period --- are the most direct next step for
-the Memory-Augmented extension. At the level of the main comparison, the
-convergence of Additive and Token-Time on drift performance is worth
-investigating: attention heads may learn to suppress the temporal signal during
-self-attention, neutralizing differences in input conditioning. Analysis of
-attention patterns stratified by period would make this testable, and could
-inform whether progress on traceability requires changes to the objective, the
+Two next steps follow. First, memory mechanisms should preserve the internal
+structure of historical representations instead of collapsing each subject and
+period to one prototype. Second, the convergence of Additive and Token-Time on
+drift performance needs attention-level analysis: heads may suppress the
+temporal signal during self-attention, neutralizing differences in input
+conditioning. Period-stratified attention analysis would test this hypothesis
+and clarify whether traceability needs changes to the objective, the
 architecture, or both.
 
-\begin{credits}
-
-\subsubsection{\discintname}
-% TODO: Replace with the final competing interests statement.
-The authors have no competing interests to declare that are relevant to the
-content of this article.
-\end{credits}
-
-% ---- Bibliography ----
+% Bibliography
 \bibliographystyle{splncs04}
 \bibliography{references}
 

@@ -1,0 +1,14 @@
+{
+  "epochs": 30,
+  "batch_size": 64,
+  "lr": 0.001,
+  "seed": 29,
+  "device": "cpu",
+  "d_model": 64,
+  "n_heads": 4,
+  "n_layers": 2,
+  "d_ff": 128,
+  "dropout": 0.1,
+  "d_sin": 32,
+  "n_epochs": 10
+}

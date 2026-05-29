@@ -138,6 +138,21 @@ def arrow(fig: go.Figure,
                        arrowcolor=color)
 
 
+def routed_arrow(fig: go.Figure,
+                 points: list[tuple[float, float]],
+                 color: str = "#aaaaaa") -> None:
+    """Draw a segmented connector with an arrowhead only on the final segment."""
+    if len(points) < 2:
+        return
+    for (x0, y0), (x1, y1) in zip(points[:-2], points[1:-1]):
+        fig.add_shape(type="line",
+                      x0=x0, y0=y0, x1=x1, y1=y1,
+                      line={"color": color, "width": 2.0},
+                      layer="above")
+    (ax, ay), (x, y) = points[-2], points[-1]
+    arrow(fig, ax, ay, x, y, color)
+
+
 def label(fig: go.Figure, x: float, y: float, text: str,
           color: str = C["muted"], size: int = 10) -> None:
     fig.add_annotation(x=x, y=y, text=text, showarrow=False,
@@ -244,32 +259,53 @@ def build_figure() -> go.Figure:
 
     # ── Arrows ────────────────────────────────────────────────────────────────
 
-    # Standard: Lexical → Encoder (long bypass, routed right of center) → output
+    # Standard: Lexical → Encoder directly; intermediate components are inactive.
     cx0 = COL_CENTERS[0]
     arrow(fig, cx0, y_bot("token"), cx0, y_top("encoder"), C["token"])
     arrow(fig, cx0, y_bot("encoder"), cx0, y_top("output"), C["encoder"])
 
-    # Additive: Lexical → Encoder, Period → Encoder (both add to encoder input)
+    # Additive: Lexical and period code reach the encoder through separate lanes.
     cx1 = COL_CENTERS[1]
-    arrow(fig, cx1, y_bot("token"), cx1, y_top("encoder"), C["token"])
-    arrow(fig, cx1, y_bot("time"),  cx1, y_top("encoder"), C["time"])
+    routed_arrow(fig, [
+        (cx1, y_bot("token")),
+        (cx1, 0.735),
+        (cx1 - 0.070, 0.735),
+        (cx1 - 0.070, y_top("encoder") + 0.018),
+        (cx1 - 0.020, y_top("encoder") + 0.018),
+        (cx1 - 0.020, y_top("encoder")),
+    ], C["token"])
+    arrow(fig, cx1, y_bot("time"), cx1, y_top("encoder"), C["time"])
     label(fig, cx1 + 0.025,
           (y_bot("time") + y_top("encoder")) / 2,
           "add", C["time"], size=10)
     arrow(fig, cx1, y_bot("encoder"), cx1, y_top("output"), C["encoder"])
 
-    # Token-Time: Lexical → Interact, Period → Interact, Interact → Encoder → output
+    # Token-Time: lexical input bypasses the period box; both enter fusion separately.
     cx2 = COL_CENTERS[2]
-    arrow(fig, cx2, y_bot("token"),   cx2, y_top("interact"),  C["token"])
-    arrow(fig, cx2, y_bot("time"),    cx2, y_top("interact"),  C["time"])
+    routed_arrow(fig, [
+        (cx2, y_bot("token")),
+        (cx2, 0.735),
+        (cx2 - 0.070, 0.735),
+        (cx2 - 0.070, y_top("interact") + 0.018),
+        (cx2 - 0.035, y_top("interact") + 0.018),
+        (cx2 - 0.035, y_top("interact")),
+    ], C["token"])
+    arrow(fig, cx2, y_bot("time"), cx2, y_top("interact"), C["time"])
     arrow(fig, cx2, y_bot("interact"), cx2, y_top("encoder"),  C["interaction"])
     arrow(fig, cx2, y_bot("encoder"), cx2, y_top("output"),    C["encoder"])
 
     # Memory-Augmented: Lexical → Interact, Period → Interact,
     #   Interact → Causal memory, Memory → Attention (horizontal), → Encoder → output
     cx3 = COL_CENTERS[3]
-    arrow(fig, cx3, y_bot("token"),   cx3, y_top("interact"),  C["token"])
-    arrow(fig, cx3, y_bot("time"),    cx3, y_top("interact"),  C["time"])
+    routed_arrow(fig, [
+        (cx3, y_bot("token")),
+        (cx3, 0.735),
+        (cx3 - 0.070, 0.735),
+        (cx3 - 0.070, y_top("interact") + 0.018),
+        (cx3 - 0.035, y_top("interact") + 0.018),
+        (cx3 - 0.035, y_top("interact")),
+    ], C["token"])
+    arrow(fig, cx3, y_bot("time"), cx3, y_top("interact"), C["time"])
     arrow(fig, cx3, y_bot("interact"), cx3, y_top("mem_attn"), C["interaction"])
     # Prototype Memory → History Gate (horizontal)
     arrow(fig, mem_cx + HALF_W_TF, ROWS["mem_attn"],
@@ -299,7 +335,7 @@ def build_figure() -> go.Figure:
     fig.update_layout(
         template="plotly_white",
         width=1400,
-        height=960,
+        height=900,
         margin={"l": 10, "r": 10, "t": 20, "b": 20},
         font={"family": "Arial", "size": 12, "color": C["ink"]},
         xaxis={"range": [0, 1], "visible": False, "fixedrange": True},

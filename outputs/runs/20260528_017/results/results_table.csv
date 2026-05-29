@@ -1,0 +1,29 @@
+model,model_label,split,probe_subj_accuracy,probe_subj_f1,probe_subj_auroc,probe_sent_accuracy,probe_sent_f1,probe_sent_auroc,precision_at_5,cluster_ari,cluster_nmi,sign_flip_rate
+Static,Standard Transformer,test,0.8558,0.7885,0.9189,0.8689,0.7992,0.9285,0.7651,-0.0127,0.0154,
+Static,Standard Transformer,hard_verb,0.5256,0.407,0.4417,0.5349,0.4118,0.4387,0.7349,-0.0084,0.0092,
+Static,Standard Transformer,hard_both,0.2754,0.0741,0.148,0.2754,0.0385,0.0986,0.7014,-0.0272,0.0344,
+Static,Standard Transformer,ambiguous_test,0.5614,0.399,0.56,0.5734,0.4017,0.5634,0.6378,-0.0103,0.0398,
+Static,Standard Transformer,continuation,0.7191,0.7039,0.7836,0.7229,0.6944,0.7982,0.7554,0.0622,0.0476,
+Static,Standard Transformer,interpolation,0.7563,0.6689,0.7891,0.7638,0.6781,0.8068,0.7191,0.0336,0.104,
+Static,Standard Transformer,contrastive,,,,,,,,,,0.0
+Additive,Additive Time-Conditioned Transformer,test,0.8847,0.8261,0.9539,0.8794,0.8182,0.9545,0.8299,-0.0003,0.0008,
+Additive,Additive Time-Conditioned Transformer,hard_verb,0.4698,0.3596,0.3059,0.4558,0.3314,0.3004,0.8688,-0.0032,0.0003,
+Additive,Additive Time-Conditioned Transformer,hard_both,0.2754,0.0741,0.058,0.2609,0.0727,0.059,0.7652,-0.0056,0.0017,
+Additive,Additive Time-Conditioned Transformer,ambiguous_test,0.587,0.4294,0.5694,0.5882,0.4311,0.5695,0.6962,-0.0,0.0001,
+Additive,Additive Time-Conditioned Transformer,continuation,0.7645,0.7722,0.7787,0.7594,0.7662,0.779,0.7171,-0.0011,0.0001,
+Additive,Additive Time-Conditioned Transformer,interpolation,0.7563,0.682,0.7872,0.7563,0.682,0.782,0.6879,-0.0018,0.0001,
+Additive,Additive Time-Conditioned Transformer,contrastive,,,,,,,,,,0.6897
+Joint,Token-Time Transformer,test,0.8899,0.8359,0.9572,0.8938,0.8421,0.9622,0.8197,-0.002,0.0006,
+Joint,Token-Time Transformer,hard_verb,0.493,0.3911,0.361,0.5163,0.4348,0.3276,0.8726,-0.002,0.0012,
+Joint,Token-Time Transformer,hard_both,0.2754,0.1379,0.117,0.2319,0.1017,0.0716,0.7826,-0.0097,0.0006,
+Joint,Token-Time Transformer,ambiguous_test,0.5904,0.4536,0.5886,0.5894,0.4515,0.5707,0.6942,-0.0007,0.0001,
+Joint,Token-Time Transformer,continuation,0.7594,0.769,0.7873,0.7821,0.7933,0.7857,0.731,-0.0012,0.0,
+Joint,Token-Time Transformer,interpolation,0.7688,0.7089,0.7998,0.7688,0.7107,0.8031,0.7196,-0.0008,0.001,
+Joint,Token-Time Transformer,contrastive,,,,,,,,,,0.8276
+Timeformer,Memory-Augmented Timeformer,test,0.8938,0.8402,0.9611,0.8925,0.8386,0.9586,0.8396,-0.0003,0.0008,
+Timeformer,Memory-Augmented Timeformer,hard_verb,0.493,0.3842,0.3181,0.5163,0.4023,0.3314,0.8958,-0.0032,0.0003,
+Timeformer,Memory-Augmented Timeformer,hard_both,0.2464,0.037,0.0745,0.2609,0.0727,0.0677,0.7942,-0.0056,0.0017,
+Timeformer,Memory-Augmented Timeformer,ambiguous_test,0.5812,0.4215,0.5561,0.5788,0.4233,0.5638,0.6823,-0.0,0.0001,
+Timeformer,Memory-Augmented Timeformer,continuation,0.7582,0.7594,0.7774,0.7695,0.7721,0.7898,0.6997,-0.0011,0.0001,
+Timeformer,Memory-Augmented Timeformer,interpolation,0.7563,0.6901,0.788,0.7638,0.7025,0.7807,0.7307,-0.0018,0.0001,
+Timeformer,Memory-Augmented Timeformer,contrastive,,,,,,,,,,0.6207

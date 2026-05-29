@@ -22,15 +22,30 @@ import plotly.express as px
 from src.timeformer.nomenclature import model_label
 
 
-DEFAULT_RUNS = ("20260523_006", "20260523_007", "20260523_008")
 DEFAULT_MODELS = ("Static", "Additive", "Joint", "Timeformer")
 CLASS_LABELS = {
     "stable": "Stable",
     "drift": "Drift",
     "bifurc": "Bifurcation",
 }
-MODEL_ORDER = [model_label(m) for m in DEFAULT_MODELS]
+# Short labels for the plot: drop the word "Transformer"/"Timeformer"
+PLOT_LABELS = {
+    "Static":     "Standard",
+    "Additive":   "Additive",
+    "Joint":      "Token-Time",
+    "Timeformer": "Memory-Augmented",
+}
+MODEL_ORDER = [PLOT_LABELS[m] for m in DEFAULT_MODELS]
 CLASS_ORDER = ["Stable", "Drift", "Bifurcation"]
+
+
+def default_runs() -> list[str]:
+    """Return run IDs from multiseed_raw.json, falling back to the old 3-seed default."""
+    raw_path = Path("outputs/multiseed/multiseed_raw.json")
+    if raw_path.exists():
+        data = json.loads(raw_path.read_text())
+        return [r["run_id"] for r in data]
+    return ["20260523_006", "20260523_007", "20260523_008"]
 
 
 def load_rows(run_ids: list[str], models: list[str]) -> list[dict]:
@@ -45,7 +60,7 @@ def load_rows(run_ids: list[str], models: list[str]) -> list[dict]:
                     rows.append({
                         "run_id": run_id,
                         "model": model,
-                        "model_label": model_label(model),
+                        "model_label": PLOT_LABELS.get(model, model),
                         "class": class_id,
                         "class_label": CLASS_LABELS[class_id],
                         "epoch": int(epoch_str),
@@ -83,29 +98,28 @@ def make_figure(agg: pd.DataFrame):
         markers=True,
         labels={
             "epoch": "Epoch",
-            "mean": "Context-A share among nearest neighbors",
+            "mean": "Context-A neighbor share",
             "model_label": "Model",
             "class_label": "Subject class",
         },
-        title="Figure 3. Context drift score by subject class",
     )
 
-    fig.update_traces(line={"width": 2.6}, marker={"size": 7})
+    fig.update_traces(line={"width": 2.6}, marker={"size": 8})
     fig.for_each_annotation(lambda a: a.update(text=a.text.replace("Subject class=", "")))
     fig.update_layout(
         template="plotly_white",
         width=1200,
         height=500,
-        font={"family": "Arial", "size": 14},
-        title={"x": 0.02, "xanchor": "left"},
+        font={"family": "Arial", "size": 16},
         legend={
             "orientation": "h",
             "yanchor": "bottom",
-            "y": -0.24,
+            "y": -0.28,
             "xanchor": "center",
             "x": 0.5,
+            "font": {"size": 15},
         },
-        margin={"l": 60, "r": 25, "t": 70, "b": 95},
+        margin={"l": 65, "r": 25, "t": 30, "b": 100},
     )
     fig.update_yaxes(range=[0, 1], dtick=0.2)
     fig.update_xaxes(dtick=1)
@@ -151,7 +165,7 @@ def make_figure(agg: pd.DataFrame):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Plot Figure 3 context drift score")
-    parser.add_argument("--runs", nargs="+", default=list(DEFAULT_RUNS))
+    parser.add_argument("--runs", nargs="+", default=default_runs())
     parser.add_argument("--models", nargs="+", default=list(DEFAULT_MODELS))
     parser.add_argument("--output-dir", default="outputs/figures")
     parser.add_argument(

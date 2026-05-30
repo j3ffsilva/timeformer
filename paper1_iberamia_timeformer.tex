@@ -152,8 +152,7 @@ model's geometry matches the generating process. The scope of these controlled
 diagnostics is revisited in the Discussion.
 
 The diagnostic suite supports several evaluation conditions. The standard split uses
-the same 75\% marker accuracy as training. Two harder splits force the verb, or
-both verb and object, to come from the opposite context. An ambiguous split sets
+the same 75\% marker accuracy as training. An ambiguous split sets
 fidelity to 50\%, so local markers carry no reliable signal in expectation; subject
 identity and period become the reliable cues. Two additional conditions test temporal behaviour
 and are described in Section~5: the contrastive set presents the same
@@ -303,9 +302,9 @@ does not reveal whether that separation shifts systematically over time.
 
 \textbf{D2: Context drift score.} Asks whether the neighborhood of a subject
 shifts in the expected direction across periods. For each period and subject
-class, we retrieve the \(k=10\) nearest neighbors of \(h_s\) by cosine
-similarity (excluding the query itself) and record the proportion assigned to
-$N_1$. A representation is traceable at period \(t\) if this proportion tracks
+class, we retrieve the \(k=10\) nearest neighbors of \(h_s\) from the evaluation set
+by cosine similarity (excluding the query itself) and record the proportion
+assigned to $N_1$. A representation is traceable at period \(t\) if this proportion tracks
 \(P(N_1 \mid s, t)\), the same probability that governs corpus generation at
 that period. For drifting subjects, the proportion should therefore decrease
 monotonically from $t0$ to $t9$; for stable subjects it should remain near its
@@ -324,10 +323,11 @@ rate above zero.
 \textbf{D4: Continuation diagnostic.} Asks whether the learned temporal
 mapping generalizes beyond MLM training. We evaluate on periods
 \(t8\)--\(t9\), excluded from MLM training, and operationalize the diagnostic as
-linear-probe accuracy on encoder representations from these periods. A model
-whose encoder has internalized the direction of change, rather than memorizing
-period-specific patterns, should preserve context recoverability when the
-encoder is queried at periods it was not trained on.
+linear-probe accuracy on encoder representations from these periods (using the
+same probe trained on the standard split, applied here to encoder outputs the
+probe has not seen). A model whose encoder has internalized the direction of
+change, rather than memorizing period-specific patterns, should preserve context
+recoverability when queried at periods excluded from MLM training.
 
 The four diagnostics are interpreted through a fixed comparison chain.
 All three conditioning architectures vs.\ Standard isolates the effect of
@@ -434,8 +434,9 @@ Bifurc. & Standard & 0.793 & 0.660 & $-$0.133 [$\pm$0.018] \\
 
 \subsection{Probe and Contrastive Diagnostics}
 The linear probe results reveal a distinction that drift score does not.
-On the standard (75\%-fidelity) split, where local markers carry reliable
-context signal, all conditioned models outperform Standard
+On the standard (75\%-fidelity) split (the probe's in-sample split), where
+local markers carry reliable context signal, all conditioned models outperform
+Standard
 (\(0.875\) [\(\pm\)0.005]): Additive reaches \(0.892\) [\(\pm\)0.003],
 Token-Time \(0.881\) [\(\pm\)0.005], and Mem-Aug.\ \(0.881\) [\(\pm\)0.006];
 on this split Additive is above Token-Time. The ordering reverses on the
@@ -453,7 +454,7 @@ equivalence is regime-specific: joint conditioning encodes temporal information
 more precisely when local markers are degraded.
 
 The contrastive sign-flip rates are similar across conditioned models: Standard
-\(0.000\), Additive \(0.602\) \([0.549, 0.655]\), Token-Time \(0.624\)
+\(0.000\) (by construction: no period input), Additive \(0.602\) \([0.549, 0.655]\), Token-Time \(0.624\)
 \([0.576, 0.673]\), Mem-Aug.\ \(0.587\) \([0.536, 0.638]\). Confidence
 intervals overlap, so the contrastive diagnostic does not separate the
 conditioned models.
@@ -533,8 +534,8 @@ vs.\ \(0.579\), non-overlapping CIs), where local markers carry no reliable sign
 suggesting that token-level binding encodes temporal information more precisely
 when context is degraded. Layer-wise CKA corroborates this convergence:
 Additive vs.\ Token-Time similarity increases from 0.726 to 0.887 across
-encoder depth (Standard stays near 0.22), suggesting self-attention absorbs
-the input-level difference. Whether the designs diverge under noisier regimes
+encoder depth (CKA between Standard and each conditioned model stays near
+0.22), suggesting self-attention absorbs the input-level difference. Whether the designs diverge under noisier regimes
 and natural corpora remains open.
 
 For bifurcating subjects, learned mean prototypes are consistent with collapsing two coexisting senses into a

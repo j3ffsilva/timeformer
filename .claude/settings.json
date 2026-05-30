@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/jeff/Documents/trabalhos/papers/2026-timeformers status)",
+      "Bash(git -C /Users/jeff/Documents/trabalhos/papers/2026-timeformers log --oneline -5)",
+      "Bash(git -C /Users/jeff/Documents/trabalhos/papers/2026-timeformers diff --stat)",
+      "Bash(git -C /Users/jeff/Documents/trabalhos/papers/2026-timeformers add paper1_iberamia_timeformer.tex paper1_iberamia_timeformer.pdf tmp/inconsistencias_paper.md)",
+      "Bash(git -C /Users/jeff/Documents/trabalhos/papers/2026-timeformers commit -m ' *)",
+      "Bash(git -C /Users/jeff/Documents/trabalhos/papers/2026-timeformers add paper1_iberamia_timeformer.tex paper1_iberamia_timeformer.pdf)",
+      "Bash(grep -v \"\\\\\\\\\\\\\\\\begin\\\\|\\\\\\\\\\\\\\\\end\\\\|\\\\\\\\\\\\\\\\label\\\\|\\\\\\\\\\\\\\\\ref\\\\|\\\\\\\\\\\\\\\\cite\\\\|\\\\\\\\\\\\\\\\caption\\\\|\\\\\\\\\\\\\\\\section\\\\|\\\\\\\\\\\\\\\\subsection\\\\|\\\\\\\\\\\\\\\\paragraph\\\\|\\\\\\\\\\\\\\\\item\\\\|\\\\\\\\\\\\\\\\toprule\\\\|\\\\\\\\\\\\\\\\midrule\\\\|\\\\\\\\\\\\\\\\bottomrule\\\\|\\\\\\\\\\\\\\\\hline\\\\|\\\\\\\\\\\\\\\\textbf\\\\|\\\\\\\\\\\\\\\\emph\\\\|\\\\\\\\texttt\\\\|\\\\\\\\\\\\\\\\mathbf\\\\|\\\\$\\\\|\\\\\\\\\\\\\\\\[\")",
+      "Bash(grep -v \"^[0-9]*:[[:space:]]*$\")",
+      "Bash(pdflatex -interaction=nonstopmode paper1_iberamia_timeformer.tex)"
+    ]
+  }
+}

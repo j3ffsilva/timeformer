@@ -29,7 +29,7 @@ Words do not preserve fixed meanings across time. Without representations that
 reflect this, token@time queries become impossible: there is no way to ask where 
 the meaning of \emph{gay} stood in 1920, or how it moved by 1980, if both 
 queries return the same geometric object. Yet time-conditioned transformers have 
-rarely been tested on whether they actually achieve this geometrically in controlled settings. Knowing 
+rarely been tested on whether they achieve this geometrically in controlled settings. Knowing 
 that a representation encodes the correct period label is not the same as knowing 
 whether it occupies a period-appropriate neighborhood, a distinction we formalize 
 as \emph{temporal traceability}. We introduce a controlled diagnostic suite 
@@ -99,7 +99,7 @@ extension exposes where mean-pooled prototypes fail.
 The diagnostic suite gives each subject a known temporal trajectory, making it
 possible to ask directly whether a model's representation of a subject at \(t0\)
 has moved toward the expected neighborhood by \(t9\). This distinguishes it from
-natural-language LSCD benchmarks, where ground truth is often annotated or
+LSCD benchmarks, where ground truth is often annotated or
 inferred post-hoc and corpus confounds are hard to separate from genuine semantic
 change.
 
@@ -169,7 +169,7 @@ they introduce the period signal: Additive applies a global period shift to ever
 token; Token-Time uses a joint token-period projection; and Memory-Augmented
 extends Token-Time with causal prototype history.
 
-All models follow the same outer pipeline based on the Transformer
+All models follow the same pipeline based on the Transformer
 encoder~\cite{vaswani2017attention}. A sentence is tokenized as
 \texttt{[CLS] S V O [SEP]}. Each token \(w_i\) is mapped to an input embedding
 \(z_i \in \mathbb{R}^d\). The sequence \((z_1,\ldots,z_n)\) is processed by a
@@ -237,7 +237,7 @@ concatenates each token embedding with \(\tau(t)\) and projects the pair:
 where \(e(w_i), \tau(t) \in \mathbb{R}^d\) and \(W \in \mathbb{R}^{d \times
 2d}\). Although \(W\) is linear, it exposes token-period inputs before
 self-attention and later nonlinear layers. Thus \texttt{S5} at \(t0\) and
-\texttt{S5} at \(t9\) enter the encoder as distinct period-conditioned inputs.
+\texttt{S5} at \(t9\) enter the encoder as period-conditioned inputs.
 
 \subsection{Memory-Augmented Extension}
 The Memory-Augmented extension asks whether causal history helps beyond token-time
@@ -284,8 +284,7 @@ token that enters the encoder informed by causal prototype history.
 All models in the comparison chain are trained with masked language modeling
 over the synthetic SVO corpus. The planted \texttt{true\_context} label is
 withheld from training and used exclusively for post-hoc evaluation: it tests
-whether the learned subject representation reflects the planted temporal
-trajectory. The primary evaluation target is \(h_s\), the final hidden state
+whether the learned subject representation reflects the planted trajectory. The primary evaluation target is \(h_s\), the final hidden state
 at the subject position, because subjects are the lexical items whose meanings
 are designed to drift, remain stable, or bifurcate over time.
 

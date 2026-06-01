@@ -135,14 +135,14 @@ def _arrowhead(fig: go.Figure,
                x_edge: float, y_edge: float,
                dx: float, dy: float,
                color: str) -> None:
-    """Filled-triangle arrowhead: base at the destination box edge, tip inside the box."""
+    """Filled-triangle arrowhead: tip touches the destination box edge, body stays outside."""
     L = (dx ** 2 + dy ** 2) ** 0.5
     if L < 1e-9:
         return
     t = ENTER_DIST / L
     fig.add_annotation(
-        ax=x_edge,           ay=y_edge,           # base: destination box edge
-        x=x_edge + dx * t,  y=y_edge + dy * t,   # tip: ENTER_DIST inside the box
+        x=x_edge,            y=y_edge,            # tip: exactly at destination box edge
+        ax=x_edge - dx * t,  ay=y_edge - dy * t,  # base: ENTER_DIST outside box (toward source)
         xref="x", yref="y", axref="x", ayref="y",
         showarrow=True, arrowhead=2, text="",
         arrowsize=1.0, arrowwidth=SHAFT_W,

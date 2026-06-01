@@ -23,6 +23,36 @@ import plotly.io as pio
 from src.timeformer.nomenclature import model_label
 
 
+# ── Ajuste aqui para testar a aparência das linhas e bandas ──────────────────
+LINE_WIDTH  = 2.5   # espessura das linhas em px
+MARKER_SIZE = 9     # tamanho dos marcadores em px
+LINE_DARK   = 0.60  # escurece a cor da linha   (0.5 = muito escuro | 1.0 = cor original)
+BAND_LIGHT  = 0.35  # clareia a cor da banda     (0.0 = cor original | 1.0 = branco puro)
+BAND_ALPHA  = 0.70  # transparência da banda     (0 = invisível | 1 = sólido)
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _to_rgb(color: str) -> tuple[int, int, int]:
+    """Parse hex (#rrggbb) or rgb(r,g,b) string into an (r,g,b) tuple."""
+    color = color.strip()
+    if color.startswith("#"):
+        h = color.lstrip("#")
+        return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return tuple(int(v.strip()) for v in color[4:-1].split(","))
+
+
+def _darken(color: str, factor: float) -> str:
+    """Multiply each RGB channel by factor to darken the color."""
+    r, g, b = _to_rgb(color)
+    return f"rgb({int(r*factor)},{int(g*factor)},{int(b*factor)})"
+
+
+def _lighten_rgba(color: str, light: float, alpha: float) -> str:
+    """Blend toward white by light (0=original, 1=white), then add alpha."""
+    r, g, b = _to_rgb(color)
+    r2, g2, b2 = (int(c + (255 - c) * light) for c in (r, g, b))
+    return f"rgba({r2},{g2},{b2},{alpha})"
+
 DEFAULT_MODELS = ("Static", "Additive", "Joint", "Timeformer")
 CLASS_LABELS = {
     "stable": "Stable",
@@ -105,7 +135,7 @@ def make_figure(agg: pd.DataFrame):
         },
     )
 
-    fig.update_traces(line={"width": 3.5}, marker={"size": 11})
+    fig.update_traces(line={"width": LINE_WIDTH}, marker={"size": MARKER_SIZE})
     fig.for_each_annotation(lambda a: a.update(text=a.text.replace("Subject class=", "")))
     fig.update_layout(
         template="plotly_white",
@@ -125,12 +155,19 @@ def make_figure(agg: pd.DataFrame):
     fig.update_yaxes(range=[0, 1], dtick=0.2)
     fig.update_xaxes(dtick=1)
 
-    # Add a light variability band (mean +/- 1 std) behind each line.
+    # Collect original Plotly colors, then darken the line traces.
     colors = {
         trace.name: trace.line.color
         for trace in fig.data
         if getattr(trace, "mode", "") and "lines" in trace.mode
     }
+    for trace in fig.data:
+        if getattr(trace, "mode", "") and "lines" in trace.mode:
+            orig = colors.get(trace.name)
+            if orig:
+                dark = _darken(orig, LINE_DARK)
+                trace.line.color = dark
+                trace.marker.color = dark
     facet_axis_by_class = {
         CLASS_ORDER[0]: ("x", "y"),
         CLASS_ORDER[1]: ("x2", "y2"),
@@ -143,8 +180,8 @@ def make_figure(agg: pd.DataFrame):
             model_df = class_df[class_df["model_label"] == model].sort_values("epoch")
             if model_df.empty:
                 continue
-            rgba = colors.get(model, "#999999")
-            band_color = rgba.replace("rgb(", "rgba(").replace(")", ",0.04)")
+            rgba = colors.get(model, "rgb(153,153,153)")
+            band_color = _lighten_rgba(rgba, BAND_LIGHT, BAND_ALPHA)
             fig.add_scatter(
                 x=list(model_df["epoch"]) + list(model_df["epoch"])[::-1],
                 y=list(model_df["upper"]) + list(model_df["lower"])[::-1],

@@ -14,8 +14,8 @@
 
 \begin{document}
 
-\title{Amnesia by Design: Diagnosing Temporal Traceability in Transformer Representations}
-\titlerunning{Amnesia by Design: Temporal Traceability in Transformer Representations}
+\title{Time-blind by Design: Diagnosing Temporal Traceability in Transformer Representations}
+\titlerunning{Time-blind by Design: Temporal Traceability in Transformer Representations}
 
 \author{Anonymous Author}
 \authorrunning{Anonymous}
@@ -26,7 +26,7 @@
 
 \begin{abstract}
 Words do not preserve fixed meanings across time. Without representations that 
-reflect this, token@time queries become impossible: there is no way to ask where 
+reflect this, \texttt{token@time} queries become impossible: there is no way to ask where 
 the meaning of \emph{gay} stood in 1920, or how it moved by 1980, if both 
 queries return the same geometric object. Yet time-conditioned transformers have 
 rarely been tested on whether they achieve this geometrically in controlled settings. Knowing 
@@ -118,7 +118,7 @@ how \(P(N_1 \mid s, t)\) evolves across the 10 periods \(t0\) through \(t9\).
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{outputs/figures/figure1_benchmark_design.png}
+\includegraphics[width=\textwidth]{outputs/figures/figure1_benchmark_design.pdf}
 \caption{Controlled diagnostic suite overview. \emph{Left}: SVO sentences for a drifting
 subject across three periods; an $N_1$ verb appearing in an $N_2$ sentence
 at \(t7\) (marked \({\ast}\)) illustrates the deliberate noise in local markers.
@@ -194,7 +194,7 @@ summarizes the comparison.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{outputs/figures/figure2_architecture_detail.png}
+\includegraphics[width=\textwidth]{outputs/figures/figure2_architecture_detail.pdf}
 \caption{Controlled design comparison. \textbf{Standard}: Transformer baseline
 with no temporal signal. \textbf{Additive}: applies the same period vector to every token. \textbf{Token-Time}: Token-Time Transformer using joint
 token-time projection. \textbf{Memory-Augmented}: extension of Token-Time with
@@ -393,7 +393,7 @@ equivalence holds also at \(\delta=0.034\) (\(p_\mathrm{TOST}=0.014\)). D2 thus 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{outputs/figures/figure3_context_drift.png}
+\includegraphics[width=\textwidth]{outputs/figures/figure3_context_drift.pdf}
 \caption{Context drift score across periods. All conditioned models move drifting
 subjects from $N_1$ toward $N_2$ more than Standard; Additive, Token-Time, and
 Memory-Augmented produce similar trajectories. Stable and bifurcating subjects

@@ -18,6 +18,7 @@ from pathlib import Path
 
 import pandas as pd
 import plotly.express as px
+import plotly.io as pio
 
 from src.timeformer.nomenclature import model_label
 
@@ -97,20 +98,20 @@ def make_figure(agg: pd.DataFrame):
         },
         markers=True,
         labels={
-            "epoch": "Epoch",
+            "epoch": "Period",
             "mean": "Proportion of N₁ neighbors",
             "model_label": "Model",
             "class_label": "Subject class",
         },
     )
 
-    fig.update_traces(line={"width": 2.6}, marker={"size": 8})
+    fig.update_traces(line={"width": 3.5}, marker={"size": 11})
     fig.for_each_annotation(lambda a: a.update(text=a.text.replace("Subject class=", "")))
     fig.update_layout(
         template="plotly_white",
         width=1200,
         height=500,
-        font={"family": "Arial", "size": 16},
+        font={"family": "Roboto", "size": 16},
         legend={
             "orientation": "h",
             "yanchor": "bottom",
@@ -143,7 +144,7 @@ def make_figure(agg: pd.DataFrame):
             if model_df.empty:
                 continue
             rgba = colors.get(model, "#999999")
-            band_color = rgba.replace("rgb(", "rgba(").replace(")", ",0.12)")
+            band_color = rgba.replace("rgb(", "rgba(").replace(")", ",0.04)")
             fig.add_scatter(
                 x=list(model_df["epoch"]) + list(model_df["epoch"])[::-1],
                 y=list(model_df["upper"]) + list(model_df["lower"])[::-1],
@@ -164,16 +165,12 @@ def make_figure(agg: pd.DataFrame):
 
 
 def main() -> None:
+    pio.kaleido.scope.mathjax = None  # prevent "Loading[MathJax]" in exports
+
     parser = argparse.ArgumentParser(description="Plot Figure 3 context drift score")
     parser.add_argument("--runs", nargs="+", default=default_runs())
     parser.add_argument("--models", nargs="+", default=list(DEFAULT_MODELS))
     parser.add_argument("--output-dir", default="outputs/figures")
-    parser.add_argument(
-        "--write-kaleido",
-        action="store_true",
-        help="Also try Plotly/Kaleido static export. Disabled by default because "
-             "Kaleido is unstable on some macOS setups.",
-    )
     args = parser.parse_args()
 
     out_dir = Path(args.output_dir)
@@ -188,14 +185,13 @@ def main() -> None:
     fig.write_html(html_path, include_plotlyjs=True, full_html=True)
     print(f"Wrote {html_path}")
 
-    if args.write_kaleido:
-        for ext in ("svg", "png"):
-            path = out_dir / f"figure3_context_drift.{ext}"
-            try:
-                fig.write_image(path)
-                print(f"Wrote {path}")
-            except Exception as exc:
-                print(f"Skipped {path}: {type(exc).__name__}: {exc}")
+    for ext in ("pdf", "svg", "png"):
+        path = out_dir / f"figure3_context_drift.{ext}"
+        try:
+            fig.write_image(path, scale=2)
+            print(f"Wrote {path}")
+        except Exception as exc:
+            print(f"Skipped {path}: {type(exc).__name__}: {exc}")
 
 
 if __name__ == "__main__":

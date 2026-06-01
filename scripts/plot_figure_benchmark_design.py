@@ -37,7 +37,7 @@ def draw_svo_panel(ax: plt.Axes) -> None:
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.axis("off")
-    ax.set_title("Corpus sentences", fontsize=9, fontweight="bold", pad=6)
+    ax.set_title("Corpus sentences", fontsize=11, fontweight="bold", pad=6)
 
     # (epoch, subj, verb, obj, true_ctx, verb_ctx, obj_ctx)
     rows = [
@@ -52,9 +52,9 @@ def draw_svo_panel(ax: plt.Axes) -> None:
     rh    = 0.21
 
     # column headers
-    for ci, hdr in enumerate(["Epoch", "Subj", "Verb", "Obj", "Context"]):
+    for ci, hdr in enumerate(["Period", "Subj", "Verb", "Obj", "Context"]):
         ax.text(col_x[ci] + col_w[ci] / 2, 0.93, hdr,
-                ha="center", va="center", fontsize=7.5,
+                ha="center", va="center", fontsize=9,
                 fontweight="bold", color="#444444")
 
     ctx_color = {"N1": C_A, "N2": C_B}
@@ -89,17 +89,17 @@ def draw_svo_panel(ax: plt.Axes) -> None:
             text_color = "white" if ci == 4 else "#1a1a1a"
             ax.text(col_x[ci] + col_w[ci] / 2, y, tok,
                     ha="center", va="center",
-                    fontsize=8, color=text_color,
+                    fontsize=10, color=text_color,
                     fontfamily="monospace", zorder=3)
 
             # asterisk on noisy markers
             if (ci == 2 and noisy_verb) or (ci == 3 and noisy_obj):
                 ax.text(col_x[ci] + col_w[ci] - 0.005, y + rh / 2 - 0.02,
                         "∗", ha="right", va="top",
-                        fontsize=7.5, color="#cc3300", zorder=4)
+                        fontsize=9, color="#cc3300", zorder=4)
 
     ax.text(0.02, 0.01, "∗ noisy marker (opposite context)",
-            fontsize=6.5, color="#cc3300", va="bottom")
+            fontsize=8, color="#cc3300", va="bottom")
 
 
 # ── Panel 2: planted P(A|s,t) trajectories ────────────────────────────────────
@@ -121,13 +121,13 @@ def draw_trajectory_panel(ax: plt.Axes) -> None:
     ax.set_xlim(-0.3, 9.3)
     ax.set_ylim(-0.05, 1.08)
     ax.set_xticks(range(0, 10, 2))
-    ax.set_xticklabels([f"t{i}" for i in range(0, 10, 2)], fontsize=8)
+    ax.set_xticklabels([f"t{i}" for i in range(0, 10, 2)], fontsize=10)
     ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
-    ax.set_yticklabels(["0", ".25", ".50", ".75", "1"], fontsize=7.5)
-    ax.set_xlabel("Epoch", fontsize=8)
-    ax.set_ylabel(r"$P(N_1 \mid s,\,t)$", fontsize=8)
-    ax.set_title("Planted trajectories", fontsize=9, fontweight="bold", pad=6)
-    ax.legend(fontsize=7.5, loc="center right",
+    ax.set_yticklabels(["0", ".25", ".50", ".75", "1"], fontsize=9)
+    ax.set_xlabel("Period", fontsize=10)
+    ax.set_ylabel(r"$P(N_1 \mid s,\,t)$", fontsize=10)
+    ax.set_title("Planted trajectories", fontsize=11, fontweight="bold", pad=6)
+    ax.legend(fontsize=9, loc="center right",
               framealpha=0.88, edgecolor="#cccccc", handlelength=2.0)
     ax.tick_params(axis="both", length=3)
     for sp in ax.spines.values():
@@ -140,7 +140,7 @@ def draw_matrix_panel(ax: plt.Axes) -> None:
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
     ax.axis("off")
-    ax.set_title("Expected neighborhood", fontsize=9, fontweight="bold", pad=6)
+    ax.set_title("Expected neighborhood", fontsize=11, fontweight="bold", pad=6)
 
     col_labels = ["t0", "t4", "t9"]
     row_labels  = ["Stable", "Drift", "Bifurc."]
@@ -159,13 +159,13 @@ def draw_matrix_panel(ax: plt.Axes) -> None:
     # column headers
     for ci, cl in enumerate(col_labels):
         ax.text(col_x[ci], 0.90, cl,
-                ha="center", va="center", fontsize=8.5,
+                ha="center", va="center", fontsize=10,
                 fontweight="bold", color="#444444")
 
     # row labels
     for ri, rl in enumerate(row_labels):
         ax.text(0.16, row_y[ri], rl,
-                ha="center", va="center", fontsize=8, color="#222222")
+                ha="center", va="center", fontsize=10, color="#222222")
 
     for ri, row in enumerate(cells):
         for ci, (label, bg) in enumerate(row):
@@ -179,14 +179,14 @@ def draw_matrix_panel(ax: plt.Axes) -> None:
             ax.add_patch(rect)
             ax.text(col_x[ci], row_y[ri], label,
                     ha="center", va="center",
-                    fontsize=7.5, color="white", fontweight="bold", zorder=3)
+                    fontsize=9, color="white", fontweight="bold", zorder=3)
 
     legend_handles = [
         mpatches.Patch(facecolor=C_A,    alpha=0.82, label="N1"),
         mpatches.Patch(facecolor=C_B,    alpha=0.82, label="N2"),
         mpatches.Patch(facecolor=C_MIX,  alpha=0.82, label="N1/N2 mixed"),
     ]
-    ax.legend(handles=legend_handles, fontsize=7, loc="lower center",
+    ax.legend(handles=legend_handles, fontsize=9, loc="lower center",
               ncol=3, framealpha=0.75, edgecolor="#cccccc",
               bbox_to_anchor=(0.58, -0.01))
 
@@ -196,7 +196,8 @@ def draw_matrix_panel(ax: plt.Axes) -> None:
 def main() -> None:
     plt.rcParams.update({
         "font.family":      "sans-serif",
-        "font.size":        9,
+        "font.sans-serif":  ["Roboto", "DejaVu Sans"],
+        "font.size":        11,
         "axes.linewidth":   0.7,
         "figure.facecolor": "white",
         "savefig.dpi":      300,

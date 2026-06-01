@@ -61,7 +61,7 @@ def add_box(
         y=y1 - 0.045,
         text=f"<b>{title}</b>",
         showarrow=False,
-        font={"size": 15, "color": color},
+        font={"size": 17, "color": color},
         align="center",
     )
     fig.add_annotation(
@@ -69,7 +69,7 @@ def add_box(
         y=(y0 + y1) / 2 - 0.015,
         text=body,
         showarrow=False,
-        font={"size": 12, "color": COLORS["ink"]},
+        font={"size": 14, "color": COLORS["ink"]},
         align="center",
     )
 
@@ -116,7 +116,7 @@ def build_figure() -> go.Figure:
             text=f"<b>{title}</b>",
             showarrow=False,
             xanchor="left",
-            font={"size": 15, "color": COLORS["ink"]},
+            font={"size": 17, "color": COLORS["ink"]},
         )
 
     # Panel A: token@time concept.
@@ -143,22 +143,22 @@ def build_figure() -> go.Figure:
         y=0.63,
         text="<b>S11@t2</b><br>near N1",
         showarrow=False,
-        font={"size": 12, "color": COLORS["n1"]},
+        font={"size": 14, "color": COLORS["n1"]},
     )
     fig.add_annotation(
         x=0.215,
         y=0.37,
         text="<b>S11@t8</b><br>near N2",
         showarrow=False,
-        font={"size": 12, "color": COLORS["n2"]},
+        font={"size": 14, "color": COLORS["n2"]},
     )
     add_arrow(fig, 0.135, 0.56, 0.19, 0.45)
     fig.add_annotation(
         x=0.16,
         y=0.515,
-        text="same surface token<br>different epoch",
+        text="same surface token<br>different period",
         showarrow=False,
-        font={"size": 11, "color": COLORS["muted"]},
+        font={"size": 13, "color": COLORS["muted"]},
     )
 
     fig.add_annotation(
@@ -166,7 +166,7 @@ def build_figure() -> go.Figure:
         y=0.20,
         text="Traceability = query and compare<br>representations as token@time",
         showarrow=False,
-        font={"size": 12, "color": COLORS["ink"]},
+        font={"size": 13, "color": COLORS["ink"]},
         align="center",
     )
 
@@ -177,13 +177,13 @@ def build_figure() -> go.Figure:
             0.36,
             0.49,
             "Static",
-            "Token + position<br><span style='color:#60708b'>no epoch signal</span>",
+            "Token + position<br><span style='color:#60708b'>no period signal</span>",
             COLORS["static"],
         ),
         (
             0.515,
             0.645,
-            "Additive Time",
+            "Additive Period",
             "Token + position<br>+ TimeEncoding(t)",
             COLORS["time"],
         ),
@@ -218,7 +218,7 @@ def build_figure() -> go.Figure:
     # Mechanism labels under the chain.
     labels = [
         (0.425, "baseline"),
-        (0.58, "global epoch<br>conditioning"),
+        (0.58, "global period<br>conditioning"),
         (0.735, "token-specific<br>conditioning"),
         (0.89, "causal historical<br>prototype attention"),
     ]
@@ -228,7 +228,7 @@ def build_figure() -> go.Figure:
             y=0.245,
             text=text,
             showarrow=False,
-            font={"size": 11, "color": COLORS["muted"]},
+            font={"size": 13, "color": COLORS["muted"]},
             align="center",
         )
 
@@ -237,7 +237,7 @@ def build_figure() -> go.Figure:
         y=0.80,
         text="<b>Increasing temporal capacity</b>",
         showarrow=False,
-        font={"size": 13, "color": COLORS["ink"]},
+        font={"size": 15, "color": COLORS["ink"]},
     )
     add_arrow(fig, 0.52, 0.785, 0.80, 0.785)
 
@@ -247,11 +247,11 @@ def build_figure() -> go.Figure:
         height=520,
         margin={"l": 24, "r": 24, "t": 62, "b": 30},
         title={
-            "text": "Figure 1. Timeformer ablation chain and token@time interface",
+            "text": "Time-blind by design",
             "x": 0.02,
             "xanchor": "left",
         },
-        font={"family": "Arial", "size": 13, "color": COLORS["ink"]},
+        font={"family": "Roboto", "size": 14, "color": COLORS["ink"]},
         xaxis={"range": [0, 1], "visible": False, "fixedrange": True},
         yaxis={"range": [0, 1], "visible": False, "fixedrange": True},
         plot_bgcolor="white",

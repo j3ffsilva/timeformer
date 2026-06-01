@@ -9,7 +9,15 @@
       "Bash(git -C /Users/jeff/Documents/trabalhos/papers/2026-timeformers add paper1_iberamia_timeformer.tex paper1_iberamia_timeformer.pdf)",
       "Bash(grep -v \"\\\\\\\\\\\\\\\\begin\\\\|\\\\\\\\\\\\\\\\end\\\\|\\\\\\\\\\\\\\\\label\\\\|\\\\\\\\\\\\\\\\ref\\\\|\\\\\\\\\\\\\\\\cite\\\\|\\\\\\\\\\\\\\\\caption\\\\|\\\\\\\\\\\\\\\\section\\\\|\\\\\\\\\\\\\\\\subsection\\\\|\\\\\\\\\\\\\\\\paragraph\\\\|\\\\\\\\\\\\\\\\item\\\\|\\\\\\\\\\\\\\\\toprule\\\\|\\\\\\\\\\\\\\\\midrule\\\\|\\\\\\\\\\\\\\\\bottomrule\\\\|\\\\\\\\\\\\\\\\hline\\\\|\\\\\\\\\\\\\\\\textbf\\\\|\\\\\\\\\\\\\\\\emph\\\\|\\\\\\\\texttt\\\\|\\\\\\\\\\\\\\\\mathbf\\\\|\\\\$\\\\|\\\\\\\\\\\\\\\\[\")",
       "Bash(grep -v \"^[0-9]*:[[:space:]]*$\")",
-      "Bash(pdflatex -interaction=nonstopmode paper1_iberamia_timeformer.tex)"
+      "Bash(pdflatex -interaction=nonstopmode paper1_iberamia_timeformer.tex)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import matplotlib.font_manager as fm; fonts = [f.name for f in fm.fontManager.ttflist]; print\\('Roboto' in fonts\\); roboto = [f for f in fm.fontManager.ttflist if 'Roboto' in f.name]; print\\([f.name for f in roboto[:5]]\\)\")",
+      "Bash(python3 scripts/plot_figure_benchmark_design.py)",
+      "Bash(python3 scripts/plot_figure2_architecture_detail.py --write-kaleido)",
+      "Bash(python3 scripts/plot_figure3_context_drift.py --write-kaleido)",
+      "Bash(python3 scripts/plot_figure1_ablation_chain.py)",
+      "Bash(python3 scripts/plot_figure2_architecture_detail.py)",
+      "Bash(python3 scripts/plot_figure3_context_drift.py)"
     ]
   }
 }

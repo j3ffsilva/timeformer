@@ -13,10 +13,10 @@ Changes from v1:
 
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
 
 import plotly.graph_objects as go
+import plotly.io as pio
 
 OUT_DIR   = Path("outputs/figures")
 HTML_PATH = OUT_DIR / "figure2_architecture_detail.html"
@@ -67,8 +67,12 @@ ROWS = {
     "output":   0.070,
 }
 
-HALF_W_TF  = 0.042
-MEM_OFFSET = COL_W * 0.44
+SUB_GAP    = 0.025                        # gap between the two memory sub-boxes
+HALF_W_TF  = (2 * COL_W - SUB_GAP) / 4  # sub-box half-width; aligns edges to column boundary
+MEM_OFFSET = COL_W - HALF_W_TF           # center offset from column center
+
+SHAFT_W    = 2.5   # arrow shaft line width (px)
+ENTER_DIST = 0.020 # how far the arrowhead tip enters the destination box (data units)
 
 VARIANT_LABELS = ["Standard", "Additive", "Token-Time", "Memory-Augmented"]
 
@@ -120,41 +124,57 @@ def box(fig: go.Figure,
     fig.add_annotation(x=cx, y=cy + BOX_H - 0.020,
                        text=f"<b>{title}</b>",
                        showarrow=False,
-                       font={"size": 11, "color": tc}, align="center")
+                       font={"size": 18, "color": tc}, align="center")
     fig.add_annotation(x=cx, y=cy - 0.014,
                        text=body,
                        showarrow=False,
-                       font={"size": 10, "color": bc}, align="center")
+                       font={"size": 19, "color": bc}, align="center")
+
+
+def _arrowhead(fig: go.Figure,
+               x_edge: float, y_edge: float,
+               dx: float, dy: float,
+               color: str) -> None:
+    """Filled-triangle arrowhead: base at the destination box edge, tip inside the box."""
+    L = (dx ** 2 + dy ** 2) ** 0.5
+    if L < 1e-9:
+        return
+    t = ENTER_DIST / L
+    fig.add_annotation(
+        ax=x_edge,           ay=y_edge,           # base: destination box edge
+        x=x_edge + dx * t,  y=y_edge + dy * t,   # tip: ENTER_DIST inside the box
+        xref="x", yref="y", axref="x", ayref="y",
+        showarrow=True, arrowhead=2, text="",
+        arrowsize=1.0, arrowwidth=SHAFT_W,
+        arrowcolor=color,
+    )
 
 
 def arrow(fig: go.Figure,
           x0: float, y0: float,
           x1: float, y1: float,
           color: str = "#aaaaaa") -> None:
-    fig.add_annotation(x=x1, y=y1, ax=x0, ay=y0,
-                       xref="x", yref="y", axref="x", ayref="y",
-                       showarrow=True, arrowhead=3,
-                       arrowsize=1.0, arrowwidth=2.0,
-                       arrowcolor=color)
+    """Shaft as a shape line (guaranteed connection) + filled-triangle arrowhead."""
+    fig.add_shape(type="line", x0=x0, y0=y0, x1=x1, y1=y1,
+                  line={"color": color, "width": SHAFT_W}, layer="above")
+    _arrowhead(fig, x1, y1, x1 - x0, y1 - y0, color)
 
 
 def routed_arrow(fig: go.Figure,
                  points: list[tuple[float, float]],
                  color: str = "#aaaaaa") -> None:
-    """Draw a segmented connector with an arrowhead only on the final segment."""
+    """All segments as shape lines so every corner connects; arrowhead on final tip."""
     if len(points) < 2:
         return
-    for (x0, y0), (x1, y1) in zip(points[:-2], points[1:-1]):
-        fig.add_shape(type="line",
-                      x0=x0, y0=y0, x1=x1, y1=y1,
-                      line={"color": color, "width": 2.0},
-                      layer="above")
+    for (x0, y0), (x1, y1) in zip(points[:-1], points[1:]):
+        fig.add_shape(type="line", x0=x0, y0=y0, x1=x1, y1=y1,
+                      line={"color": color, "width": SHAFT_W}, layer="above")
     (ax, ay), (x, y) = points[-2], points[-1]
-    arrow(fig, ax, ay, x, y, color)
+    _arrowhead(fig, x, y, x - ax, y - ay, color)
 
 
 def label(fig: go.Figure, x: float, y: float, text: str,
-          color: str = C["muted"], size: int = 10) -> None:
+          color: str = C["muted"], size: int = 20) -> None:
     fig.add_annotation(x=x, y=y, text=text, showarrow=False,
                        font={"size": size, "color": color, "style": "italic"},
                        align="center")
@@ -182,11 +202,11 @@ def build_figure() -> go.Figure:
         fig.add_annotation(x=cx, y=HEADER_Y,
                            text=f"<b>{lbl}</b>",
                            showarrow=False,
-                           font={"size": 14, "color": hc}, align="center")
+                           font={"size": 27, "color": hc}, align="center")
         fig.add_annotation(x=cx, y=FORMULA_Y,
                            text=formula,
                            showarrow=False,
-                           font={"size": 11, "color": hc}, align="center")
+                           font={"size": 22, "color": hc}, align="center")
 
     # ── Row: Lexical input (all variants) ─────────────────────────────────────
     for cx in COL_CENTERS:
@@ -236,14 +256,14 @@ def build_figure() -> go.Figure:
                       x1=cx_sub + HALF_W_TF, y1=y1_mem,
                       line={"color": C["memory"], "width": 2.0},
                       fillcolor=C["new_fill"], layer="below")
-        fig.add_annotation(x=cx_sub, y=y1_mem - 0.022,
+        fig.add_annotation(x=cx_sub, y=ROWS["mem_attn"] + 0.018,
                            text=f"<b>{title_sub}</b>",
                            showarrow=False,
-                           font={"size": 10, "color": C["memory"]}, align="center")
-        fig.add_annotation(x=cx_sub, y=y0_mem + 0.018,
+                           font={"size": 20, "color": C["memory"]}, align="center")
+        fig.add_annotation(x=cx_sub, y=ROWS["mem_attn"] - 0.026,
                            text=body_sub,
                            showarrow=False,
-                           font={"size": 9, "color": C["ink"]}, align="center")
+                           font={"size": 19, "color": C["ink"]}, align="center")
 
     # ── Row: Shared encoder (all variants) ────────────────────────────────────
     for cx in COL_CENTERS:
@@ -254,7 +274,7 @@ def build_figure() -> go.Figure:
     # ── Row: token@time output (all variants) ─────────────────────────────────
     for cx in COL_CENTERS:
         box(fig, cx, ROWS["output"],
-            "h<sub>s</sub>", "token@time representation",
+            "h<sub>s</sub>", "token@time",
             C["output"], fill=C["out_fill"])
 
     # ── Arrows ────────────────────────────────────────────────────────────────
@@ -269,10 +289,8 @@ def build_figure() -> go.Figure:
     routed_arrow(fig, [
         (cx1, y_bot("token")),
         (cx1, 0.735),
-        (cx1 - 0.070, 0.735),
-        (cx1 - 0.070, y_top("encoder") + 0.018),
-        (cx1 - 0.020, y_top("encoder") + 0.018),
-        (cx1 - 0.020, y_top("encoder")),
+        (cx1 - 0.065, 0.735),
+        (cx1 - 0.065, y_top("encoder")),
     ], C["token"])
     arrow(fig, cx1, y_bot("time"), cx1, y_top("encoder"), C["time"])
     label(fig, cx1 + 0.025,
@@ -285,10 +303,8 @@ def build_figure() -> go.Figure:
     routed_arrow(fig, [
         (cx2, y_bot("token")),
         (cx2, 0.735),
-        (cx2 - 0.070, 0.735),
-        (cx2 - 0.070, y_top("interact") + 0.018),
-        (cx2 - 0.035, y_top("interact") + 0.018),
-        (cx2 - 0.035, y_top("interact")),
+        (cx2 - 0.065, 0.735),
+        (cx2 - 0.065, y_top("interact")),
     ], C["token"])
     arrow(fig, cx2, y_bot("time"), cx2, y_top("interact"), C["time"])
     arrow(fig, cx2, y_bot("interact"), cx2, y_top("encoder"),  C["interaction"])
@@ -300,10 +316,8 @@ def build_figure() -> go.Figure:
     routed_arrow(fig, [
         (cx3, y_bot("token")),
         (cx3, 0.735),
-        (cx3 - 0.070, 0.735),
-        (cx3 - 0.070, y_top("interact") + 0.018),
-        (cx3 - 0.035, y_top("interact") + 0.018),
-        (cx3 - 0.035, y_top("interact")),
+        (cx3 - 0.065, 0.735),
+        (cx3 - 0.065, y_top("interact")),
     ], C["token"])
     arrow(fig, cx3, y_bot("time"), cx3, y_top("interact"), C["time"])
     arrow(fig, cx3, y_bot("interact"), cx3, y_top("mem_attn"), C["interaction"])
@@ -328,7 +342,7 @@ def build_figure() -> go.Figure:
             x=0.018, y=ROWS[row_key],
             text=f"<i>{row_lbl}</i>",
             showarrow=False,
-            font={"size": 9, "color": C["muted"]},
+            font={"size": 15, "color": C["muted"]},
             xanchor="left", align="left",
         )
 
@@ -337,7 +351,7 @@ def build_figure() -> go.Figure:
         width=1400,
         height=900,
         margin={"l": 10, "r": 10, "t": 20, "b": 20},
-        font={"family": "Arial", "size": 12, "color": C["ink"]},
+        font={"family": "Roboto", "size": 20, "color": C["ink"]},
         xaxis={"range": [0, 1], "visible": False, "fixedrange": True},
         yaxis={"range": [0, 1], "visible": False, "fixedrange": True},
         plot_bgcolor="white",
@@ -348,9 +362,7 @@ def build_figure() -> go.Figure:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--write-kaleido", action="store_true")
-    args = parser.parse_args()
+    pio.kaleido.scope.mathjax = None  # prevent "Loading[MathJax]" in exports
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     fig = build_figure()
@@ -358,14 +370,13 @@ def main() -> None:
     fig.write_json(JSON_PATH)
     print(f"Wrote {HTML_PATH}")
 
-    if args.write_kaleido:
-        for ext in ("svg", "png"):
-            path = OUT_DIR / f"figure2_architecture_detail.{ext}"
-            try:
-                fig.write_image(path, scale=2)
-                print(f"Wrote {path}")
-            except Exception as exc:
-                print(f"Skipped {path}: {type(exc).__name__}: {exc}")
+    for ext in ("pdf", "svg", "png"):
+        path = OUT_DIR / f"figure2_architecture_detail.{ext}"
+        try:
+            fig.write_image(path, scale=2)
+            print(f"Wrote {path}")
+        except Exception as exc:
+            print(f"Skipped {path}: {type(exc).__name__}: {exc}")
 
 
 if __name__ == "__main__":
